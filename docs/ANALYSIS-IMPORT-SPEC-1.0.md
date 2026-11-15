@@ -63,3 +63,11 @@ The import screen should show:
 
 ## Versioning
 Changes that break field meaning or required structure require a new major schema version. Additive optional fields may be introduced within v1 only when older importers can safely ignore them.
+
+
+## Probability calculation extension (V1.3-compatible)
+Analysis reports should include `analysis.expected_goals` with numeric `home` and `away` expected-goal estimates (0–8) whenever the evidence supports a model estimate. The optional `basis` field briefly describes the evidence/model inputs. Football rich can derive missing 1X2 and Asian Handicap settlement distributions from these values using an independent Poisson score model. The selected side and handicap line come from `market.selected_team` and `market.handicap_line`.
+
+The app defines handicap cover probability as **full-win probability + half-win probability**. Push probability is displayed separately and is not counted as a win. For quarter lines, the model splits the stake across the two adjacent half-goal lines before classifying the five settlement outcomes.
+
+Expected goals are model estimates, not observed facts. They must be supported by researched team scoring/conceding rates, home/away performance, opponent strength and relevant team news. If those inputs cannot support a defensible estimate, leave expected goals and probability fields null, mark `probability_status` as `insufficient_data`, and set the recommendation to `pass` or `no_recommendation`. Never invent values merely to fill the UI.
