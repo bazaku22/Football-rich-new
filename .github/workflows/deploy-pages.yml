@@ -68,7 +68,8 @@ jobs:
           sed -i '/^node \.\.\/scripts\/apply-v1-27-direct-match-detail-actions\.mjs$/a node ../scripts/apply-v1-28-capture-match-detail.mjs' build-from-archive.sh
           sed -i '/^node \.\.\/scripts\/apply-v1-28-capture-match-detail\.mjs$/a node ../scripts/apply-v1-29-direct-match-detail-bindings.mjs' build-from-archive.sh
           sed -i '/^node \.\.\/scripts\/apply-v1-29-direct-match-detail-bindings\.mjs$/a node ../scripts/apply-v1-30-native-match-detail-dialog.mjs' build-from-archive.sh
-          sed -i '/^node \.\.\/scripts\/apply-v1-30-native-match-detail-dialog\.mjs$/a node ../scripts/apply-v1-31-scope-safe-match-detail.mjs\nnode ../scripts/test-v1-31-match-detail-runtime.mjs' build-from-archive.sh
+          sed -i '/^node \.\.\/scripts\/apply-v1-30-native-match-detail-dialog\.mjs$/a node ../scripts/apply-v1-31-scope-safe-match-detail.mjs' build-from-archive.sh
+          sed -i '/^node \.\.\/scripts\/apply-v1-31-scope-safe-match-detail\.mjs$/a node ../scripts/test-v1-31-match-detail-runtime.mjs' build-from-archive.sh
 
       - name: Build Football rich
         run: bash build-from-archive.sh
