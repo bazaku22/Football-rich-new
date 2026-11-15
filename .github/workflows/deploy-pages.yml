@@ -113,6 +113,21 @@ jobs:
           echo "=== GENERATED JS FILES ==="
           find dist -maxdepth 2 -type f -name '*.js' -printf '%p %s bytes\\n'
 
+      - name: Inspect runtime startup and styling
+        working-directory: football-rich-v1
+        shell: bash
+        run: |
+          echo "=== PWA MODULE ==="
+          cat src/pwa.ts
+          echo "=== DATABASE OPEN / STORE SETUP ==="
+          sed -n '1,220p' src/data/database.ts
+          echo "=== MAIN RENDER STARTUP ==="
+          tail -n 100 src/main.ts
+          echo "=== CSS SELECTORS AND ROOT ==="
+          sed -n '1,240p' src/styles/main.css
+          echo "=== BUILD STATIC SCRIPT ==="
+          sed -n '1,220p' scripts/build-static.mjs
+
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
