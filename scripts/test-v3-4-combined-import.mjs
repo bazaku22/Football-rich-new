@@ -13,10 +13,9 @@ assert.ok(html.includes('main.js?v=20261116-v3-4'));
 assert.ok(sw.includes("const CACHE_NAME = 'football-rich-shell-v50'"));
 
 const toolsStart=main.indexOf("currentView === 'tools'");
-const importMatch=toolsStart<0?null:/else if\s*\(currentView\s*===\s*['"]import['"]\s*\)\s*\{/.exec(main.slice(toolsStart));
-const importStart=importMatch?toolsStart+importMatch.index:-1;
-const toolsBlock=main.slice(toolsStart,importStart);
-assert.ok(toolsStart>=0&&importStart>toolsStart,'Tools Center route must exist before combined importer');
+const resultStart=main.indexOf("else if (currentView === 'result-import') {",toolsStart);
+const toolsBlock=main.slice(toolsStart,resultStart);
+assert.ok(toolsStart>=0&&resultStart>toolsStart,'Tools Center route must exist before Result Import');
 assert.equal((toolsBlock.match(/data-tool-target=/g)||[]).length,2,'Tools Center should show exactly two tools');
 assert.ok(toolsBlock.includes('นำเข้าโปรแกรมพร้อมบทวิเคราะห์'));
 assert.ok(toolsBlock.includes('สรุปผลการแข่งขัน'));
