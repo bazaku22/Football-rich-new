@@ -83,7 +83,7 @@ jobs:
           sed -i '/^node \.\.\/scripts\/apply-v2-4-match-card-visual-clarity\.mjs && node \.\.\/scripts\/test-v2-4-match-card-visual-clarity\.mjs$/a node ../scripts/apply-v3-0-analysis-engine.mjs && node ../scripts/test-v3-0-analysis-engine.mjs' build-from-archive.sh
           sed -i '/^node \.\.\/scripts\/apply-v3-0-analysis-engine\.mjs && node \.\.\/scripts\/test-v3-0-analysis-engine\.mjs$/a node ../scripts/apply-v3-1-existing-only-import.mjs && node ../scripts/test-v3-1-existing-only-import.mjs' build-from-archive.sh
           sed -i '/^node \.\.\/scripts\/apply-v3-1-existing-only-import\.mjs && node \.\.\/scripts\/test-v3-1-existing-only-import\.mjs$/a node ../scripts/apply-v3-2-tools-center.mjs && node ../scripts/test-v3-2-tools-center.mjs' build-from-archive.sh
-          sed -i '/^node \\.\\.\\/scripts\\/apply-v3-2-tools-center\\.mjs && node \\.\\.\\/scripts\\/test-v3-2-tools-center\\.mjs$/a node ../scripts/apply-v3-4-combined-import.mjs && node ../scripts/test-v3-4-combined-import.mjs' build-from-archive.sh
+          sed -i '/^node \.\.\/scripts\/apply-v3-2-tools-center\.mjs && node \.\.\/scripts\/test-v3-2-tools-center\.mjs$/a node ../scripts/apply-v3-4-combined-import.mjs && node ../scripts/test-v3-4-combined-import.mjs' build-from-archive.sh
 
       - name: Syntax-check V3.4 combined import scripts
         run: |
