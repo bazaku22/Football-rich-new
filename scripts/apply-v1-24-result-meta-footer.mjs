@@ -1,10 +1,12 @@
 import fs from 'node:fs';
 const mainPath='dist/main.js', cssPath='dist/styles/main.css', htmlPath='dist/index.html', swPath='dist/sw.js';
 let main=fs.readFileSync(mainPath,'utf8'), css=fs.readFileSync(cssPath,'utf8'), html=fs.readFileSync(htmlPath,'utf8'), sw=fs.readFileSync(swPath,'utf8');
-const oldTail = `<div class="mc-id">MATCH ID: ' + esc(m.id) + ' · RESULT ID: ' + esc(r.importResultId || 'legacy') + '</div>' + (Number(r.revisionNumber) > 1 ? '<div class="mc-muted">มีประวัติแก้ไขผล ' + (Number(r.revisionNumber) - 1) + ' ครั้ง · เก็บ Snapshot ก่อนหน้าไว้</div>' : '') + revisionHtml + '</article>';`;
-const newTail = `<section class="mc-result-meta"><div class="mc-id-block"><span class="mc-meta-label">รหัสรายการ</span><div class="mc-id">MATCH ID: ' + esc(m.id) + '</div><div class="mc-id">RESULT ID: ' + esc(r.importResultId || 'legacy') + '</div></div>' + (Number(r.revisionNumber) > 1 ? '<div class="mc-snapshot-note"><span class="mc-meta-label">ประวัติการแก้ไข</span><p>แก้ไขผลแล้ว ' + (Number(r.revisionNumber) - 1) + ' ครั้ง · เก็บ Snapshot ก่อนหน้าไว้</p></div>' : '') + (revisionHtml ? '<div class="mc-history-wrap">' + revisionHtml + '</div>' : '') + '</section></article>';`;
-if (!main.includes(oldTail)) throw new Error('V1.24 could not find exact finished-match metadata footer');
-main=main.replace(oldTail,newTail);
+const idStart = main.indexOf("'<div class=\"mc-id\">MATCH ID: ' + esc(m.id)");
+const footerEndMarker = "+ revisionHtml + '</article>';";
+const footerEnd = idStart < 0 ? -1 : main.indexOf(footerEndMarker,idStart);
+if (idStart < 0 || footerEnd < 0) throw new Error('V1.24 could not locate MATCH ID-to-history footer boundaries');
+const newFooter = `'<section class="mc-result-meta"><div class="mc-id-block"><span class="mc-meta-label">รหัสรายการ</span><div class="mc-id">MATCH ID: ' + esc(m.id) + '</div><div class="mc-id">RESULT ID: ' + esc(r.importResultId || 'legacy') + '</div></div>' + (Number(r.revisionNumber) > 1 ? '<div class="mc-snapshot-note"><span class="mc-meta-label">ประวัติการแก้ไข</span><p>แก้ไขผลแล้ว ' + (Number(r.revisionNumber) - 1) + ' ครั้ง · เก็บ Snapshot ก่อนหน้าไว้</p></div>' : '') + (revisionHtml ? '<div class="mc-history-wrap">' + revisionHtml + '</div>' : '') + '</section></article>';`;
+main=main.slice(0,idStart)+newFooter+main.slice(footerEnd+footerEndMarker.length);
 const cssPatch = `
 /* V1.24: full-width readable result metadata and snapshot history footer */
 .mc-result-meta{display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:10px!important;width:100%!important;max-width:100%!important;min-width:0!important;box-sizing:border-box!important;margin-top:14px!important;padding-top:12px!important;border-top:1px solid #40351f!important}
