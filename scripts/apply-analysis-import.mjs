@@ -24,7 +24,7 @@ const helper = [
 "  if (typeof obj.match.competition !== 'string' || !obj.match.competition.trim() || typeof obj.match.home_team !== 'string' || !obj.match.home_team.trim() || typeof obj.match.away_team !== 'string' || !obj.match.away_team.trim()) fail('ชื่อรายการหรือทีมแข่งขันไม่ถูกต้อง');",
 "  if (obj.match.kickoff_at !== null && !validDate(obj.match.kickoff_at)) fail('เวลาแข่งขันไม่ถูกต้อง');",
 "  if (!isObject(obj.market) || obj.market.market_type !== 'asian_handicap' || !['home','away'].includes(obj.market.selected_team)) fail('ข้อมูลตลาด Asian Handicap ไม่ถูกต้อง');",
-"  const allowedLines = [-0.25,-0.5,-0.75,-1,-1.25,-1.5,-1.75,-2];",
+"  const allowedLines = [0,-0.25,-0.5,-0.75,-1,-1.25,-1.5,-1.75,-2,-2.25,-2.5,-2.75,-3,-3.25,-3.5,-3.75,-4];",
 "  if (!allowedLines.some(v => Math.abs(v - Number(obj.market.handicap_line)) < 0.0001)) fail('เส้นแฮนดิแคปไม่อยู่ในรายการที่ Football rich รองรับ');",
 "  if (obj.market.decimal_odds !== null && (!Number.isFinite(obj.market.decimal_odds) || obj.market.decimal_odds <= 1)) fail('ราคาต่อรองไม่ถูกต้อง');",
 "  if (!isObject(obj.analysis) || !isObject(obj.recommendation) || !Array.isArray(obj.evidence)) fail('ข้อมูลวิเคราะห์ คำแนะนำ หรือหลักฐานไม่ครบ');",
