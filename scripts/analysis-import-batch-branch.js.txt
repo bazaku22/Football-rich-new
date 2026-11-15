@@ -1,6 +1,6 @@
 else if (currentView === 'import') {
   root.innerHTML = pageTitle('ANALYSIS IMPORT','นำเข้ารายงานวิเคราะห์','เลือก JSON แบบชุด หรือ ZIP ที่มี JSON หลายคู่ แล้วนำเข้าพร้อมกันในครั้งเดียว') +
-    card('เลือกไฟล์รายงาน','<p class="muted">Football rich Analysis v1.0.0 · JSON หรือ ZIP · สูงสุด 20 MB · ไม่เกิน 100 คู่</p><label class="file-label">เลือกไฟล์ JSON / ZIP<input id="analysis-import-file" type="file" accept=".json,application/json,.zip,application/zip"></label><p id="analysis-import-message" class="notice" role="status">เลือกไฟล์เพื่อเริ่มตรวจสอบ</p><div id="analysis-import-preview"></div>');
+    card('เลือกไฟล์รายงาน','<p class="muted">Football rich Analysis v1.0.0 · JSON หรือ ZIP · สูงสุด 20 MB · ไม่เกิน 100 คู่</p><label class="file-label">เลือกไฟล์ JSON / ZIP<input id="analysis-import-file" type="file" accept=".json,application/json,.zip,application/zip"></label><label class="mc-check" style="display:flex;gap:8px;align-items:flex-start;margin:12px 0"><input id="analysis-import-existing-only" type="checkbox" checked><span><b>อัปเดตแมตช์เดิมเท่านั้น (แนะนำ)</b><small class="muted" style="display:block">ไม่สร้างแมตช์ใหม่ · ต้องตรงกับรายการ ทีม และเวลาเตะเดิม · เก็บ Match ID และประวัติเดิม</small></span></label><p id="analysis-import-message" class="notice" role="status">เลือกไฟล์เพื่อเริ่มตรวจสอบ</p><div id="analysis-import-preview"></div>');
   const input=document.querySelector('#analysis-import-file'), preview=document.querySelector('#analysis-import-preview');
   const zipReports=async file=>{
     const b=new Uint8Array(await file.arrayBuffer()),v=new DataView(b.buffer),d=new TextDecoder(); let e=-1;
@@ -51,18 +51,25 @@ else if (currentView === 'import') {
       if(new Set(keys).size!==keys.length)throw Error('พบคู่แข่งขันซ้ำในไฟล์');
       const old=await records(),oldIds=new Set(old.analyses.map(a=>a.importReportId));
       if(ids.some(id=>oldIds.has(id)))throw Error('มี report_id ที่เคยนำเข้าแล้ว กรุณาตรวจสอบไฟล์');
+      const updateExistingOnly=document.querySelector('#analysis-import-existing-only')?.checked!==false;
+      const normTeam=v=>String(v??'').normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').toLowerCase().replace(/\\s+/g,' ').trim().replace('czechia','czech republic').replace('turkiye','turkey');
+      const normComp=v=>String(v??'').toLowerCase().replace(/[—–]/g,'-').replace(/\\s+/g,' ').trim();
+      const sameCompetition=(a,b)=>{const x=normComp(a),y=normComp(b);return x===y||x.startsWith(y+' ')||y.startsWith(x+' ')||x.includes('uefa nations league')&&y.includes('uefa nations league');};
+      const sameKickoff=(a,b)=>{const x=Date.parse(a??''),y=Date.parse(b??'');return Number.isFinite(x)&&Number.isFinite(y)&&Math.abs(x-y)<=120000;};
       const plan=items.map(({report})=>{
-        const m=old.matches.filter(x=>x.league.trim().toLowerCase()===report.match.competition.trim().toLowerCase()&&x.homeTeam.trim().toLowerCase()===report.match.home_team.trim().toLowerCase()&&x.awayTeam.trim().toLowerCase()===report.match.away_team.trim().toLowerCase());
-        if(m.length>1)throw Error('พบคู่แข่งขันซ้ำในแอป: '+report.match.home_team+' vs '+report.match.away_team);
+        const m=old.matches.filter(x=>sameCompetition(x.league,report.match.competition)&&normTeam(x.homeTeam)===normTeam(report.match.home_team)&&normTeam(x.awayTeam)===normTeam(report.match.away_team)&&(!updateExistingOnly||sameKickoff(x.kickoffAt,report.match.kickoff_at)));
+        if(m.length>1)throw Error('พบคู่แข่งขันที่ตรงกันหลายรายการในแอป: '+report.match.home_team+' vs '+report.match.away_team+' · ระบบหยุดเพื่อป้องกันการอัปเดตผิด Match ID');
+        if(updateExistingOnly&&m.length===0)throw Error('ไม่พบแมตช์เดิมที่ตรงกันครบทั้งรายการแข่งขัน ทีม และเวลาเตะ: '+report.match.home_team+' vs '+report.match.away_team+' · ไม่มีการสร้างแมตช์ใหม่');
         return {report,match:m[0]};
       });
       const pct=x=>x==null?'—':(Number(x)*100).toFixed(1)+'%';
-      preview.innerHTML='<div class="panel import-preview"><div class="record-top"><b>ตรวจสอบผ่าน '+items.length+' คู่</b><span class="tag">พร้อมนำเข้า</span></div>'+plan.map(({report:r},i)=>'<article class="record"><b>'+(i+1)+'. '+esc(r.match.home_team)+' VS '+esc(r.match.away_team)+'</b><small>'+esc(r.match.competition)+'</small><p class="muted">'+(r.match.kickoff_at?esc(fmtDate(r.match.kickoff_at)):'ไม่ระบุเวลา')+' · '+esc(r.report_id)+'</p><div class="metrics"><span>AH <b>'+Number(r.market.handicap_line).toFixed(2)+'</b></span><span>Cover <b>'+pct(r.analysis.cover_probability)+'</b></span></div><p>'+esc(r.recommendation.summary)+'</p></article>').join('')+'<p class="notice">ทุกคู่จะถูกบันทึกในธุรกรรมเดียว หากผิดพลาดจะไม่บันทึกบางส่วน</p><button class="primary" id="confirm-analysis-import">นำเข้าทั้งหมด '+items.length+' คู่</button></div>';
+      preview.innerHTML='<div class="panel import-preview"><div class="record-top"><b>ตรวจสอบผ่าน '+items.length+' คู่</b><span class="tag">พร้อมนำเข้า</span></div>'+plan.map(({report:r},i)=>'<article class="record"><b>'+(i+1)+'. '+esc(r.match.home_team)+' VS '+esc(r.match.away_team)+'</b><small>'+esc(r.match.competition)+'</small><p class="muted">'+(r.match.kickoff_at?esc(fmtDate(r.match.kickoff_at)):'ไม่ระบุเวลา')+' · '+esc(r.report_id)+'</p>'+(plan[i].match?'<p class="notice">จะอัปเดต Match ID เดิม: '+esc(plan[i].match.id)+'</p>':'<p class="notice">จะสร้างแมตช์ใหม่</p>')+<div class="metrics"><span>AH <b>'+Number(r.market.handicap_line).toFixed(2)+'</b></span><span>Cover <b>'+pct(r.analysis.cover_probability)+'</b></span></div><p>'+esc(r.recommendation.summary)+'</p></article>').join('')+'<p class="notice">'+(updateExistingOnly?'โหมดปลอดภัย: ทุกคู่เชื่อมกับ Match ID เดิมเท่านั้น และเพิ่มเฉพาะบทวิเคราะห์เวอร์ชันใหม่':'โหมดทั่วไป: อาจสร้างแมตช์ใหม่สำหรับคู่ที่ไม่พบ')+' · ทุกคู่จะถูกบันทึกในธุรกรรมเดียว หากผิดพลาดจะไม่บันทึกบางส่วน</p><button class="primary" id="confirm-analysis-import">นำเข้าทั้งหมด '+items.length+' คู่</button></div>';
       setMessage('#analysis-import-message','ตรวจสอบผ่าน '+items.length+' คู่ · ยังไม่ได้บันทึก','success');
       document.querySelector('#confirm-analysis-import')?.addEventListener('click',async ev=>{
         const btn=ev.currentTarget;btn.disabled=true;
         try{
           const latest=await records();if(items.some(x=>latest.analyses.some(a=>a.importReportId===x.report.report_id)))throw Error('พบรายงานที่ถูกนำเข้าไปแล้ว');
+          if(updateExistingOnly&&plan.some(x=>!x.match||!latest.matches.some(m=>m.id===x.match.id)))throw Error('แมตช์เดิมเปลี่ยนแปลงหรือไม่พบแล้ว กรุณาตรวจสอบใหม่ · ไม่มีการบันทึกข้อมูล');
           const db=await openDatabase(),tx=db.transaction(['matches','analyses','research_records','source_evidence'],'readwrite'),ms=tx.objectStore('matches'),as=tx.objectStore('analyses'),rs=tx.objectStore('research_records'),es=tx.objectStore('source_evidence');
           for(const {report:r,match:existing} of plan){
             const m=existing??{...base(),league:r.match.competition,homeTeam:r.match.home_team,awayTeam:r.match.away_team,kickoffAt:r.match.kickoff_at?new Date(r.match.kickoff_at).toISOString():'',status:r.match.match_status==='finished'?'FINISHED':'UPCOMING',notes:'นำเข้าจากรายงาน '+r.report_id};
@@ -74,7 +81,7 @@ else if (currentView === 'import') {
             for(const v of r.evidence.filter(x=>typeof x.url==='string'&&x.url.trim()))es.add({...base(),matchId:m.id,sourceName:String(v.publisher),url:String(v.url),verificationStatus:'UNVERIFIED',retrievedAt:v.checked_at??r.analysis_as_of,notes:String(v.claim)});
           }
           await new Promise((resolve,reject)=>{tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error??Error('บันทึกไม่สำเร็จ'));tx.onabort=()=>reject(tx.error??Error('ธุรกรรมถูกยกเลิก'));});
-          setMessage('#analysis-import-message','นำเข้าสำเร็จครบ '+items.length+' คู่','success');preview.innerHTML='<div class="notice success">บันทึกครบ '+items.length+' คู่แล้ว · ไม่มีการเขียนทับผลการแข่งขันหรือคำทำนายเดิม</div>';
+          setMessage('#analysis-import-message','นำเข้าสำเร็จครบ '+items.length+' คู่','success');preview.innerHTML='<div class="notice success">บันทึกครบ '+items.length+' คู่แล้ว · '+(updateExistingOnly?'ใช้ Match ID เดิมทุกคู่และเพิ่มบทวิเคราะห์เวอร์ชันใหม่เท่านั้น':'รายการที่มีอยู่ยังคงประวัติเดิม')+' · ไม่เขียนทับผลการแข่งขันหรือคำทำนายเดิม</div>';
         }catch(err){btn.disabled=false;setMessage('#analysis-import-message',err?.message||'นำเข้าไม่สำเร็จ','error');}
       });
     }catch(err){setMessage('#analysis-import-message',err?.message||'อ่านไฟล์ไม่สำเร็จ','error');}
