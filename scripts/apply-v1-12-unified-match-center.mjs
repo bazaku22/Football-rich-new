@@ -79,7 +79,7 @@ fs.writeFileSync(swPath,sw);
 fs.writeFileSync(htmlPath,html);
 fs.writeFileSync('dist/app-version.json',JSON.stringify({version:'1.12',release:'V1.12'}));
 
-for (const needle of ['const allMatches = d.matches.slice().sort','รายการแข่งขันทั้งหมด','teamHtml(m.homeTeam, matchCountry(m,a))','teamHtml(m.awayTeam, matchCountry(m,a))','knownClubCrests','mc-team-crest']) {
+for (const needle of ['const allMatches = d.matches.slice().sort','รายการแข่งขันทั้งหมด',"teamHtml(m.homeTeam, matchCountry(m,a), crestFor(m,a,'home'))","teamHtml(m.awayTeam, matchCountry(m,a), crestFor(m,a,'away'))",'knownClubCrests','mc-team-crest']) {
   if (!main.includes(needle)) throw new Error('V1.12 audit failed: '+needle);
 }
 if (main.includes('<h2>ก่อนแข่งขัน</h2>') || main.includes('<h2>หลังแข่งขัน</h2>')) throw new Error('V1.12 old split sections remain');
