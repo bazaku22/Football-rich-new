@@ -1,4 +1,4 @@
-name: Build, scan and deploy Football rich
+name: Build, scan and deploy Football rich # V2.4 validation refresh
 
 on:
   push:
