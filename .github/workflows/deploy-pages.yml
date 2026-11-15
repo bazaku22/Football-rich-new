@@ -42,7 +42,7 @@ jobs:
           sed -i '/^python3 \/tmp\/football-rich-v1-1-ui.py$/a node ../scripts/apply-match-center.mjs' build-from-archive.sh
           sed -i '/^node \.\.\/scripts\/apply-match-center\.mjs$/a node ../scripts/apply-v1-3-fixes.mjs' build-from-archive.sh
           sed -i '/^node \.\.\/scripts\/apply-v1-3-fixes\.mjs$/a node ../scripts/apply-v1-4-batch-import.mjs' build-from-archive.sh
-          sed -i '/^node \.\.\/scripts\/apply-v1-4-batch-import\.mjs$/a base64 -d ../scripts/apply-v1-5-ui.mjs.gz.b64 | gzip -dc > /tmp/apply-v1-5-ui.mjs\nnode /tmp/apply-v1-5-ui.mjs' build-from-archive.sh
+          sed -i '/^node \.\.\/scripts\/apply-v1-4-batch-import\.mjs$/a bash ../scripts/apply-v1-5-ui.sh' build-from-archive.sh
 
       - name: Build Football rich
         run: bash build-from-archive.sh
@@ -109,7 +109,13 @@ jobs:
           console.log('Service worker source preview:', fs.readFileSync(swFiles[0], 'utf8').slice(0, 1000));
           const swSource = fs.readFileSync(swFiles[0], 'utf8');
           if (!swSource.includes("const CACHE_NAME = 'football-rich-shell-v12'")) throw new Error('Service worker cache version is stale');
-          console.log('Service worker cache version v11 verified.');
+          console.log('Service worker cache version v12 verified.');
+          const app = fs.readFileSync(path.join(root,'main.js'),'utf8');
+          for (const feature of ['mc-calendar-head','mc-risk-badge','coverPct > 70','coverPct >= 50','probBar +']) {
+            if (!app.includes(feature)) throw new Error('V1.5 UI feature missing: ' + feature);
+          }
+          if (app.includes('id="match-form"') || app.includes("currentView === 'matches'")) throw new Error('Legacy duplicate fixture/manual-entry UI remains visible');
+          console.log('V1.5 home calendar, AH risk thresholds, 1X2 bar and hidden legacy fixture UI verified.');
           NODE
 
       - name: Diagnose app entry and UI assets
