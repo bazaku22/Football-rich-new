@@ -5,14 +5,16 @@ let main=fs.readFileSync(mainPath,'utf8'), html=fs.readFileSync(htmlPath,'utf8')
 const historySourcePattern = /\s*\+\s*' · '\s*\+\s*esc\(old\.source\s*\|\|\s*'ไม่ระบุแหล่ง'\)/;
 main=main.replace(historySourcePattern,'');
 
-// Remove the complete top metadata fragment by locating the next review section.
+// Remove the complete top metadata fragment, if it is still present.
 const finishedStart=main.indexOf("const renderFinished =");
 const metaLabel=main.indexOf('ยืนยันผล:',finishedStart);
-const reviewLabel=main.indexOf('<div class="mc-review">',metaLabel);
-if (finishedStart<0 || metaLabel<0 || reviewLabel<0) throw new Error('V1.16 result metadata section not found');
-const metaStart=main.lastIndexOf(`'<div class="mc-muted">`,metaLabel);
-if (metaStart<finishedStart) throw new Error('V1.16 result metadata start not found');
-main=main.slice(0,metaStart) + `'<div class="mc-review">` + main.slice(reviewLabel + '<div class="mc-review">'.length);
+const reviewLabel=main.indexOf('<div class="mc-review">',finishedStart);
+if (finishedStart<0 || reviewLabel<0) throw new Error('V1.16 finished-match review section not found');
+if (metaLabel>=finishedStart && metaLabel<reviewLabel) {
+  const metaStart=main.lastIndexOf("'<",metaLabel);
+  if (metaStart<finishedStart) throw new Error('V1.16 result metadata start not found');
+  main=main.slice(0,metaStart) + "'<div class=\"mc-review\">" + main.slice(reviewLabel + '<div class="mc-review">'.length);
+}
 const footerText = "+ revisionHtml + '<div class=\"mc-confirmed-at\">ยืนยันผลแล้ว · ' + esc(fmtDate(r.verifiedAt || r.importedAt || r.createdAt)) + '</div></article>';";
 const plainEnd = "+ revisionHtml + '</article>';";
 if (!main.includes(footerText)) {
