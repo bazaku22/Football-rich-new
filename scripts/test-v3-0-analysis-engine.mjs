@@ -1,0 +1,25 @@
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+
+const main=fs.readFileSync('dist/main.js','utf8');
+const css=fs.readFileSync('dist/styles/main.css','utf8');
+const html=fs.readFileSync('dist/index.html','utf8');
+const sw=fs.readFileSync('dist/sw.js','utf8');
+const version=JSON.parse(fs.readFileSync('dist/app-version.json','utf8'));
+const schema=JSON.parse(fs.readFileSync('../schemas/football-rich-analysis-v1.schema.json','utf8'));
+const importer=fs.readFileSync('../scripts/apply-analysis-import.mjs','utf8');
+
+assert.equal(version.version,'3.0');
+assert.ok(html.includes('main.js?v=20261116-v3-0'));
+assert.ok(sw.includes("const CACHE_NAME = 'football-rich-shell-v46'"));
+for(const marker of ["const APP_VERSION='3.0';",'v30-risk-score','v30-confidence','settleLine','candidate_handicaps']) assert.ok(main.includes(marker),'Missing '+marker);
+for(const marker of ['.v30-risk-score','.v30-confidence']) assert.ok(css.includes(marker),'Missing '+marker);
+assert.equal(schema.properties.market.properties.handicap_line.minimum,-4);
+assert.equal(schema.properties.market.properties.handicap_line.maximum,4);
+assert.ok(importer.includes('Array.from({length:33},(_,i)=>Number((-4+i*0.25).toFixed(2)))'));
+assert.ok(importer.includes('obj.analysis.risk_score'));
+assert.ok(importer.includes('obj.analysis.data_confidence'));
+assert.ok(importer.includes('riskComponents:report.analysis.risk_components'));
+assert.ok(!main.includes('indexedDB.deleteDatabase('));
+assert.ok(!main.includes('objectStore.clear('));
+console.log('V3.0 regression passed: positive/negative AH validation, separate risk/confidence display, version/cache bump, and no destructive database operations.');
