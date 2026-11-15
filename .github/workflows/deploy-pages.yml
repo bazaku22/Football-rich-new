@@ -84,8 +84,13 @@ jobs:
           sed -i '/^node \.\.\/scripts\/apply-v3-0-analysis-engine\.mjs && node \.\.\/scripts\/test-v3-0-analysis-engine\.mjs$/a node ../scripts/apply-v3-1-existing-only-import.mjs && node ../scripts/test-v3-1-existing-only-import.mjs' build-from-archive.sh
           sed -i '/^node \.\.\/scripts\/apply-v3-1-existing-only-import\.mjs && node \.\.\/scripts\/test-v3-1-existing-only-import\.mjs$/a node ../scripts/apply-v3-2-tools-center.mjs && node ../scripts/test-v3-2-tools-center.mjs' build-from-archive.sh
 
+      - name: Syntax-check V3.2 import scripts
+        run: |
+          node --check scripts/apply-v3-2-tools-center.mjs
+          node --check scripts/test-v3-2-tools-center.mjs
+
       - name: Build Football rich
-        run: bash build-from-archive.sh
+        run: bash -euo pipefail build-from-archive.sh
 
       - name: Run smoke tests
         working-directory: football-rich-v1
