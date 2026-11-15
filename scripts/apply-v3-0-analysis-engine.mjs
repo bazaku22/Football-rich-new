@@ -37,5 +37,5 @@ fs.writeFileSync(mainPath,main);
 fs.writeFileSync(cssPath,css);
 fs.writeFileSync(htmlPath,html);
 fs.writeFileSync(swPath,sw);
-fs.writeFileSync(versionPath,JSON.stringify(version,null,2)+'\\n');
+fs.writeFileSync(versionPath,JSON.stringify(version,null,2)+'\n');
 console.log('Applied V3.0: two-sided AH import support, Risk Score and Data Confidence presentation, app/cache version.');
