@@ -137,10 +137,19 @@ NODE
 # GitHub Pages project sites are served beneath /Football-rich-new/.
 # Prefix public asset URLs without rewriting JavaScript source: broad sed replacement
 # corrupts regex literals such as /[&<>"']/g by treating the closing quote + slash as a path.
-find dist -type f \( -name '*.html' -o -name '*.webmanifest' -o -name '*.svg' \) -print0 |
+find dist -type f \( -name '*.html' -o -name '*.webmanifest' \) -print0 |
   xargs -0 sed -i \
     -e 's|"/|"/Football-rich-new/|g' \
     -e "s|'/|'/Football-rich-new/|g"
+
+# SVG artwork is self-contained and must never be path-rewritten; doing so corrupts XML tags.
+while IFS= read -r -d '' file; do
+  if grep -q '/Football-rich-new/' "$file"; then
+    echo "Unexpected Pages prefix inside SVG artwork: $file" >&2
+    exit 1
+  fi
+  grep -q '</svg>' "$file" || { echo "Malformed SVG: $file" >&2; exit 1; }
+done < <(find dist -type f -name '*.svg' -print0)
 
 # Rewrite only known runtime asset paths and the service-worker precache list.
 node --input-type=module <<'NODE'
