@@ -38,7 +38,7 @@ assert.ok(/currentView\s*===\s*['"]import['"]/.test(main));
 assert.ok(!main.includes('fixture-import'));
 assert.ok(!main.includes('analysis-import-existing-only'));
 assert.ok(main.includes('application/json'));
-assert.ok(main.includes('อัปเดตรายงานเดิม'));
+assert.ok(main.includes('เพิ่มเวอร์ชันรายงานเดิม'));
 assert.ok(!main.includes('indexedDB.deleteDatabase('));
 assert.ok(!main.includes('objectStore.clear('));
 assert.ok(!main.includes("card('ผลชำระเดิมพัน'"));
