@@ -31,6 +31,9 @@ main=replaceOnce(main,'Football rich Analysis v1.0.0 · JSON หรือ ZIP ·
 'Football rich Analysis Batch v1.0.0 · JSON 1 ไฟล์ · 1–100 คู่ · แต่ละรายงานต้องมีรายการแข่งขัน ทีม และเวลาเตะ',
 'combined importer description');
 
+main=replaceOnce(main,'เลือกไฟล์ JSON / ZIP','เลือกไฟล์ JSON','combined JSON picker label');
+main=replaceOnce(main,'.json,application/json,.zip,application/zip','.json,application/json','combined JSON picker accept type');
+
 // Remove the old update-only checkbox from the combined workflow.
 const importHeading=main.indexOf("pageTitle('MATCH + ANALYSIS IMPORT'");
 const importInput=main.indexOf("const input=document.querySelector('#analysis-import-file')",importHeading);
