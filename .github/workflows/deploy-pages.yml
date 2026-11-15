@@ -99,6 +99,9 @@ jobs:
           if (!fs.existsSync(path.join(root,'main.js'))) throw new Error('App entry main.js missing from final output');
           console.log('Startup watchdog, cache-busted app entry and main.js verified.');
           console.log('Service worker source preview:', fs.readFileSync(swFiles[0], 'utf8').slice(0, 1000));
+          const swSource = fs.readFileSync(swFiles[0], 'utf8');
+          if (!swSource.includes("const CACHE_NAME = 'football-rich-shell-v6'")) throw new Error('Service worker cache version is stale');
+          console.log('Service worker cache version v6 verified.');
           NODE
 
       - name: Diagnose app entry and UI assets
