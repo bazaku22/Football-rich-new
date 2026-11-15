@@ -24,14 +24,17 @@ const helper = [
 "  if (typeof obj.match.competition !== 'string' || !obj.match.competition.trim() || typeof obj.match.home_team !== 'string' || !obj.match.home_team.trim() || typeof obj.match.away_team !== 'string' || !obj.match.away_team.trim()) fail('ชื่อรายการหรือทีมแข่งขันไม่ถูกต้อง');",
 "  if (obj.match.kickoff_at !== null && !validDate(obj.match.kickoff_at)) fail('เวลาแข่งขันไม่ถูกต้อง');",
 "  if (!isObject(obj.market) || obj.market.market_type !== 'asian_handicap' || !['home','away'].includes(obj.market.selected_team)) fail('ข้อมูลตลาด Asian Handicap ไม่ถูกต้อง');",
-"  const allowedLines = [0,-0.25,-0.5,-0.75,-1,-1.25,-1.5,-1.75,-2,-2.25,-2.5,-2.75,-3,-3.25,-3.5,-3.75,-4];",
+"  const allowedLines = Array.from({length:33},(_,i)=>Number((-4+i*0.25).toFixed(2)));",
 "  if (!allowedLines.some(v => Math.abs(v - Number(obj.market.handicap_line)) < 0.0001)) fail('เส้นแฮนดิแคปไม่อยู่ในรายการที่ Football rich รองรับ');",
 "  if (obj.market.decimal_odds !== null && (!Number.isFinite(obj.market.decimal_odds) || obj.market.decimal_odds <= 1)) fail('ราคาต่อรองไม่ถูกต้อง');",
 "  if (!isObject(obj.analysis) || !isObject(obj.recommendation) || !Array.isArray(obj.evidence)) fail('ข้อมูลวิเคราะห์ คำแนะนำ หรือหลักฐานไม่ครบ');",
 "  const cover = obj.analysis.cover_probability;",
 "  if (cover !== null && (!Number.isFinite(cover) || cover < 0 || cover > 1)) fail('เปอร์เซ็นต์โอกาสกินราคาไม่ถูกต้อง');",
 "  if (obj.analysis.probability_status === 'insufficient_data' && cover !== null) fail('ข้อมูลไม่เพียงพอ ต้องไม่ระบุ cover_probability');",
-"  if (obj.analysis.probability_status !== 'insufficient_data' && obj.analysis.probability_status !== 'estimated') fail('สถานะความน่าจะเป็นไม่ถูกต้อง');",
+"  if (obj.analysis.probability_status !== 'insufficient_data' && obj.analysis.probability_status !== 'estimated') fail('สถานะความน่าจะเป็นไม่ถูกต้อง');
+  if (obj.analysis.risk_score !== undefined && (!Number.isFinite(obj.analysis.risk_score) || obj.analysis.risk_score < 0 || obj.analysis.risk_score > 100)) fail('คะแนนความเสี่ยงต้องอยู่ระหว่าง 0–100');
+  if (obj.analysis.data_confidence !== undefined && (!Number.isFinite(obj.analysis.data_confidence) || obj.analysis.data_confidence < 0 || obj.analysis.data_confidence > 100)) fail('ความเชื่อมั่นของข้อมูลต้องอยู่ระหว่าง 0–100');
+  if (obj.analysis.risk_components !== undefined) { const rc=obj.analysis.risk_components; const ks=['data_completeness','form_instability','factor_disagreement','lineup_uncertainty','market_volatility']; if(!isObject(rc)||!ks.every(k=>Number.isFinite(rc[k])&&rc[k]>=0&&rc[k]<=100)) fail('องค์ประกอบคะแนนความเสี่ยงไม่ถูกต้อง'); const score=rc.data_completeness*.30+rc.form_instability*.25+rc.factor_disagreement*.20+rc.lineup_uncertainty*.15+rc.market_volatility*.10; if(obj.analysis.risk_score!==undefined&&Math.abs(score-obj.analysis.risk_score)>1.1) fail('คะแนนความเสี่ยงรวมไม่ตรงกับองค์ประกอบ'); }",
 "  const checkDistribution = (value: any, keys: string[], label: string) => {",
 "    if (value === null) return;",
 "    if (!isObject(value) || !keys.every(k => Number.isFinite(value[k]) && value[k] >= 0 && value[k] <= 1)) fail(label + ' ไม่ถูกต้อง');",
