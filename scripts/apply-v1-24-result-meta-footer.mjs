@@ -1,13 +1,14 @@
 import fs from 'node:fs';
 const mainPath='dist/main.js', cssPath='dist/styles/main.css', htmlPath='dist/index.html', swPath='dist/sw.js';
 let main=fs.readFileSync(mainPath,'utf8'), css=fs.readFileSync(cssPath,'utf8'), html=fs.readFileSync(htmlPath,'utf8'), sw=fs.readFileSync(swPath,'utf8');
-const idPos=main.indexOf('MATCH ID:');
+const finishedStart=main.indexOf('const renderFinished =');
+const idPos=finishedStart<0?-1:main.indexOf('MATCH ID:',finishedStart);
 const revisionPos=idPos<0?-1:main.indexOf('revisionHtml',idPos);
 const articleToken="'</article>'";
 const articleEnd=revisionPos<0?-1:main.indexOf(articleToken,revisionPos);
 const divPos=idPos<0?-1:main.lastIndexOf('<div',idPos);
 const quoteStart=divPos<0?-1:main.lastIndexOf("'",divPos);
-if(idPos<0||revisionPos<0||articleEnd<0||quoteStart<0) throw new Error('V1.24 could not locate result footer: id='+idPos+', revision='+revisionPos+', article='+articleEnd+', div='+divPos);
+if(finishedStart<0||idPos<0||revisionPos<0||articleEnd<0||quoteStart<0) throw new Error('V1.24 could not locate finished result footer: renderer='+finishedStart+', id='+idPos+', revision='+revisionPos+', article='+articleEnd+', div='+divPos);
 const newFooter=`'<section class="mc-result-meta"><div class="mc-id-block"><span class="mc-meta-label">รหัสรายการ</span><div class="mc-id">MATCH ID: ' + esc(m.id) + '</div><div class="mc-id">RESULT ID: ' + esc(r.importResultId || 'legacy') + '</div></div>' + (Number(r.revisionNumber) > 1 ? '<div class="mc-snapshot-note"><span class="mc-meta-label">ประวัติการแก้ไข</span><p>แก้ไขผลแล้ว ' + (Number(r.revisionNumber) - 1) + ' ครั้ง · เก็บ Snapshot ก่อนหน้าไว้</p></div>' : '') + (revisionHtml ? '<div class="mc-history-wrap">' + revisionHtml + '</div>' : '') + '</section></article>'`;
 main=main.slice(0,quoteStart)+newFooter+main.slice(articleEnd+articleToken.length);
 const cssPatch=`
