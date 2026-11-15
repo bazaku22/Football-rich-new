@@ -87,8 +87,9 @@ jobs:
           sed -i '/^node \.\.\/scripts\/apply-v3-4-combined-import\.mjs$/a node ../scripts/test-v3-4-combined-import.mjs' build-from-archive.sh
           sed -i '/^node \.\.\/scripts\/test-v3-4-combined-import\.mjs$/a node ../scripts/apply-v3-5-result-template-export.mjs && node ../scripts/test-v3-5-result-template-export.mjs' build-from-archive.sh
           sed -i '/^node \.\.\/scripts\/apply-v3-5-result-template-export\.mjs && node \.\.\/scripts\/test-v3-5-result-template-export\.mjs$/a node ../scripts/apply-v3-6-result-import-null-guard.mjs && node ../scripts/test-v3-6-result-import-null-guard.mjs' build-from-archive.sh
+          sed -i '/^node \.\.\/scripts\/apply-v3-6-result-import-null-guard\.mjs && node \.\.\/scripts\/test-v3-6-result-import-null-guard\.mjs$/a base64 -d ../scripts/apply-v3-7-analysis-performance-center.mjs.gz.b64 | gzip -dc > /tmp/apply-v3-7-analysis-performance-center.mjs && node /tmp/apply-v3-7-analysis-performance-center.mjs && base64 -d ../scripts/test-v3-7-analysis-performance-center.mjs.gz.b64 | gzip -dc > /tmp/test-v3-7-analysis-performance-center.mjs && node /tmp/test-v3-7-analysis-performance-center.mjs' build-from-archive.sh
 
-      - name: Syntax-check V3.6 combined import scripts
+      - name: Syntax-check V3.7 Analysis Performance Center scripts
         run: |
           node --check scripts/apply-v3-2-tools-center.mjs
           node --check scripts/test-v3-2-tools-center.mjs
@@ -98,6 +99,10 @@ jobs:
           node --check scripts/test-v3-5-result-template-export.mjs
           node --check scripts/apply-v3-6-result-import-null-guard.mjs
           node --check scripts/test-v3-6-result-import-null-guard.mjs
+          base64 -d scripts/apply-v3-7-analysis-performance-center.mjs.gz.b64 | gzip -dc > /tmp/apply-v3-7-analysis-performance-center.mjs
+          base64 -d scripts/test-v3-7-analysis-performance-center.mjs.gz.b64 | gzip -dc > /tmp/test-v3-7-analysis-performance-center.mjs
+          node --check /tmp/apply-v3-7-analysis-performance-center.mjs
+          node --check /tmp/test-v3-7-analysis-performance-center.mjs
 
       - name: Build Football rich
         run: bash -euo pipefail build-from-archive.sh
@@ -117,17 +122,17 @@ jobs:
           import fs from 'node:fs';
           const file='football-rich-v1/dist/index.html';
           let html=fs.readFileSync(file,'utf8');
-          html=html.replace(/main\.js(?:\?[^"']*)?/g, 'main.js?v=20261116-v3-6');
-          if (!html.includes('main.js?v=20261116-v3-6')) throw new Error('Could not apply final V3.6 cache-busted app entry');
+          html=html.replace(/main\.js(?:\?[^"']*)?/g, 'main.js?v=20261116-v3-7');
+          if (!html.includes('main.js?v=20261116-v3-7')) throw new Error('Could not apply final V3.7 cache-busted app entry');
           if (!html.includes('fonts.googleapis.com/css2?family=Inter')) {
             html=html.replace('</head>', '<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Thai:wght@400;500;600;700;800&display=swap" rel="stylesheet></head>');
           }
           fs.writeFileSync(file,html);
           const swFile='football-rich-v1/dist/sw.js';
-          let sw=fs.readFileSync(swFile,'utf8').replaceAll('football-rich-shell-v52','football-rich-shell-v52').replaceAll('football-rich-shell-v52','football-rich-shell-v52');
-          if (!sw.includes("const CACHE_NAME = 'football-rich-shell-v52'")) throw new Error('Could not apply final V3.6 service worker cache version');
+          let sw=fs.readFileSync(swFile,'utf8');
+          if (!sw.includes("const CACHE_NAME = 'football-rich-shell-v53'")) throw new Error('Could not apply final V3.7 service worker cache version');
           fs.writeFileSync(swFile,sw);
-          console.log('Final V3.6 app entry, Noto Sans Thai font link and service worker cache version verified.');
+          console.log('Final V3.7 app entry, Noto Sans Thai font link and service worker cache version verified.');
           NODE
 
       - name: Audit generated PWA files
@@ -175,21 +180,21 @@ jobs:
           }
           const index = fs.readFileSync(path.join(root,'index.html'),'utf8');
           if (!index.includes('__footballRichBootGuardInstalled')) throw new Error('Startup watchdog missing from final HTML');
-          if (!index.includes('main.js?v=20261116-v3-6')) throw new Error('Cache-busted app entry missing from final HTML');
+          if (!index.includes('main.js?v=20261116-v3-7')) throw new Error('Cache-busted app entry missing from final HTML');
           if (!fs.existsSync(path.join(root,'main.js'))) throw new Error('App entry main.js missing from final output');
           console.log('Startup watchdog, cache-busted app entry and main.js verified.');
           console.log('Service worker source preview:', fs.readFileSync(swFiles[0], 'utf8').slice(0, 1000));
           const swSource = fs.readFileSync(swFiles[0], 'utf8');
-          if (!swSource.includes("const CACHE_NAME = 'football-rich-shell-v52'")) throw new Error('Service worker cache version is stale');
+          if (!swSource.includes("const CACHE_NAME = 'football-rich-shell-v53'")) throw new Error('Service worker cache version is stale');
           console.log('Service worker cache version v13 verified.');
           const app = fs.readFileSync(path.join(root,'main.js'),'utf8');
           for (const feature of ['installReleaseUpdateCheck','footballRichLastNotifiedVersion','footballRichNotificationsV1','fr-notification-header-button','fr-notification-unread-label','readAt:null','ศูนย์แจ้งเตือน']) {
             if (!app.includes(feature)) throw new Error('V1.5.1 UI feature missing: ' + feature);
           }
-          if (!app.includes('MATCH + ANALYSIS IMPORT') || !app.includes('football-rich-analysis-batch') || !app.includes('result-import-file') || !app.includes('currentView === \'tools\'') || !app.includes('currentView === \'import\'') || !app.includes('currentView === \'result-import\'') || app.includes('fixture-import-file') || app.includes('analysis-import-existing-only')) throw new Error('V3.6 combined import routes are missing');
+          if (!app.includes('MATCH + ANALYSIS IMPORT') || !app.includes('football-rich-analysis-batch') || !app.includes('result-import-file') || !app.includes('ANALYSIS PERFORMANCE CENTER') || !app.includes('football-rich-analysis-learning') || !app.includes('data-apc-review') || !app.includes('currentView === \'tools\'') || !app.includes('currentView === \'import\'') || !app.includes('currentView === \'result-import\'') || app.includes('fixture-import-file') || app.includes('analysis-import-existing-only')) throw new Error('V3.7 required app routes are missing');
           if (!fs.existsSync(path.join(root,'app-version.json'))) throw new Error('App version manifest missing');
           const appVersion = JSON.parse(fs.readFileSync(path.join(root,'app-version.json'),'utf8'));
-          if (appVersion.version !== '3.6') throw new Error('App version manifest is stale');
+          if (appVersion.version !== '3.7') throw new Error('App version manifest is stale');
           if (app.includes('กำไรจำลองสุทธิ') || app.includes("card('ผลชำระเดิมพัน'")) throw new Error('V1.9 non-gambling Performance cleanup failed');
           const appCss = fs.readFileSync(path.join(root,'styles/main.css'),'utf8');
           const navStart = app.indexOf('const navItems = [');
