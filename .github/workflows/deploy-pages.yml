@@ -1,0 +1,61 @@
+name: Build, scan and deploy Football rich
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Extract V1 source
+        run: unzip -q -o football-rich-v1-test-candidate-0.5.0.zip -d .
+
+      - name: Scan source for secrets
+        run: |
+          docker run --rm -v "$PWD:/path" zricethezav/gitleaks:latest detect --source=/path/football-rich-v1 --no-git --redact --exit-code 1
+
+      - name: Build Football rich
+        run: bash build-from-archive.sh
+
+      - name: Run smoke tests
+        working-directory: football-rich-v1
+        run: npm run test:smoke
+
+      - name: Run unit tests
+        working-directory: football-rich-v1
+        run: npm test
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: football-rich-v1/dist
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
