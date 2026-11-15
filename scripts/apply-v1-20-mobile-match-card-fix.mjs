@@ -45,7 +45,7 @@ const cssPatch = `
   .mc-score{font-size:22px}
 }
 `;
-if (!css.includes('V1.20 mobile Match Center card layout repair')) css += '\\n' + cssPatch;
+if (!css.includes('V1.20 mobile Match Center card layout repair')) css += '\n' + cssPatch;
 
 if (!main.includes("const APP_VERSION='1.19';")) throw new Error('V1.20 expected app version 1.19');
 main=main.replace("const APP_VERSION='1.19';","const APP_VERSION='1.20';")
