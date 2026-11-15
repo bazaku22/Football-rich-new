@@ -7,21 +7,21 @@ if(eventStart<0 || revisionStart<0) throw new Error('V1.15 event renderer anchor
 const eventRenderer = "const eventOrder = ev => { const raw=String(ev.minute ?? ''); const parts=raw.split('+'); return Number(parts[0]) + Number(parts[1] || 0)/100; };\n" +
 "          const renderSideEvents = side => {\n" +
 "            const sideEvents = events.filter(ev => ev.team === side).slice().sort((a,b)=>eventOrder(a)-eventOrder(b));\n" +
-"            if (!sideEvents.length) return '<p class=\\"mc-muted mc-no-events\\">ไม่มีเหตุการณ์ที่บันทึกไว้</p>';\n" +
+"            if (!sideEvents.length) return '<p class=\"mc-muted mc-no-events\">ไม่มีเหตุการณ์ที่บันทึกไว้</p>';\n" +
 "            return sideEvents.map(ev => {\n" +
 "              const type = ev.type || 'goal'; const minute = esc(ev.minute || '—');\n" +
 "              const player = esc(ev.scorer || (type === 'goal' ? 'ไม่ระบุผู้ทำประตู' : 'ไม่ระบุชื่อผู้เล่น'));\n" +
-"              if (type === 'yellow_card' || type === 'red_card') { const card = type === 'yellow_card' ? 'yellow' : 'red'; const label = type === 'yellow_card' ? 'ใบเหลือง' : 'ใบแดง'; return '<div class=\\"mc-event-row mc-event-card-row\\"><time>' + minute + '</time><span class=\\"mc-card-icon mc-card-icon-' + card + '\\" aria-label=\\"' + label + '\\"></span><span class=\\"mc-event-player\\">' + player + '</span></div>'; }\n" +
-"              return '<div class=\\"mc-event-block\\"><div class=\\"mc-event-row\\"><time>' + minute + '</time><span class=\\"mc-event-ball\\" aria-label=\\"ประตู\\">⚽</span><span class=\\"mc-event-player\\">' + player + '</span></div>' + (ev.assist ? '<div class=\\"mc-assist-row\\"><span class=\\"mc-assist-boot\\" aria-label=\\"แอสซิสต์\\">👟</span><span>แอสซิสต์: ' + esc(ev.assist) + '</span></div>' : '') + '</div>';\n" +
+"              if (type === 'yellow_card' || type === 'red_card') { const card = type === 'yellow_card' ? 'yellow' : 'red'; const label = type === 'yellow_card' ? 'ใบเหลือง' : 'ใบแดง'; return '<div class=\"mc-event-row mc-event-card-row\"><time>' + minute + '</time><span class=\"mc-card-icon mc-card-icon-' + card + '\" aria-label=\"' + label + '\"></span><span class=\"mc-event-player\">' + player + '</span></div>'; }\n" +
+"              return '<div class=\"mc-event-block\"><div class=\"mc-event-row\"><time>' + minute + '</time><span class=\"mc-event-ball\" aria-label=\"ประตู\">⚽</span><span class=\"mc-event-player\">' + player + '</span></div>' + (ev.assist ? '<div class=\"mc-assist-row\"><span class=\"mc-assist-boot\" aria-label=\"แอสซิสต์\">👟</span><span>แอสซิสต์: ' + esc(ev.assist) + '</span></div>' : '') + '</div>';\n" +
 "            }).join('');\n" +
 "          };\n" +
-"          const eventHtml = '<div class=\\"mc-event-columns\\"><section class=\\"mc-event-side\\"><h4>' + esc(m.homeTeam) + '</h4>' + renderSideEvents('home') + '</section><section class=\\"mc-event-side\\"><h4>' + esc(m.awayTeam) + '</h4>' + renderSideEvents('away') + '</section></div>';";
+"          const eventHtml = '<div class=\"mc-event-columns\"><section class=\"mc-event-side\"><h4>' + esc(m.homeTeam) + '</h4>' + renderSideEvents('home') + '</section><section class=\"mc-event-side\"><h4>' + esc(m.awayTeam) + '</h4>' + renderSideEvents('away') + '</section></div>';";
 main=main.slice(0,eventStart)+eventRenderer+'\n          '+main.slice(revisionStart);
-const oldMeta="'<div class=\\"mc-muted\\">ยืนยันผล: ' + esc(fmtDate(r.verifiedAt || r.importedAt || r.createdAt)) + ' · แหล่งข้อมูล: ' + esc(r.source || 'รายการเดิม') + '</div>' +";
+const oldMeta="'<div class=\"mc-muted\">ยืนยันผล: ' + esc(fmtDate(r.verifiedAt || r.importedAt || r.createdAt)) + ' · แหล่งข้อมูล: ' + esc(r.source || 'รายการเดิม') + '</div>' +";
 if(main.includes(oldMeta)) main=main.replace(oldMeta,'');
 else if(main.includes('แหล่งข้อมูล:')) throw new Error('V1.15 verbose source metadata anchor changed');
 const oldEnd="+ revisionHtml + '</article>';";
-const newEnd="+ revisionHtml + '<div class=\\"mc-confirmed-at\\">ยืนยันผลแล้ว · ' + esc(fmtDate(r.verifiedAt || r.importedAt || r.createdAt)) + '</div></article>';";
+const newEnd="+ revisionHtml + '<div class=\"mc-confirmed-at\">ยืนยันผลแล้ว · ' + esc(fmtDate(r.verifiedAt || r.importedAt || r.createdAt)) + '</div></article>';";
 if(main.includes(oldEnd)) main=main.replace(oldEnd,newEnd);
 else if(!main.includes('mc-confirmed-at')) throw new Error('V1.15 confirmation footer anchor missing');
 if(!main.includes("const APP_VERSION='1.14';")) throw new Error('V1.15 expected app version 1.14');
