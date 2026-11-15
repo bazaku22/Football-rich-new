@@ -132,7 +132,7 @@ jobs:
           let sw=fs.readFileSync(swFile,'utf8');
           if (!sw.includes("const CACHE_NAME = 'football-rich-shell-v53'")) throw new Error('Could not apply final V3.7 service worker cache version');
           fs.writeFileSync(swFile,sw);
-          console.log('Final V3.6 app entry, Noto Sans Thai font link and service worker cache version verified.');
+          console.log('Final V3.7 app entry, Noto Sans Thai font link and service worker cache version verified.');
           NODE
 
       - name: Audit generated PWA files
