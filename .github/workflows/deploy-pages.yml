@@ -109,10 +109,10 @@ jobs:
           }
           fs.writeFileSync(file,html);
           const swFile='football-rich-v1/dist/sw.js';
-          let sw=fs.readFileSync(swFile,'utf8').replaceAll('football-rich-shell-v46','football-rich-shell-v48');
-          if (!sw.includes("const CACHE_NAME = 'football-rich-shell-v48'")) throw new Error('Could not apply final V3.1 service worker cache version');
+          let sw=fs.readFileSync(swFile,'utf8').replaceAll('football-rich-shell-v47','football-rich-shell-v48').replaceAll('football-rich-shell-v46','football-rich-shell-v48');
+          if (!sw.includes("const CACHE_NAME = 'football-rich-shell-v48'")) throw new Error('Could not apply final V3.2 service worker cache version');
           fs.writeFileSync(swFile,sw);
-          console.log('Final V3.1 app entry, Noto Sans Thai font link and service worker cache version verified.');
+          console.log('Final V3.2 app entry, Noto Sans Thai font link and service worker cache version verified.');
           NODE
 
       - name: Audit generated PWA files
