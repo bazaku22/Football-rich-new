@@ -6,6 +6,6 @@ const next="document.addEventListener('click', event => { const target=event.tar
 if(main.includes(old)) main=main.replace(old,next);
 else if(!main.includes(next)) throw new Error('Notification click handler anchor missing');
 if(!main.includes(next)) throw new Error('Notification bell click handler was not moved to document');
-main=main.replaceAll("'England':'🏴'", "'England':'🇬🇧'").replaceAll("'Scotland':'🏴'", "'Scotland':'🇬🇧'").replaceAll("'Wales':'🏴'", "'Wales':'🇬🇧'");
+main=main.replaceAll("'England':'🏴'", "'England':'🇬🇧'").replaceAll("'Scotland':'🏴'", "'Scotland':'🇬🇧'").replaceAll("'Wales':'🏴'", "'Wales':'🇬🇧'").replaceAll("'ENG':'🏴'", "'ENG':'🇬🇧'").replaceAll("'SCO':'🏴'", "'SCO':'🇬🇧'").replaceAll("'WAL':'🏴'", "'WAL':'🇬🇧'");
 fs.writeFileSync(path,main);
 console.log('V1.7 notification bell click handler remains active after moving it into the header.');
