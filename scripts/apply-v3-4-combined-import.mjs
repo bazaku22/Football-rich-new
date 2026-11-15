@@ -14,7 +14,7 @@ const resultText=main.indexOf('result-import',fixtureText);
 const fixtureCard=main.lastIndexOf("'<button",fixtureText);
 const resultCard=main.lastIndexOf("'<button",resultText);
 if(toolsStart<0||fixtureCard<0||resultCard<=fixtureCard)throw Error('Could not locate the two old import cards in Tools Center');
-const combinedCard="'<button class=\\\"panel tools-card\\\" data-tool-target=\\\"import\\\"><span class=\\\"tools-icon\\\">◈</span><b>นำเข้าโปรแกรมพร้อมบทวิเคราะห์</b><small>สร้าง Match ID และผูกบทวิเคราะห์จาก JSON ชุดเดียว</small><span class=\\\"tools-open\\\">เปิดเครื่องมือ ›</span></button>'+\\n    ";
+const combinedCard="'<button class=\\\"panel tools-card\\\" data-tool-target=\\\"import\\\"><span class=\\\"tools-icon\\\">◈</span><b>นำเข้าโปรแกรมพร้อมบทวิเคราะห์</b><small>สร้าง Match ID และผูกบทวิเคราะห์จาก JSON ชุดเดียว</small><span class=\\\"tools-open\\\">เปิดเครื่องมือ ›</span></button>'+\n    ";
 main=main.slice(0,fixtureCard)+combinedCard+main.slice(resultCard);
 
 // Remove the now-obsolete standalone Fixture Import route. Result Import remains unchanged.
