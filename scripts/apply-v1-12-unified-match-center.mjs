@@ -28,7 +28,7 @@ else if (!main.includes('const allMatches = d.matches.slice().sort')) {
 const oldUpcomingTeams = `<div class="mc-teams"><div class="mc-team">' + esc(m.homeTeam) + '</div><div class="mc-vs">VS</div><div class="mc-team">' + esc(m.awayTeam) + '</div></div>`;
 const newUpcomingTeams = `<div class="mc-teams">' + teamHtml(m.homeTeam, matchCountry(m,a)) + '<div class="mc-vs">VS</div>' + teamHtml(m.awayTeam, matchCountry(m,a)) + '</div>`;
 if (main.includes(oldUpcomingTeams)) main=main.replace(oldUpcomingTeams,newUpcomingTeams);
-else if (!main.includes(`teamHtml(m.homeTeam, matchCountry(m,a))`)) throw new Error('V1.12 upcoming team crest insertion anchor missing');
+else if (!main.includes(`teamHtml(m.homeTeam, matchCountry(m,a))`)) { const i=main.indexOf('mc-teams'); throw new Error('V1.12 upcoming team crest insertion anchor missing. Context: '+main.slice(Math.max(0,i-350),i+650)); }
 
 const oldFinishedTeams = `<div class="mc-teams"><div class="mc-team">' + esc(m.homeTeam) + '</div><div class="mc-score">' + Number(r.homeGoals) + ' – ' + Number(r.awayGoals) + '</div><div class="mc-team">' + esc(m.awayTeam) + '</div></div>`;
 const newFinishedTeams = `<div class="mc-teams">' + teamHtml(m.homeTeam, matchCountry(m,a)) + '<div class="mc-score">' + Number(r.homeGoals) + ' – ' + Number(r.awayGoals) + '</div>' + teamHtml(m.awayTeam, matchCountry(m,a)) + '</div>`;
