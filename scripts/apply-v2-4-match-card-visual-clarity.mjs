@@ -5,7 +5,7 @@ if(!main.includes("const APP_VERSION='2.3';")||!html.includes('main.js?v=2026111
 const cardStart=main.indexOf(' const card=m=>{');
 const cardEnd=main.indexOf(' const count=k=>',cardStart);
 if(cardStart<0||cardEnd<=cardStart)throw Error('V2.1 Match Center card renderer boundaries missing');
-const card=String.raw\` const actualOutcome=(home,away)=>Number(home)>Number(away)?'home':Number(home)<Number(away)?'away':'draw';
+const card=String.raw` const actualOutcome=(home,away)=>Number(home)>Number(away)?'home':Number(home)<Number(away)?'away':'draw';
  const forecastOutcome=p=>{
   if(!p||!['homeWin','draw','awayWin'].every(k=>Number.isFinite(Number(p[k]))))return '';
   return ['home','draw','away'].reduce((best,k)=>Number(p[k==='home'?'homeWin':k==='away'?'awayWin':'draw'])>Number(p[best==='home'?'homeWin':best==='away'?'awayWin':'draw'])?k:best,'home');
@@ -47,13 +47,13 @@ const card=String.raw\` const actualOutcome=(home,away)=>Number(home)>Number(awa
   const details='<details class="v21-details"><summary>ดูรายละเอียดเพิ่มเติม</summary><div>'+(a?.summary?'<p>'+esc(a.summary)+'</p>':'<p class="v21-muted">ยังไม่มีสรุปบทวิเคราะห์</p>')+'<p>สถานะข้อมูล: '+(a?.probabilityStatus==='insufficient_data'?'ข้อมูลไม่เพียงพอ':a?'มีบทวิเคราะห์':'ยังไม่มีบทวิเคราะห์')+'</p><p>อัปเดต: '+(a?.createdAt?esc(fmtDate(a.createdAt)):'—')+'</p>'+(r?'<p>แหล่งยืนยันผล: '+esc(r.source||'ไม่ระบุ')+'</p>'+eventHtml:'')+'</div></details>';
   return '<article class="panel v21-card v24-card"><div class="v21-top"><span>'+esc(m.league||'ไม่ระบุรายการ')+'</span><span>'+time+' · <b class="v24-status '+statusClass+'">'+status+'</b></span></div><div class="v21-teams"><div>'+mark(m.homeTeam)+'<b>'+esc(m.homeTeam)+'</b></div><strong>'+(r?Number(r.homeGoals)+' – '+Number(r.awayGoals):'VS')+'</strong><div>'+mark(m.awayTeam)+'<b>'+esc(m.awayTeam)+'</b></div></div><small class="v21-label">โอกาสผลการแข่งขัน 1X2</small>'+probs+ah+review+'<div class="v21-bottom"><span class="v21-risk '+level[1]+'">ความเสี่ยง '+level[0]+'</span><small>Match ID · '+esc(m.id)+'</small></div>'+details+'</article>';
  };
-\`;
+`;
 main=main.slice(0,cardStart)+card+main.slice(cardEnd);
 main=main.replace("const APP_VERSION='2.3';","const APP_VERSION='2.4';")
  .replace("const PREVIOUS_APP_VERSION='2.2';","const PREVIOUS_APP_VERSION='2.3';")
  .replaceAll('FOOTBALL RICH · BLACK & GOLD · V2.3','FOOTBALL RICH · BLACK & GOLD · V2.4')
  .replace('<span class="tag">V2.3</span>','<span class="tag">V2.4</span>');
-css += String.raw\`
+css += String.raw`
 /* V2.4 Match Center visual clarity */
 .v24-card{font-family:"Noto Sans Thai","Inter",system-ui,-apple-system,"Segoe UI",Tahoma,sans-serif}
 .v24-status{display:inline-flex;align-items:center;padding:4px 8px;border-radius:999px;font-size:10px;font-weight:800;white-space:nowrap}
@@ -85,7 +85,7 @@ css += String.raw\`
 body{font-family:"Noto Sans Thai","Inter",system-ui,-apple-system,"Segoe UI",Tahoma,sans-serif}
 button,input,select,textarea{font:inherit}
 h1,h2,h3,h4,.panel-title,.section-title{font-family:"Noto Sans Thai","Inter",system-ui,sans-serif;letter-spacing:0}
-\`;
+`;
 html=html.replace('main.js?v=20261116-v2-3','main.js?v=20261116-v2-4');
 if(!html.includes('Noto Sans Thai'))html=html.replace('</head>','<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Thai:wght@400;500;600;700;800&display=swap" rel="stylesheet"></head>');
 sw=sw.replaceAll('football-rich-shell-v44','football-rich-shell-v45');
