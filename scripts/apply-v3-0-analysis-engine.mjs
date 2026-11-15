@@ -19,8 +19,8 @@ if(!main.includes("const APP_VERSION='2.4';")) throw new Error('V3.0 expected V2
 if(!html.includes('main.js?v=20261116-v2-4')) throw new Error('V3.0 expected V2.4 HTML cache anchor missing');
 if(!sw.includes("const CACHE_NAME = 'football-rich-shell-v45'")) throw new Error('V3.0 expected V2.4 service worker cache anchor missing');
 
-const oldBottom='<span class="v21-risk '+level[1]+'">ความเสี่ยง '+level[0]+'</span><small>Match ID · '+esc(m.id)+'</small>';
-const newBottom='<span class="v21-risk '+level[1]+'">ความเสี่ยง '+level[0]+'</span>'+(Number.isFinite(a?.sourceReport?.analysis?.risk_score)?'<small class="v30-risk-score">Risk Score '+Number(a.sourceReport.analysis.risk_score).toFixed(0)+'/100</small>':'')+(Number.isFinite(a?.sourceReport?.analysis?.data_confidence)?'<small class="v30-confidence">ข้อมูล '+Number(a.sourceReport.analysis.data_confidence).toFixed(0)+'/100</small>':'')+'<small>Match ID · '+esc(m.id)+'</small>';
+const oldBottom=`<span class="v21-risk '+level[1]+'">ความเสี่ยง '+level[0]+'</span><small>Match ID · '+esc(m.id)+'</small>`;
+const newBottom=`<span class="v21-risk '+level[1]+'">ความเสี่ยง '+level[0]+'</span>'+(Number.isFinite(a?.sourceReport?.analysis?.risk_score)?'<small class="v30-risk-score">Risk Score '+Number(a.sourceReport.analysis.risk_score).toFixed(0)+'/100</small>':'')+(Number.isFinite(a?.sourceReport?.analysis?.data_confidence)?'<small class="v30-confidence">ข้อมูล '+Number(a.sourceReport.analysis.data_confidence).toFixed(0)+'/100</small>':'')+'<small>Match ID · '+esc(m.id)+'</small>`;
 if(!main.includes(oldBottom)) throw new Error('V2.4 Match Center risk footer anchor missing');
 main=main.replace(oldBottom,newBottom);
 main=main.replace("const APP_VERSION='2.4';","const APP_VERSION='3.0';")
