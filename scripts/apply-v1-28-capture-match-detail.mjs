@@ -4,7 +4,7 @@ let main=fs.readFileSync(mainPath,'utf8'), html=fs.readFileSync(htmlPath,'utf8')
 if(!main.includes("const APP_VERSION='1.27';") || !html.includes('main.js?v=20261116-v1-27') || !sw.includes('football-rich-shell-v35')) {
   throw new Error('V1.28 expected V1.27 anchors missing');
 }
-const rootAnchor="const app=document.querySelector('#app');";
+const rootAnchor="const app = document.querySelector('#app');";
 if(!main.includes(rootAnchor)) throw new Error('V1.28 app root anchor missing');
 const capture=`
 /* V1.28: capture Match Center taps before inline handlers and stale view listeners. */
