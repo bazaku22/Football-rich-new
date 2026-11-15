@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 const main=fs.readFileSync('dist/main.js','utf8'),css=fs.readFileSync('dist/styles/main.css','utf8'),html=fs.readFileSync('dist/index.html','utf8'),sw=fs.readFileSync('dist/sw.js','utf8'),version=JSON.parse(fs.readFileSync('dist/app-version.json','utf8'));
 assert.equal(version.version,'3.5');assert.equal(version.previous_version,'3.4');
 assert.ok(html.includes('main.js?v=20261116-v3-5'));assert.ok(sw.includes("const CACHE_NAME = 'football-rich-shell-v51'"));
-const start=main.indexOf("currentView === 'tools'"),end=main.indexOf("else if (currentView === 'import')",start);
+const start=main.indexOf("currentView === 'tools'"),end=main.indexOf("currentView === 'result-import'",start);
 assert.ok(start>=0&&end>start,'Tools Center route must exist');const tools=main.slice(start,end);
 assert.ok(tools.includes('data-tool-action=\\\"download-result-template\\\"'));assert.ok(tools.includes('ส่งออก Match ID สำหรับสรุปผล'));
 assert.ok(main.includes("a.download='football-rich-result-template.json'"));assert.ok(main.includes("report_type:'football-rich-result'"));
