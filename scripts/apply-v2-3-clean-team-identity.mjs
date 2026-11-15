@@ -33,12 +33,12 @@ const replacement=String.raw`const nationalFlags = {
  unitedstatesofamerica:'🇺🇸',unitedrepublicoftanzania:'🇹🇿',saintkittsandnevis:'🇰🇳',trinidadandtobago:'🇹🇹',dominicanrepublic:'🇩🇴',elsalvador:'🇸🇻'
 };
 const flagFor = name => {
- const key=String(name||'').toLowerCase().normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').replace(/[^a-z0-9]/g,'');
+ const key=String(name||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]/g,'');
  const base=key.replace(/u(?:17|18|19|20|21|23)$/,'').replace(/(?:nationalteam|national|team)$/,'');
  return nationalFlags[key]||nationalFlags[base]||'';
 };
 const mark=name=>{
- const n=String(name||'?'),k=n.toLowerCase().normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').replace(/[^a-z0-9]/g,''),logo=logos[k],flag=flagFor(n),initial=n.trim().split(/\\s+/).slice(0,2).map(x=>x[0]||'').join('').toUpperCase();
+ const n=String(name||'?'),k=n.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]/g,''),logo=logos[k],flag=flagFor(n),initial=n.trim().split(/\s+/).slice(0,2).map(x=>x[0]||'').join('').toUpperCase();
  if(flag)return '<span class="v23-team-mark v23-flag" role="img" aria-label="ธงชาติ '+esc(n)+'">'+flag+'</span>';
  return '<span class="v23-team-mark v23-crest">'+(logo?'<img src="'+logo+'" alt="'+esc(n)+'" loading="lazy" referrerpolicy="no-referrer" onerror="this.parentElement.innerHTML=\'<b>'+esc(initial||'?')+'</b>\'">':'<b>'+esc(initial||'?')+'</b>')+'</span>';
 };`;
