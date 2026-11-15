@@ -91,7 +91,7 @@ console.log('Brand icon, install icon, startup fallback and service worker regis
 NODE
 
 # GitHub Pages project sites are served beneath /Football-rich-new/.
-find dist -type f \\( -name '*.html' -o -name '*.js' -o -name '*.webmanifest' -o -name '*.svg' \\) -print0 |
-  xargs -0 sed -i \\
-    -e 's|"/|"/Football-rich-new/|g' \\
+find dist -type f \( -name '*.html' -o -name '*.js' -o -name '*.webmanifest' -o -name '*.svg' \) -print0 |
+  xargs -0 sed -i \
+    -e 's|"/|"/Football-rich-new/|g' \
     -e "s|'/|'/Football-rich-new/|g"
