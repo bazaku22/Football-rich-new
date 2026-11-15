@@ -95,7 +95,7 @@
               ],
               "properties": {
                 "type": {
-                  "const": "goal"
+                  "enum": [\n                  "goal",\n                  "yellow_card",\n                  "red_card"\n                ]
                 },
                 "minute": {
                   "oneOf": [
