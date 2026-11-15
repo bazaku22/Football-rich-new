@@ -64,6 +64,14 @@
           "type": "string",
           "minLength": 1
         },
+        "home_team_crest_url": {
+          "type": ["string", "null"],
+          "format": "uri"
+        },
+        "away_team_crest_url": {
+          "type": ["string", "null"],
+          "format": "uri"
+        },
         "home_table_position": {
           "type": [
             "integer",
