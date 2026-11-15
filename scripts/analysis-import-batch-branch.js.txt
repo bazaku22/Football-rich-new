@@ -1,0 +1,82 @@
+else if (currentView === 'import') {
+  root.innerHTML = pageTitle('ANALYSIS IMPORT','นำเข้ารายงานวิเคราะห์','เลือก JSON แบบชุด หรือ ZIP ที่มี JSON หลายคู่ แล้วนำเข้าพร้อมกันในครั้งเดียว') +
+    card('เลือกไฟล์รายงาน','<p class="muted">Football rich Analysis v1.0.0 · JSON หรือ ZIP · สูงสุด 20 MB · ไม่เกิน 100 คู่</p><label class="file-label">เลือกไฟล์ JSON / ZIP<input id="analysis-import-file" type="file" accept=".json,application/json,.zip,application/zip"></label><p id="analysis-import-message" class="notice" role="status">เลือกไฟล์เพื่อเริ่มตรวจสอบ</p><div id="analysis-import-preview"></div>');
+  const input=document.querySelector('#analysis-import-file'), preview=document.querySelector('#analysis-import-preview');
+  const zipReports=async file=>{
+    const b=new Uint8Array(await file.arrayBuffer()),v=new DataView(b.buffer),d=new TextDecoder(); let e=-1;
+    for(let p=b.length-22;p>=Math.max(0,b.length-65557);p--)if(v.getUint32(p,true)===0x06054b50){e=p;break;}
+    if(e<0)throw Error('ไฟล์ ZIP ไม่สมบูรณ์');
+    let p=v.getUint32(e+16,true); const count=v.getUint16(e+10,true),out=[];
+    for(let i=0;i<count;i++){
+      if(v.getUint32(p,true)!==0x02014b50)throw Error('โครงสร้าง ZIP ไม่ถูกต้อง');
+      const method=v.getUint16(p+10,true),size=v.getUint32(p+20,true),nl=v.getUint16(p+28,true),el=v.getUint16(p+30,true),cl=v.getUint16(p+32,true),off=v.getUint32(p+42,true),name=d.decode(b.slice(p+46,p+46+nl)); p+=46+nl+el+cl;
+      if(!name.toLowerCase().endsWith('.json')||name.startsWith('__MACOSX/'))continue;
+      if(v.getUint32(off,true)!==0x04034b50)throw Error('อ่าน ZIP ไม่ได้: '+name);
+      const start=off+30+v.getUint16(off+26,true)+v.getUint16(off+28,true),raw=b.slice(start,start+size);
+      let txt;
+      if(method===0)txt=d.decode(raw);
+      else if(method===8){if(!('DecompressionStream' in window))throw Error('เบราว์เซอร์ไม่รองรับ ZIP แบบบีบอัด');txt=await new Response(new Blob([raw]).stream().pipeThrough(new DecompressionStream('deflate-raw'))).text();}
+      else throw Error('วิธีบีบอัด ZIP ไม่รองรับ: '+name);
+      try{out.push({name,value:JSON.parse(txt)});}catch{throw Error('JSON ภายใน ZIP เสียหาย: '+name);}
+    }
+    if(!out.length)throw Error('ไม่พบ JSON ใน ZIP'); return out;
+  };
+  const unpack=(obj,name)=>{
+    if(Array.isArray(obj))return obj.map((value,i)=>({name:name+' #'+(i+1),value}));
+    if(obj&&Array.isArray(obj.reports)){
+      if(obj.schema_version!=='1.0.0'||obj.report_type!=='football-rich-analysis-batch')throw Error('ส่วนหัว Batch ต้องเป็น football-rich-analysis-batch v1.0.0');
+      return obj.reports.map((value,i)=>({name:name+' #'+(i+1),value}));
+    }
+    return [{name,value:obj}];
+  };
+  input.addEventListener('change',async()=>{
+    preview.innerHTML='';const file=input.files?.[0];if(!file)return;
+    if(file.size>20*1024*1024){setMessage('#analysis-import-message','ไฟล์ใหญ่เกิน 20 MB','error');return;}
+    try{
+      const entries=file.name.toLowerCase().endsWith('.zip')?await zipReports(file):unpack(JSON.parse(await file.text()),file.name);
+      if(!entries.length||entries.length>100)throw Error('จำนวนรายงานต้องอยู่ระหว่าง 1–100 คู่');
+      const items=entries.map((entry,i)=>{
+        try{
+          const r=entry.value,eg=r?.analysis?.expected_goals;
+          if(eg&&Number.isFinite(Number(eg.home))&&Number.isFinite(Number(eg.away))){
+            const c=frProbabilityModel(eg,r.market.selected_team,Number(r.market.handicap_line));
+            r.analysis.match_outcome_probabilities??=c.match_outcome_probabilities;r.analysis.handicap_settlement_probabilities??=c.handicap_settlement_probabilities;
+            r.analysis.cover_probability??=c.cover_probability;r.recommendation.cover_probability??=c.cover_probability;r.analysis.probability_status='estimated';
+          }
+          validateAnalysisImport(r);return {report:r,name:entry.name};
+        }catch(err){throw Error('คู่ที่ '+(i+1)+' ('+entry.name+'): '+(err?.message||'รูปแบบไม่ถูกต้อง'));}
+      });
+      const ids=items.map(x=>x.report.report_id),keys=items.map(x=>[x.report.match.competition,x.report.match.home_team,x.report.match.away_team].map(s=>String(s).trim().toLowerCase()).join('|'));
+      if(new Set(ids).size!==ids.length)throw Error('พบ report_id ซ้ำในไฟล์');
+      if(new Set(keys).size!==keys.length)throw Error('พบคู่แข่งขันซ้ำในไฟล์');
+      const old=await records(),oldIds=new Set(old.analyses.map(a=>a.importReportId));
+      if(ids.some(id=>oldIds.has(id)))throw Error('มี report_id ที่เคยนำเข้าแล้ว กรุณาตรวจสอบไฟล์');
+      const plan=items.map(({report})=>{
+        const m=old.matches.filter(x=>x.league.trim().toLowerCase()===report.match.competition.trim().toLowerCase()&&x.homeTeam.trim().toLowerCase()===report.match.home_team.trim().toLowerCase()&&x.awayTeam.trim().toLowerCase()===report.match.away_team.trim().toLowerCase());
+        if(m.length>1)throw Error('พบคู่แข่งขันซ้ำในแอป: '+report.match.home_team+' vs '+report.match.away_team);
+        return {report,match:m[0]};
+      });
+      const pct=x=>x==null?'—':(Number(x)*100).toFixed(1)+'%';
+      preview.innerHTML='<div class="panel import-preview"><div class="record-top"><b>ตรวจสอบผ่าน '+items.length+' คู่</b><span class="tag">พร้อมนำเข้า</span></div>'+plan.map(({report:r},i)=>'<article class="record"><b>'+(i+1)+'. '+esc(r.match.home_team)+' VS '+esc(r.match.away_team)+'</b><small>'+esc(r.match.competition)+'</small><p class="muted">'+(r.match.kickoff_at?esc(fmtDate(r.match.kickoff_at)):'ไม่ระบุเวลา')+' · '+esc(r.report_id)+'</p><div class="metrics"><span>AH <b>'+Number(r.market.handicap_line).toFixed(2)+'</b></span><span>Cover <b>'+pct(r.analysis.cover_probability)+'</b></span></div><p>'+esc(r.recommendation.summary)+'</p></article>').join('')+'<p class="notice">ทุกคู่จะถูกบันทึกในธุรกรรมเดียว หากผิดพลาดจะไม่บันทึกบางส่วน</p><button class="primary" id="confirm-analysis-import">นำเข้าทั้งหมด '+items.length+' คู่</button></div>';
+      setMessage('#analysis-import-message','ตรวจสอบผ่าน '+items.length+' คู่ · ยังไม่ได้บันทึก','success');
+      document.querySelector('#confirm-analysis-import')?.addEventListener('click',async ev=>{
+        const btn=ev.currentTarget;btn.disabled=true;
+        try{
+          const latest=await records();if(items.some(x=>latest.analyses.some(a=>a.importReportId===x.report.report_id)))throw Error('พบรายงานที่ถูกนำเข้าไปแล้ว');
+          const db=await openDatabase(),tx=db.transaction(['matches','analyses','research_records','source_evidence'],'readwrite'),ms=tx.objectStore('matches'),as=tx.objectStore('analyses'),rs=tx.objectStore('research_records'),es=tx.objectStore('source_evidence');
+          for(const {report:r,match:existing} of plan){
+            const m=existing??{...base(),league:r.match.competition,homeTeam:r.match.home_team,awayTeam:r.match.away_team,kickoffAt:r.match.kickoff_at?new Date(r.match.kickoff_at).toISOString():'',status:r.match.match_status==='finished'?'FINISHED':'UPCOMING',notes:'นำเข้าจากรายงาน '+r.report_id};
+            const version=latest.analyses.filter(a=>a.matchId===m.id).reduce((n,a)=>Math.max(n,a.version||0),0)+1,o=r.analysis.match_outcome_probabilities;
+            const content=[String(r.recommendation.summary),...(r.analysis.reasoning||[]),...(r.analysis.limitations||[]).map(x=>'ข้อจำกัด: '+x)].join('\n');
+            if(!existing)ms.add(m);
+            as.add({...base(),matchId:m.id,version,summary:content,confidence:r.analysis.cover_probability==null?undefined:r.analysis.cover_probability*100,probabilities:o?{homeWin:o.home_win*100,draw:o.draw*100,awayWin:o.away_win*100}:undefined,importReportId:r.report_id,importSchemaVersion:r.schema_version,importedAt:nowISO(),analysisAsOf:r.analysis_as_of,recommendation:r.recommendation,marketSnapshot:r.market,handicapSettlementProbabilities:r.analysis.handicap_settlement_probabilities,coverProbability:r.analysis.cover_probability,probabilityStatus:r.analysis.probability_status,riskLevel:r.analysis.risk_level,evidence:r.evidence,sourceReport:r});
+            rs.add({...base(),matchId:m.id,researchType:'รายงานวิเคราะห์ที่นำเข้า',content});
+            for(const v of r.evidence.filter(x=>typeof x.url==='string'&&x.url.trim()))es.add({...base(),matchId:m.id,sourceName:String(v.publisher),url:String(v.url),verificationStatus:'UNVERIFIED',retrievedAt:v.checked_at??r.analysis_as_of,notes:String(v.claim)});
+          }
+          await new Promise((resolve,reject)=>{tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error??Error('บันทึกไม่สำเร็จ'));tx.onabort=()=>reject(tx.error??Error('ธุรกรรมถูกยกเลิก'));});
+          setMessage('#analysis-import-message','นำเข้าสำเร็จครบ '+items.length+' คู่','success');preview.innerHTML='<div class="notice success">บันทึกครบ '+items.length+' คู่แล้ว · ไม่มีการเขียนทับผลการแข่งขันหรือคำทำนายเดิม</div>';
+        }catch(err){btn.disabled=false;setMessage('#analysis-import-message',err?.message||'นำเข้าไม่สำเร็จ','error');}
+      });
+    }catch(err){setMessage('#analysis-import-message',err?.message||'อ่านไฟล์ไม่สำเร็จ','error');}
+  });
+}
