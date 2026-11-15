@@ -31,7 +31,7 @@ for(const marker of [
   "openDatabase()",
   "tx.objectStore('matches')",
   "tx.objectStore('analyses')",
-  "sameKickoff(x.kickoffAt,report.match.kickoff_at)"
+  "sameKickoff(x.kickoffAt,report.match.kickoff_at)",\n  "sameCompetition(a.competition,b.competition)"
 ]) assert.ok(main.includes(marker),'Missing combined import feature: '+marker);
 
 assert.ok(!main.includes('fixture-import'));
