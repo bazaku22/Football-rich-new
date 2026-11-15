@@ -96,7 +96,23 @@ jobs:
           console.log('Service worker source preview:', fs.readFileSync(swFiles[0], 'utf8').slice(0, 1000));
           NODE
 
-      - name: Upload Pages artifact
+      - name: Diagnose app entry and UI assets
+        working-directory: football-rich-v1
+        shell: bash
+        run: |
+          echo "=== SOURCE TREE ==="
+          find src public -maxdepth 3 -type f 2>/dev/null | sort
+          echo "=== PACKAGE SCRIPTS ==="
+          node -e "console.log(JSON.stringify(require('./package.json').scripts,null,2))"
+          echo "=== GENERATED HTML ==="
+          sed -n '1,240p' dist/index.html
+          echo "=== MAIN ENTRY ==="
+          for f in src/main.ts src/main.js src/app.ts src/app.js src/pwa.ts src/pwa.js; do
+            if [ -f "$f" ]; then echo "--- $f ---"; sed -n '1,260p' "$f"; fi
+          done
+          echo "=== GENERATED JS FILES ==="
+          find dist -maxdepth 2 -type f -name '*.js' -printf '%p %s bytes\\n'
+\n      - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: football-rich-v1/dist
