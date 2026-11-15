@@ -53,6 +53,7 @@ jobs:
           sed -i '/^node \.\.\/scripts\/apply-v1-12-unified-match-center\.mjs$/a node ../scripts/apply-v1-13-football-logos.mjs' build-from-archive.sh
           sed -i '/^node \.\.\/scripts\/apply-v1-13-football-logos\.mjs$/a node ../scripts/apply-v1-14-match-events.mjs' build-from-archive.sh
           sed -i '/^node \.\.\/scripts\/apply-v1-14-match-events\.mjs$/a node ../scripts/apply-v1-15-match-detail-ui.mjs' build-from-archive.sh
+          sed -i '/^node \.\.\/scripts\/apply-v1-15-match-detail-ui\.mjs$/a node ../scripts/apply-v1-16-confirmation-footer.mjs' build-from-archive.sh
 
       - name: Build Football rich
         run: bash build-from-archive.sh
@@ -113,12 +114,12 @@ jobs:
           }
           const index = fs.readFileSync(path.join(root,'index.html'),'utf8');
           if (!index.includes('__footballRichBootGuardInstalled')) throw new Error('Startup watchdog missing from final HTML');
-          if (!index.includes('main.js?v=20261115-v1-15')) throw new Error('Cache-busted app entry missing from final HTML');
+          if (!index.includes('main.js?v=20261115-v1-16')) throw new Error('Cache-busted app entry missing from final HTML');
           if (!fs.existsSync(path.join(root,'main.js'))) throw new Error('App entry main.js missing from final output');
           console.log('Startup watchdog, cache-busted app entry and main.js verified.');
           console.log('Service worker source preview:', fs.readFileSync(swFiles[0], 'utf8').slice(0, 1000));
           const swSource = fs.readFileSync(swFiles[0], 'utf8');
-          if (!swSource.includes("const CACHE_NAME = 'football-rich-shell-v23'")) throw new Error('Service worker cache version is stale');
+          if (!swSource.includes("const CACHE_NAME = 'football-rich-shell-v24'")) throw new Error('Service worker cache version is stale');
           console.log('Service worker cache version v13 verified.');
           const app = fs.readFileSync(path.join(root,'main.js'),'utf8');
           for (const feature of ['fr-national-flag-wrap','installReleaseUpdateCheck','footballRichLastNotifiedVersion','mc-calendar-head','mc-risk-badge','coverPct >= 60','coverPct >= 45','probBar +','allUpcomingMatches.map','ยังประเมินความเสี่ยงไม่ได้','knownClubCrests','mc-team-crest','FC Machida Zelvia','Kashiwa Reysol','Kawasaki Frontale','Vissel Kobe','footballRichNotificationsV1','fr-notification-header-button','fr-national-flag','Republic of Ireland','🇧🇴','fr-notification-unread-label','readAt:null','ศูนย์แจ้งเตือน']) {
@@ -127,11 +128,12 @@ jobs:
           if (app.includes('id="match-form"') || app.includes("currentView === 'matches'")) throw new Error('Legacy duplicate fixture/manual-entry UI remains visible');
           if (!fs.existsSync(path.join(root,'app-version.json'))) throw new Error('App version manifest missing');
           const appVersion = JSON.parse(fs.readFileSync(path.join(root,'app-version.json'),'utf8'));
-          if (appVersion.version !== '1.15') throw new Error('App version manifest is stale');
+          if (appVersion.version !== '1.16') throw new Error('App version manifest is stale');
           if (app.includes('กำไรจำลองสุทธิ') || app.includes("card('ผลชำระเดิมพัน'")) throw new Error('V1.9 non-gambling Performance cleanup failed');
           for (const crestUrl of ['machida-zelvia-logo-footylogos.svg','vissel-kobe-logo-footylogos.svg','kashiwa-reysol-logo-footylogos.svg','kawasaki-frontale-logo-footylogos.svg']) if (!app.includes(crestUrl)) throw new Error('V1.13 club crest asset missing: '+crestUrl);
           const appCss = fs.readFileSync(path.join(root,'styles/main.css'),'utf8');
           for (const feature of ['mc-event-columns','mc-assist-boot','mc-confirmed-at','renderSideEvents']) if (!app.includes(feature) && !appCss.includes(feature)) throw new Error('V1.15 match detail UI feature missing: '+feature);
+          if (app.includes('แหล่งข้อมูล:') || app.includes('ยืนยันผล:')) throw new Error('V1.16 verbose source or top confirmation metadata remains in match renderer');
           for (const feature of ['mc-card-icon-yellow','mc-card-icon-red','.mc-event-ball']) if (!appCss.includes(feature)) throw new Error('V1.15 event icon style missing: '+feature);
           console.log('V1.9 verified: existing match analysis retained, financial summary cards removed, unread notification center and release metadata updated.');
           NODE
