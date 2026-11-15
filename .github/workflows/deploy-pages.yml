@@ -154,7 +154,7 @@ jobs:
           if (!app.includes('data-match-day') || !app.includes('renderMatchesByDay()')) throw new Error('V1.23 day grouping runtime renderer missing');
           if (app.includes('allMatches.map(m => resultByMatch.has(m.id) ? renderFinished(m) : renderUpcoming(m)).join')) throw new Error('V1.23 flat match list remains');
           for (const rule of ['V1.23: stable mobile match details and visible day-separated Match Center','article.mc-card .mc-event span','writing-mode:horizontal-tb!important']) if (!appCss.includes(rule)) throw new Error('V1.23 mobile event/day CSS missing: '+rule);
-          for (const feature of ['mc-result-meta','mc-id-block','mc-snapshot-note','mc-history-wrap']) if (!app.includes(feature)) throw new Error('V1.24 result metadata footer missing: '+feature);
+          for (const feature of ['mc-detail-modal','historyHtml','MATCH ID: ','RESULT ID: ','revisionHistory']) if (!app.includes(feature)) throw new Error('V1.24/V1.25 compact detail metadata missing: '+feature);
           for (const rule of ['V1.24: full-width readable result metadata and snapshot history footer','.mc-result-meta','.mc-history-row{display:block!important']) if (!appCss.includes(rule)) throw new Error('V1.24 result metadata layout missing: '+rule);
           console.log('V1.9 verified: existing match analysis retained, financial summary cards removed, unread notification center and release metadata updated.');
           NODE
