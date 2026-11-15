@@ -287,6 +287,33 @@
           "items": {
             "type": "string"
           }
+        },
+        "expected_goals": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "home",
+            "away"
+          ],
+          "properties": {
+            "home": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 8
+            },
+            "away": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 8
+            },
+            "basis": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "description": "Expected goals estimated from verified pre-match evidence; used by the app's Independent Poisson calculator when outcome probabilities are omitted."
         }
       }
     },
