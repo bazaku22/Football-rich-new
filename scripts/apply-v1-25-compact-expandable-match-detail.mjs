@@ -7,7 +7,7 @@ if(!main.includes('data-select-match')) throw new Error('V1.25 match buttons mis
 main=main.replaceAll('data-select-match=', 'data-open-match-detail=');
 const at=main.indexOf('const matchForm');
 const logic = [
-"        root.insertAdjacentHTML('beforeend', '<div id=\"mc-detail-modal\" class=\"mc-detail-overlay\" hidden><section class=\"mc-detail-dialog\" role=\"dialog\" aria-modal=\"true\" aria-labelledby=\"mc-detail-title\"><button type=\"button\" class=\"mc-detail-close\" data-detail-close aria-label=\"ปิด\">×</button><div id=\"mc-detail-content\"></div></section></div>');",
+"        document.body.insertAdjacentHTML('beforeend', '<div id=\"mc-detail-modal\" class=\"mc-detail-overlay\" hidden><section class=\"mc-detail-dialog\" role=\"dialog\" aria-modal=\"true\" aria-labelledby=\"mc-detail-title\"><button type=\"button\" class=\"mc-detail-close\" data-detail-close aria-label=\"ปิด\">×</button><div id=\"mc-detail-content\"></div></section></div>');",
 "        const detailModal=document.querySelector('#mc-detail-modal'), detailContent=document.querySelector('#mc-detail-content');",
 "        let activeDetailMatchId='';",
 "        const detailPercent=v=>typeof v==='number'&&Number.isFinite(v)?v.toFixed(1)+'%':'—';",
@@ -28,7 +28,7 @@ const logic = [
 "          detailContent.innerHTML='<div class=\"mc-detail-kicker\">'+esc(m.league)+' · '+esc(m.kickoffAt?fmtDate(m.kickoffAt):'ไม่ระบุเวลา')+'</div><div class=\"mc-detail-status\">'+status+'</div><h2 id=\"mc-detail-title\">'+esc(m.homeTeam)+' <span>'+score+'</span> '+esc(m.awayTeam)+'</h2><section class=\"mc-detail-summary\"><h3>ผลวิเคราะห์</h3>'+prob+ah+review+'</section><details class=\"mc-detail-accordion\"><summary>เหตุการณ์การแข่งขัน</summary>'+eventHtml+'</details><details class=\"mc-detail-accordion\"><summary>รายละเอียดการวิเคราะห์</summary>'+analysis+'</details><details class=\"mc-detail-accordion\"><summary>ประวัติและข้อมูลรายการ</summary>'+historyHtml+'</details><div class=\"mc-detail-actions\"><button type=\"button\" class=\"primary\" data-detail-analysis>เปิดหน้าวิเคราะห์</button></div>';",
 "          detailModal.hidden=false; document.body.classList.add('mc-detail-open'); detailModal.querySelector('[data-detail-close]').focus();",
 "        };",
-"        root.querySelectorAll('[data-open-match-detail]').forEach(b=>b.addEventListener('click',()=>openMatchDetail(b.dataset.openMatchDetail||'')));",
+"        root.addEventListener('click',event=>{const button=event.target.closest('[data-open-match-detail]');if(button&&root.contains(button))openMatchDetail(button.dataset.openMatchDetail||'');});",
 "        const closeMatchDetail=()=>{detailModal.hidden=true;document.body.classList.remove('mc-detail-open');};",
 "        detailModal.querySelector('[data-detail-close]').addEventListener('click',closeMatchDetail);",
 "        detailModal.addEventListener('click',e=>{if(e.target===detailModal)closeMatchDetail();if(e.target.closest('[data-detail-analysis]')){const mid=activeDetailMatchId;closeMatchDetail();selectedMatchId=mid;switchView('analysis');}});",
