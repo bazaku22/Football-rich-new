@@ -105,7 +105,11 @@ jobs:
             html=html.replace('</head>', '<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Thai:wght@400;500;600;700;800&display=swap" rel="stylesheet></head>');
           }
           fs.writeFileSync(file,html);
-          console.log('Final V2.4 app entry cache-bust and Noto Sans Thai font link verified.');
+          const swFile='football-rich-v1/dist/sw.js';
+          let sw=fs.readFileSync(swFile,'utf8').replaceAll('football-rich-shell-v44','football-rich-shell-v45');
+          if (!sw.includes("const CACHE_NAME = 'football-rich-shell-v45'")) throw new Error('Could not apply final V2.4 service worker cache version');
+          fs.writeFileSync(swFile,sw);
+          console.log('Final V2.4 app entry, Noto Sans Thai font link and service worker cache version verified.');
           NODE
 
       - name: Audit generated PWA files
