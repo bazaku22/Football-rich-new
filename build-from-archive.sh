@@ -50,7 +50,7 @@ manifest.icons=[
   {src:'/brand-emblem.svg',sizes:'any',type:'image/svg+xml',purpose:'any'},
   ...(manifest.icons||[])
 ];
-fs.writeFileSync(manifestPath,JSON.stringify(manifest,null,2)+'\\n');
+fs.writeFileSync(manifestPath,JSON.stringify(manifest,null,2)+'\n');
 
 fs.appendFileSync('src/styles/main.css', `
 /* Approved Football rich crown-and-trophy brand mark */
@@ -72,7 +72,7 @@ const file='dist/index.html';
 let html=fs.readFileSync(file,'utf8');
 html=html.replace('<div id="app"></div>','<div id="app"><div class="boot-screen">กำลังเปิด Football rich…</div></div>');
 html=html.replace('<script type="module" src="/main.js"></script>','<script type="module" src="/main.js" onerror="document.getElementById(\'app\').innerHTML=\'<div class=\\\'boot-screen boot-error\\\'>โหลดแอปไม่สำเร็จ กรุณารีเฟรชหน้าเว็บ</div>\'"></script>');
-if (!html.includes('rel="icon"')) html=html.replace('</head>','  <link rel="icon" type="image/svg+xml" href="/brand-emblem.svg" />\\n  <link rel="apple-touch-icon" href="/icon-192.png" />\\n</head>');
+if (!html.includes('rel="icon"')) html=html.replace('</head>','  <link rel="icon" type="image/svg+xml" href="/brand-emblem.svg" />\n  <link rel="apple-touch-icon" href="/icon-192.png" />\n</head>');
 if (!html.includes('navigator.serviceWorker.register')) {
   const registration = `<script>
     if ('serviceWorker' in navigator) {
@@ -86,7 +86,7 @@ if (!html.includes('navigator.serviceWorker.register')) {
   html = html.replace('</body>', registration + '</body>');
 }
 fs.writeFileSync(file,html);
-fs.appendFileSync('src/styles/main.css', '\\n.boot-screen{min-height:100vh;display:grid;place-items:center;background:#121212;color:#F4D27B;font:600 16px system-ui,sans-serif}.boot-error{color:#ffb4a9;padding:24px;text-align:center}\\n');
+fs.appendFileSync('src/styles/main.css', '\n.boot-screen{min-height:100vh;display:grid;place-items:center;background:#121212;color:#F4D27B;font:600 16px system-ui,sans-serif}.boot-error{color:#ffb4a9;padding:24px;text-align:center}\n');
 console.log('Brand icon, install icon, startup fallback and service worker registration prepared.');
 NODE
 
