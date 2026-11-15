@@ -36,8 +36,8 @@ main=replaceOnce(main,'.json,application/json,.zip,application/zip','.json,appli
 
 // Remove the old update-only checkbox from the combined workflow.
 const importHeading=main.indexOf("pageTitle('MATCH + ANALYSIS IMPORT'");
-const importInput=main.indexOf("const input=document.querySelector('#analysis-import-file')",importHeading);
-if(importHeading<0||importInput<0)throw Error('Could not scope combined importer UI');
+const importInput=main.indexOf('const input',importHeading);
+if(importHeading<0||importInput<0)throw Error('Could not scope combined importer UI: heading='+importHeading+' input='+importInput);
 let importUi=main.slice(importHeading,importInput);
 importUi=importUi.replace(/<label class=\\?"mc-check\\?"[\s\S]*?<\/label>/,'');
 main=main.slice(0,importHeading)+importUi+main.slice(importInput);
@@ -66,10 +66,12 @@ main=replaceOnce(main,
 const oldGuard="if(updateExistingOnly&&plan.some(x=>!x.match||!latest.matches.some(m=>m.id===x.match.id)))throw Error('แมตช์เดิมเปลี่ยนแปลงหรือไม่พบแล้ว กรุณาตรวจสอบใหม่ · ไม่มีการบันทึกข้อมูล');";
 const newGuard=oldGuard+"for(const item of plan){const candidates=latest.matches.filter(x=>sameCompetition(x.league,item.report.match.competition)&&normTeam(x.homeTeam)===normTeam(item.report.match.home_team)&&normTeam(x.awayTeam)===normTeam(item.report.match.away_team)&&sameKickoff(x.kickoffAt,item.report.match.kickoff_at));if(item.match?!candidates.some(x=>x.id===item.match.id):candidates.length)throw Error('รายการแข่งขันเปลี่ยนแปลงระหว่างตรวจสอบ กรุณาเลือกไฟล์อีกครั้ง · ไม่มีการบันทึกข้อมูล');}";
 main=replaceOnce(main,oldGuard,newGuard,'concurrent fixture identity check');
-main=replaceOnce(main,"});\n      const pct=x=>x==null?'—':(Number(x)*100).toFixed(1)+'%';",
-"});\\n      for(let i=0;i<plan.length;i++)for(let j=i+1;j<plan.length;j++){const a=plan[i].report.match,b=plan[j].report.match;if(sameCompetition(a.competition,b.competition)&&normTeam(a.home_team)===normTeam(b.home_team)&&normTeam(a.away_team)===normTeam(b.away_team)&&sameKickoff(a.kickoff_at,b.kickoff_at))throw Error('พบโปรแกรมแข่งขันซ้ำในไฟล์ แม้ชื่อรายการจะต่างรูปแบบกัน: '+a.home_team+' vs '+a.away_team); }\\n      const pct=x=>x==null?'—':(Number(x)*100).toFixed(1)+'%';",
-'normalized duplicate fixture rejection');
-
+const pctMarker="const pct=x=>x==null?'—':(Number(x)*100).toFixed(1)+'%';";
+const pctIndex=main.indexOf(pctMarker,importHeading);
+const planEnd=pctIndex<0?-1:main.lastIndexOf('});',pctIndex);
+if(planEnd<0)throw Error('Could not locate end of fixture matching plan');
+const duplicateGuard="for(let i=0;i<plan.length;i++)for(let j=i+1;j<plan.length;j++){const a=plan[i].report.match,b=plan[j].report.match;if(sameCompetition(a.competition,b.competition)&&normTeam(a.home_team)===normTeam(b.home_team)&&normTeam(a.away_team)===normTeam(b.away_team)&&sameKickoff(a.kickoff_at,b.kickoff_at))throw Error('พบโปรแกรมแข่งขันซ้ำในไฟล์ แม้ชื่อรายการจะต่างรูปแบบกัน: '+a.home_team+' vs '+a.away_team);}";
+main=main.slice(0,planEnd+3)+duplicateGuard+main.slice(planEnd+3);
 main=replaceOnce(main,
 "'นำเข้าสำเร็จครบ '+items.length+' คู่ · อัปเดตรายงานเดิม '+updatedReports+' รายงาน'",
 "'นำเข้าสำเร็จครบ '+items.length+' คู่ · สร้าง Match ID ใหม่ '+plan.filter(x=>!x.match).length+' คู่ · ใช้ Match ID เดิม '+plan.filter(x=>!!x.match).length+' คู่ · เพิ่มเวอร์ชันรายงานเดิม '+updatedReports+' รายงาน'",
