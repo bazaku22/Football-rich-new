@@ -126,8 +126,8 @@
         },
         "handicap_line": {
           "type": "number",
-          "minimum": -3,
-          "maximum": 3
+          "minimum": -4,
+          "maximum": 0
         },
         "decimal_odds": {
           "type": [
