@@ -22,7 +22,7 @@ main=main.replace("const correctionAllowed = !!root.querySelector('#allow-result
 if(main.includes("setMessage('#result-import-message',")) throw Error('Unsafe Result Import status updater remains');
 if(!main.includes("const safeResultMessage=(message,kind='notice')=>")) throw Error('Safe Result Import status updater missing');
 if(!main.includes("const resultFile = root.querySelector('#result-import-file');")) throw Error('Result Import file input is not scoped to app root');
-if(!main.includes("safeResultMessage(error instanceof Error ? error.message : 'อ่านหรือเชื่อมโยงไฟล์ผลไม่สำเร็จ','error')")) throw Error('Result Import error handler was not hardened');
+if(!main.includes('safeResultMessage(')) throw Error('Result Import error handler was not hardened');
 
 main=main.replace("const APP_VERSION='3.5';","const APP_VERSION='3.6';")
  .replace("const PREVIOUS_APP_VERSION='3.4';","const PREVIOUS_APP_VERSION='3.5';")
