@@ -101,7 +101,7 @@ else if (!main.includes("teamHtml(m.homeTeam, matchCountry(m,a))")) throw new Er
 const oldFinished = `return '<article class="panel mc-card"><div class="mc-card-head"><span>' + esc(m.league) + '</span><span class="tag">ยืนยันผลแล้ว</span></div><div class="mc-teams"><div class="mc-team">' + esc(m.homeTeam) + '</div><div class="mc-score">' + Number(r.homeGoals) + ' – ' + Number(r.awayGoals) + '</div><div class="mc-team">' + esc(m.awayTeam) + '</div></div>`;
 const newFinished = `return '<article class="panel mc-card"><div class="mc-card-head"><span>' + esc(m.league) + '</span><span class="tag">ยืนยันผลแล้ว</span></div><div class="mc-teams">' + teamHtml(m.homeTeam, matchCountry(m,a)) + '<div class="mc-score">' + Number(r.homeGoals) + ' – ' + Number(r.awayGoals) + '</div>' + teamHtml(m.awayTeam, matchCountry(m,a)) + '</div>`;
 if (main.includes(oldFinished)) main = main.replace(oldFinished, newFinished);
-else if (!main.includes("teamHtml(m.homeTeam, matchCountry(m,a)) + '<div class="mc-score">")) throw new Error('V1.3 finished team display anchor missing');
+else if (!main.includes(`teamHtml(m.homeTeam, matchCountry(m,a)) + '<div class="mc-score">'`)) throw new Error('V1.3 finished team display anchor missing');
 
 const cssPatch = `
 /* Football rich V1.3 team marks and country flags */
