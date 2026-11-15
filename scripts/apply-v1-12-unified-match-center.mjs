@@ -36,10 +36,14 @@ if (main.includes(oldFinishedTeams)) main=main.replace(oldFinishedTeams,`<div cl
 else if (!main.includes(crestFinished)) throw new Error('V1.12 finished card is missing the shared team/crest renderer');
 
 // Keep kickoff time visible on finished cards as well as the completed status.
-const oldFinishedHeader = `<div class="mc-card-head"><span>' + esc(m.league) + '</span><span class="tag">ยืนยันผลแล้ว</span></div>`;
+const oldFinishedHeaders = [
+  `<div class="mc-card-head"><span>' + esc(m.league) + '</span><span class="tag">ยืนยันผลแล้ว</span></div>`,
+  `<div class="mc-card-head"><span>' + esc(m.league) + '</span><span class="tag">จบแล้ว</span></div>`
+];
 const newFinishedHeader = `<div class="mc-card-head"><span>' + esc(m.league) + '</span><span>' + (m.kickoffAt ? esc(fmtDate(m.kickoffAt)) : 'ไม่ระบุเวลาแข่งขัน') + ' · <b class="tag">จบแล้ว</b></span></div>`;
-if (main.includes(oldFinishedHeader)) main=main.replace(oldFinishedHeader,newFinishedHeader);
-else if (!main.includes('ไม่ระบุเวลาแข่งขัน') || !main.includes('ยืนยันผลแล้ว')) throw new Error('V1.12 finished card date anchor missing');
+const finishedHeaderAnchor = oldFinishedHeaders.find(anchor => main.includes(anchor));
+if (finishedHeaderAnchor) main=main.replace(finishedHeaderAnchor,newFinishedHeader);
+else if (!main.includes('ไม่ระบุเวลาแข่งขัน') || !main.includes('fmtDate(m.kickoffAt)')) throw new Error('V1.12 finished card date anchor missing; supported completed-state header variants not found');
 
 // Replace the two separated sections with one list, retaining the same match-card layouts.
 const oldGroups = `          '<div class="mc-group"><h2>ก่อนแข่งขัน</h2><span class="count">' + upcomingMatches.length + '</span></div><div class="mc-cards">' + (upcomingMatches.length ? upcomingMatches.map(renderUpcoming).join('') : '<div class="panel empty">ไม่มีคู่ที่รอแข่งขัน</div>') + '</div>' +
