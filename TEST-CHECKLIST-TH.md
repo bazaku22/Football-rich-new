@@ -19,7 +19,7 @@ Use only the clearly labelled synthetic fixture data during initial testing. The
 - [ ] Confirm incomplete or invalid probabilities are rejected.
 - [ ] Test handicap lines -0.25, -0.75, -1.00 and -1.75.
 - [ ] Verify full win, half win, push, half loss and full loss.
-- [ ] Confirm settlement probabilities total 100% before Fair Odds and EV.
+- [ ] Confirm handicap settlement probabilities total 100% when sufficient data exists; do not calculate Fair Odds or EV for pick selection.
 - [ ] Confirm a prediction and verify its snapshot appears in History.
 
 ## Results and backup
@@ -29,3 +29,13 @@ Use only the clearly labelled synthetic fixture data during initial testing. The
 - [ ] Test offline app-shell launch after first online load.
 
 Do not clear browser storage before reporting a defect; it may destroy useful test evidence.
+
+
+## Analysis report import (pending in-app implementation)
+- [ ] Validate JSON syntax and schema version before preview.
+- [ ] Show match, analysis freshness, selected favorite, handicap line, cover probability and evidence.
+- [ ] Keep unknown probabilities null and display an insufficient-data warning.
+- [ ] Detect duplicate report IDs and match identities.
+- [ ] Require explicit confirmation before writing records.
+- [ ] Never overwrite an existing confirmed prediction silently.
+- [ ] Reject unsupported future schema versions without partial writes.
