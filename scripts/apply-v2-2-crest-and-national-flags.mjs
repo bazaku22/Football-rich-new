@@ -4,7 +4,7 @@ let main=fs.readFileSync(mainPath,'utf8'),css=fs.readFileSync(cssPath,'utf8'),ht
 if(!main.includes("const APP_VERSION='2.1';")||!html.includes('main.js?v=20261116-v2-1')||!sw.includes("const CACHE_NAME = 'football-rich-shell-v42'"))throw Error('V2.2 expected V2.1 build anchors missing; refusing to patch an unknown build');
 const markStart=main.indexOf('const mark=name=>{'),markEnd=main.indexOf('};',markStart)+2;
 if(markStart<0||markEnd<=markStart)throw Error('V2.1 team mark renderer anchor missing');
-const replacement=String.raw\`const nationalFlags = {
+const replacement=String.raw`const nationalFlags = {
  argentina:'🇦🇷',australia:'🇦🇺',austria:'🇦🇹',albania:'🇦🇱',algeria:'🇩🇿',angola:'🇦🇴',armenia:'🇦🇲',azerbaijan:'🇦🇿',
  belgium:'🇧🇪',bolivia:'🇧🇴',bosniaandherzegovina:'🇧🇦',bosnia:'🇧🇦',brazil:'🇧🇷',bulgaria:'🇧🇬',canada:'🇨🇦',chile:'🇨🇱',china:'🇨🇳',chinapr:'🇨🇳',colombia:'🇨🇴',costarica:'🇨🇷',
  croatia:'🇭🇷',cyprus:'🇨🇾',czechia:'🇨🇿',czechrepublic:'🇨🇿',denmark:'🇩🇰',ecuador:'🇪🇨',egypt:'🇪🇬',england:'🇬🇧',estonia:'🇪🇪',finland:'🇫🇮',france:'🇫🇷',
@@ -25,7 +25,7 @@ const mark=name=>{
  const n=String(name||'?'),k=n.toLowerCase().normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').replace(/[^a-z0-9]/g,''),logo=logos[k],flag=flagFor(n),initial=n.trim().split(/\\s+/).slice(0,2).map(x=>x[0]||'').join('').toUpperCase();
  if(flag)return '<span class="v21-mark v22-flag" role="img" aria-label="ธงชาติ '+esc(n)+'"><span>'+flag+'</span></span>';
  return '<span class="v21-mark v22-crest">'+(logo?'<img src="'+logo+'" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">':'<b>'+esc(initial||'?')+'</b>')+'</span>';
-};\`;
+};`;
 main=main.slice(0,markStart)+replacement+main.slice(markEnd);
 main=main.replace("const APP_VERSION='2.1';","const APP_VERSION='2.2';").replace("const PREVIOUS_APP_VERSION='1.33';","const PREVIOUS_APP_VERSION='2.1';").replaceAll('FOOTBALL RICH · BLACK & GOLD · V2.1','FOOTBALL RICH · BLACK & GOLD · V2.2').replace('<span class="tag">V2.1</span>','<span class="tag">V2.2</span>');
 css=css.replace('.v21-mark img{width:100%;height:100%;object-fit:contain;background:#fff;padding:2px}', '.v21-mark{isolation:isolate}.v21-mark img{width:100%;height:100%;object-fit:contain;background:transparent;padding:0;mix-blend-mode:multiply}.v21-mark.v22-crest{background:#211d14}.v21-mark.v22-flag{background:#211d14;border-color:#66512b;font-size:31px;line-height:1}.v21-mark.v22-flag span{display:block;transform:translateY(-1px)}');
