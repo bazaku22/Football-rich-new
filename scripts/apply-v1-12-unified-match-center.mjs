@@ -7,14 +7,8 @@ let sw=fs.readFileSync(swPath,'utf8');
 let html=fs.readFileSync(htmlPath,'utf8');
 
 // One chronological Match Center list. Result presence determines card state only.
-const oldLists = `        const upcomingMatches = d.matches.filter(m => !resultByMatch.has(m.id)).slice().sort((a,b) => {
-          const ta = Date.parse(a.kickoffAt || '') || Number.MAX_SAFE_INTEGER;
-          const tb = Date.parse(b.kickoffAt || '') || Number.MAX_SAFE_INTEGER;
-          return ta - tb;
-        });
-        const finishedMatches = d.matches.filter(m => resultByMatch.has(m.id)).slice().sort((a,b) =>
-          String(resultByMatch.get(b.id)?.verifiedAt || '').localeCompare(String(resultByMatch.get(a.id)?.verifiedAt || ''))
-        );`;
+const listStart = main.indexOf('const upcomingMatches =');
+const listEnd = main.indexOf('const latestAnalysis =', listStart);
 const newLists = `        const allMatches = d.matches.slice().sort((a,b) => {
           const time = value => { const parsed = Date.parse(value || ''); return Number.isFinite(parsed) ? parsed : Number.MAX_SAFE_INTEGER; };
           const kickoffDiff = time(a.kickoffAt) - time(b.kickoffAt);
@@ -23,8 +17,11 @@ const newLists = `        const allMatches = d.matches.slice().sort((a,b) => {
           const resultDiff = time(ar?.verifiedAt || ar?.importedAt || ar?.createdAt) - time(br?.verifiedAt || br?.importedAt || br?.createdAt);
           return resultDiff || String(a.id).localeCompare(String(b.id));
         });`;
-if (main.includes(oldLists)) main=main.replace(oldLists,newLists);
-else if (!main.includes('const allMatches = d.matches.slice().sort')) throw new Error('V1.12 match list sorting anchor missing');
+if (listStart >= 0 && listEnd > listStart) main = main.slice(0,listStart) + newLists + '\\n        ' + main.slice(listEnd);
+else if (!main.includes('const allMatches = d.matches.slice().sort')) {
+  const diagnostic = main.indexOf('upcomingMatches');
+  throw new Error('V1.12 match list sorting anchor missing. Context: ' + main.slice(Math.max(0,diagnostic-120),diagnostic+900));
+}
 
 // Render actual club marks in both pre-match and completed match cards.
 // The V1.11 renderer maps knownClubCrests and keeps initials as an image-load fallback.
