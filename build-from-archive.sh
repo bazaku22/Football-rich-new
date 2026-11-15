@@ -40,7 +40,7 @@ let pwa=fs.readFileSync(pwaPath,'utf8').replace("navigator.serviceWorker.registe
 fs.writeFileSync(pwaPath,pwa);
 
 const swPath='public/sw.js';
-let sw=fs.readFileSync(swPath,'utf8').replace('football-rich-shell-v2','football-rich-shell-v4');
+let sw=fs.readFileSync(swPath,'utf8').replace('football-rich-shell-v5','football-rich-shell-v5');
 if (!sw.includes('/brand-emblem.svg')) sw=sw.replace('const APP_SHELL = [', "const APP_SHELL = ['/brand-emblem.svg', ");
 fs.writeFileSync(swPath,sw);
 
@@ -78,7 +78,7 @@ import fs from 'node:fs';
 const file='dist/index.html';
 let html=fs.readFileSync(file,'utf8');
 html=html.replace('<div id="app"></div>','<div id="app"><div class="boot-screen">กำลังเปิด Football rich…</div></div>');
-html=html.replace('<script type="module" src="/main.js"></script>','<script type="module" src="main.js?v=20261115-bootfix-1" onerror="window.__footballRichModuleError=true"></script>');
+html=html.replace('<script type="module" src="/main.js"></script>','<script type="module" src="main.js?v=20261115-bootfix-2" onerror="window.__footballRichModuleError=true"></script>');
 if (!html.includes('rel="icon"')) html=html.replace('</head>','  <link rel="icon" type="image/svg+xml" href="/brand-emblem.svg" />\n  <link rel="apple-touch-icon" href="/icon-192.png" />\n</head>');
 // Prevent an endless startup screen if the JavaScript module graph fails.
 const bootGuard = `<script>
@@ -95,7 +95,7 @@ const bootGuard = `<script>
     }
   }, 10000);
 </script>`;
-if (!html.includes('__footballRichModuleError')) html = html.replace('</body>', bootGuard + '</body>');
+if (!html.includes('__footballRichBootGuardInstalled')) html = html.replace('</body>', bootGuard.replace('<script>', '<script>\n  window.__footballRichBootGuardInstalled = true;') + '</body>');
 if (!html.includes('navigator.serviceWorker.register')) {
   const registration = `<script>
     if ('serviceWorker' in navigator) {
