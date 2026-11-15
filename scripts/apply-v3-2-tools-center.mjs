@@ -12,7 +12,12 @@ if(navStart<0||navEnd<=navStart)throw Error('Navigation array not found');
 const navBlock=main.slice(navStart,navEnd);
 const importNav=navBlock.match(/\[\s*['"]import['"]\s*,\s*['"][^'"]*['"]\s*\]/);
 if(importNav)main=main.slice(0,navStart)+navBlock.replace(importNav[0],"['tools', 'เครื่องมือ']")+main.slice(navEnd);
-else if(!navBlock.includes("['tools', 'เครื่องมือ']"))throw Error('Import navigation item missing in: '+navBlock.slice(0,500));
+else if(!navBlock.includes("['tools', 'เครื่องมือ']")) {
+  const dashboardNav=navBlock.match(/\[\s*['"]dashboard['"]\s*,\s*['"][^'"]*['"]\s*\]/);
+  if(!dashboardNav)throw Error('Could not find a primary navigation item to place Tools');
+  const updatedNav=navBlock.replace(dashboardNav[0],dashboardNav[0]+", ['tools', 'เครื่องมือ']");
+  main=main.slice(0,navStart)+updatedNav+main.slice(navEnd);
+}
 
 const toolsBranch = [
 "else if (currentView === 'tools') {",
