@@ -124,7 +124,38 @@ console.log('Brand icon, install icon, startup fallback and service worker regis
 NODE
 
 # GitHub Pages project sites are served beneath /Football-rich-new/.
-find dist -type f \( -name '*.html' -o -name '*.js' -o -name '*.webmanifest' -o -name '*.svg' \) -print0 |
+# Prefix public asset URLs without rewriting JavaScript source: broad sed replacement
+# corrupts regex literals such as /[&<>"']/g by treating the closing quote + slash as a path.
+find dist -type f \( -name '*.html' -o -name '*.webmanifest' -o -name '*.svg' \) -print0 |
   xargs -0 sed -i \
     -e 's|"/|"/Football-rich-new/|g' \
     -e "s|'/|'/Football-rich-new/|g"
+
+# Rewrite only known runtime asset paths and the service-worker precache list.
+node --input-type=module <<'NODE'
+import fs from 'node:fs';
+const mainPath = 'dist/main.js';
+let main = fs.readFileSync(mainPath, 'utf8');
+main = main.replaceAll('"/brand-emblem.svg"', '"/Football-rich-new/brand-emblem.svg"');
+main = main.replaceAll("'/brand-emblem.svg'", "'/Football-rich-new/brand-emblem.svg'");
+fs.writeFileSync(mainPath, main);
+
+const swPath = 'dist/sw.js';
+let sw = fs.readFileSync(swPath, 'utf8');
+const marker = 'const APP_SHELL = [';
+const start = sw.indexOf(marker);
+if (start < 0) throw new Error('Service worker APP_SHELL list was not found');
+const end = sw.indexOf('];', start);
+if (end < 0) throw new Error('Service worker APP_SHELL list is incomplete');
+const shell = sw.slice(start, end + 2)
+  .replaceAll("'/", "'/Football-rich-new/")
+  .replaceAll('"/', '"/Football-rich-new/');
+sw = sw.slice(0, start) + shell + sw.slice(end + 2);
+fs.writeFileSync(swPath, sw);
+NODE
+
+# Fail the deployment if any generated JavaScript is syntactically invalid.
+while IFS= read -r -d '' file; do
+  echo "Syntax-checking $file"
+  node --check "$file"
+done < <(find dist -type f -name '*.js' -print0)
