@@ -81,6 +81,7 @@ jobs:
           sed -i '/^node \.\.\/scripts\/apply-v2-2-crest-and-national-flags\.mjs && node \.\.\/scripts\/test-v2-2-crest-and-national-flags\.mjs$/a node ../scripts/apply-v2-3-clean-team-identity.mjs && node ../scripts/test-v2-3-clean-team-identity.mjs' build-from-archive.sh
           sed -i '/^node \.\.\/scripts\/apply-v2-3-clean-team-identity\.mjs && node \.\.\/scripts\/test-v2-3-clean-team-identity\.mjs$/a node ../scripts/apply-v2-4-match-card-visual-clarity.mjs && node ../scripts/test-v2-4-match-card-visual-clarity.mjs' build-from-archive.sh
           sed -i '/^node \.\.\/scripts\/apply-v2-4-match-card-visual-clarity\.mjs && node \.\.\/scripts\/test-v2-4-match-card-visual-clarity\.mjs$/a node ../scripts/apply-v3-0-analysis-engine.mjs && node ../scripts/test-v3-0-analysis-engine.mjs' build-from-archive.sh
+          sed -i '/^node \.\.\/scripts\/apply-v3-0-analysis-engine\.mjs && node \.\.\/scripts\/test-v3-0-analysis-engine\.mjs$/a node ../scripts/apply-v3-1-existing-only-import.mjs && node ../scripts/test-v3-1-existing-only-import.mjs' build-from-archive.sh
 
       - name: Build Football rich
         run: bash build-from-archive.sh
