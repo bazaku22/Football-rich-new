@@ -93,6 +93,11 @@ jobs:
           if (!swFiles.length || !html.includes('navigator.serviceWorker.register')) {
             throw new Error('PWA installability check failed: service worker file or registration is missing');
           }
+          const index = fs.readFileSync(path.join(root,'index.html'),'utf8');
+          if (!index.includes('__footballRichBootGuardInstalled')) throw new Error('Startup watchdog missing from final HTML');
+          if (!index.includes('main.js?v=20261115-bootfix-2')) throw new Error('Cache-busted app entry missing from final HTML');
+          if (!fs.existsSync(path.join(root,'main.js'))) throw new Error('App entry main.js missing from final output');
+          console.log('Startup watchdog, cache-busted app entry and main.js verified.');
           console.log('Service worker source preview:', fs.readFileSync(swFiles[0], 'utf8').slice(0, 1000));
           NODE
 
