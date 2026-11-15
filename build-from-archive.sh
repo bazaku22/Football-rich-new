@@ -130,7 +130,6 @@ if (!html.includes('navigator.serviceWorker.register')) {
   html = html.replace('</body>', registration + '</body>');
 }
 fs.writeFileSync(file,html);
- }\n.hero > div:first-child { flex:1 1 320px; min-width:0; }\n.hero-emblem { flex:0 1 220px; width:220px; min-width:0; padding:0; opacity:1; }\n.hero-emblem img { display:block; width:100%; max-width:220px; height:auto; aspect-ratio:1; object-fit:contain; margin-inline:auto; }\n@media(max-width:650px) {\n  .hero { flex-direction:column; align-items:stretch; gap:18px; padding:22px; }\n  .hero > div:first-child { width:100%; flex:1 1 auto; }\n  .hero-emblem { align-self:center; flex:0 0 auto; width:min(44vw,148px); max-width:148px; padding:0; }\n  .hero-emblem img { width:100%; max-width:148px; height:auto; border-radius:20px; box-shadow:0 10px 28px #0007; }\n  .stats-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }\n  .two-col { grid-template-columns:minmax(0,1fr); }\n}\n");
 fs.appendFileSync('src/styles/main.css', '\n.boot-screen{min-height:100vh;display:grid;place-items:center;background:#121212;color:#F4D27B;font:600 16px system-ui,sans-serif}.boot-error{color:#ffb4a9;padding:24px;text-align:center}\n');
 console.log('Brand icon, install icon, startup fallback and service worker registration prepared.');
 NODE
