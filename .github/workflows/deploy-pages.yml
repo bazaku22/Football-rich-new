@@ -32,23 +32,14 @@ jobs:
       - name: Extract V1 source
         run: unzip -q -o football-rich-v1-test-candidate-0.5.0.zip -d .
 
-      - name: Export V1.1 build patch for source review
-        run: |
-          base64 -d scripts/apply-v1-1-ui.py.gz.b64 | gzip -dc > /tmp/football-rich-v1-1-ui.py
-      - name: Upload V1.1 build patch for source review
-        uses: actions/upload-artifact@v4
-        with:
-          name: football-rich-v1-1-patch-audit
-          path: /tmp/football-rich-v1-1-ui.py
-          retention-days: 1
-
       - name: Scan source for secrets
         run: |
           docker run --rm -v "$PWD:/path" zricethezav/gitleaks:latest detect --source=/path/football-rich-v1 --no-git --redact --exit-code 1
 
-      - name: Wire Analysis Import into repeatable build
+      - name: Wire Analysis Import and Match Center into repeatable build
         run: |
           sed -i '/^cd football-rich-v1$/a node ../scripts/apply-analysis-import.mjs' build-from-archive.sh
+          sed -i '/^python3 \/tmp\/football-rich-v1-1-ui.py$/a node ../scripts/apply-match-center.mjs' build-from-archive.sh
 
       - name: Build Football rich
         run: bash build-from-archive.sh
@@ -109,13 +100,13 @@ jobs:
           }
           const index = fs.readFileSync(path.join(root,'index.html'),'utf8');
           if (!index.includes('__footballRichBootGuardInstalled')) throw new Error('Startup watchdog missing from final HTML');
-          if (!index.includes('main.js?v=20261115-v1-1')) throw new Error('Cache-busted app entry missing from final HTML');
+          if (!index.includes('main.js?v=20261115-v1-2')) throw new Error('Cache-busted app entry missing from final HTML');
           if (!fs.existsSync(path.join(root,'main.js'))) throw new Error('App entry main.js missing from final output');
           console.log('Startup watchdog, cache-busted app entry and main.js verified.');
           console.log('Service worker source preview:', fs.readFileSync(swFiles[0], 'utf8').slice(0, 1000));
           const swSource = fs.readFileSync(swFiles[0], 'utf8');
-          if (!swSource.includes("const CACHE_NAME = 'football-rich-shell-v8'")) throw new Error('Service worker cache version is stale');
-          console.log('Service worker cache version v7 verified.');
+          if (!swSource.includes("const CACHE_NAME = 'football-rich-shell-v9'")) throw new Error('Service worker cache version is stale');
+          console.log('Service worker cache version v9 verified.');
           NODE
 
       - name: Diagnose app entry and UI assets
