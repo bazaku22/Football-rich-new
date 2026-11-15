@@ -87,7 +87,7 @@ jobs:
           sed -i '/^node \.\.\/scripts\/apply-v3-4-combined-import\.mjs$/a node ../scripts/test-v3-4-combined-import.mjs' build-from-archive.sh
           sed -i '/^node \.\.\/scripts\/test-v3-4-combined-import\.mjs$/a node ../scripts/apply-v3-5-result-template-export.mjs && node ../scripts/test-v3-5-result-template-export.mjs' build-from-archive.sh
           sed -i '/^node \.\.\/scripts\/apply-v3-5-result-template-export\.mjs && node \.\.\/scripts\/test-v3-5-result-template-export\.mjs$/a node ../scripts/apply-v3-6-result-import-null-guard.mjs && node ../scripts/test-v3-6-result-import-null-guard.mjs' build-from-archive.sh
-          sed -i '/^node \\.\\.\\/scripts\\/apply-v3-6-result-import-null-guard\\.mjs && node \\.\\.\\/scripts\\/test-v3-6-result-import-null-guard\\.mjs$/a base64 -d ../scripts/apply-v3-7-analysis-performance-center.mjs.gz.b64 | gzip -dc > /tmp/apply-v3-7-analysis-performance-center.mjs && node /tmp/apply-v3-7-analysis-performance-center.mjs && base64 -d ../scripts/test-v3-7-analysis-performance-center.mjs.gz.b64 | gzip -dc > /tmp/test-v3-7-analysis-performance-center.mjs && node /tmp/test-v3-7-analysis-performance-center.mjs' build-from-archive.sh
+          sed -i '/^node \.\.\/scripts\/apply-v3-6-result-import-null-guard\.mjs && node \.\.\/scripts\/test-v3-6-result-import-null-guard\.mjs$/a base64 -d ../scripts/apply-v3-7-analysis-performance-center.mjs.gz.b64 | gzip -dc > /tmp/apply-v3-7-analysis-performance-center.mjs && node /tmp/apply-v3-7-analysis-performance-center.mjs && base64 -d ../scripts/test-v3-7-analysis-performance-center.mjs.gz.b64 | gzip -dc > /tmp/test-v3-7-analysis-performance-center.mjs && node /tmp/test-v3-7-analysis-performance-center.mjs' build-from-archive.sh
 
       - name: Syntax-check V3.7 Analysis Performance Center scripts
         run: |
@@ -129,7 +129,7 @@ jobs:
           }
           fs.writeFileSync(file,html);
           const swFile='football-rich-v1/dist/sw.js';
-          let sw=fs.readFileSync(swFile,'utf8').replaceAll('football-rich-shell-v53','football-rich-shell-v53').replaceAll('football-rich-shell-v53','football-rich-shell-v53');
+          let sw=fs.readFileSync(swFile,'utf8');
           if (!sw.includes("const CACHE_NAME = 'football-rich-shell-v53'")) throw new Error('Could not apply final V3.7 service worker cache version');
           fs.writeFileSync(swFile,sw);
           console.log('Final V3.6 app entry, Noto Sans Thai font link and service worker cache version verified.');
