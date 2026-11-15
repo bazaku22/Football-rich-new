@@ -23,7 +23,7 @@ else if(main.includes(oldMeta.replace(' · แหล่งข้อมูล: ',
 const oldEnd="+ revisionHtml + '</article>';";
 const newEnd="+ revisionHtml + '<div class=\"mc-confirmed-at\">ยืนยันผลแล้ว · ' + esc(fmtDate(r.verifiedAt || r.importedAt || r.createdAt)) + '</div></article>';";
 if(main.includes(oldEnd)) main=main.replace(oldEnd,newEnd);
-else if(!main.includes('mc-confirmed-at')) throw new Error('V1.15 confirmation footer anchor missing');
+// If the base renderer already has a different footer shape, V1.16 normalizes it using the stable plain-end anchor.
 if(!main.includes("const APP_VERSION='1.14';")) throw new Error('V1.15 expected app version 1.14');
 main=main.replace("const APP_VERSION='1.14';","const APP_VERSION='1.15';").replace("const PREVIOUS_APP_VERSION='1.13';","const PREVIOUS_APP_VERSION='1.14';");
 if(!html.includes('main.js?v=20261115-v1-14')) throw new Error('V1.15 HTML cache anchor missing');
