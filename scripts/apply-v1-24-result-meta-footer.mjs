@@ -4,7 +4,7 @@ let main=fs.readFileSync(mainPath,'utf8'), css=fs.readFileSync(cssPath,'utf8'), 
 const finishedStart=main.indexOf('const renderFinished =');
 const idPos=finishedStart<0?-1:main.indexOf('MATCH ID:',finishedStart);
 const revisionPos=idPos<0?-1:main.indexOf('revisionHtml',idPos);
-const articleToken="'</article>'";
+const articleToken='</article>';
 const articleEnd=revisionPos<0?-1:main.indexOf(articleToken,revisionPos);
 const divPos=idPos<0?-1:main.lastIndexOf('<div',idPos);
 const quoteStart=divPos<0?-1:main.lastIndexOf("'",divPos);
