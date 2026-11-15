@@ -36,6 +36,14 @@ jobs:
         run: |
           docker run --rm -v "$PWD:/path" zricethezav/gitleaks:latest detect --source=/path/football-rich-v1 --no-git --redact --exit-code 1
 
+      - name: Upload verified source archive for maintenance inspection
+        uses: actions/upload-artifact@v4
+        with:
+          name: football-rich-source-audit
+          path: football-rich-v1-test-candidate-0.5.0.zip
+          if-no-files-found: error
+          retention-days: 1
+
       - name: Wire Analysis Import into repeatable build
         run: |
           sed -i '/^cd football-rich-v1$/a node ../scripts/apply-analysis-import.mjs' build-from-archive.sh
