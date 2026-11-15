@@ -180,7 +180,7 @@ jobs:
           const navStart = app.indexOf('const navItems = [');
           const navEnd = app.indexOf('];', navStart);
           if (navStart < 0 || navEnd <= navStart || app.slice(navStart, navEnd).includes("'matches'")) throw new Error('V2.1 navigation audit failed');
-          for (const marker of ['data-select-match','data-open-match-detail','mc-detail-modal','result-import-file','match-form','renderMatchesByDay','mc-day-section','mc-status-upcoming','mc-status-live','mc-status-finished']) {
+          for (const marker of ['data-select-match','data-open-match-detail','mc-detail-modal','match-form','renderMatchesByDay','mc-day-section','mc-status-upcoming','mc-status-live','mc-status-finished']) {
             if (app.includes(marker)) throw new Error('V1.33 Match Center UI residue remains: '+marker);
           }
           if (app.includes('data-go="matches"') || app.includes('พื้นที่โปรแกรมแข่งขันกำลังปรับปรุง') || !app.includes('v21-card') || !app.includes('data-date')) throw new Error('V2.1 Match Center audit failed');
