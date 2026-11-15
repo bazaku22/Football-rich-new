@@ -34,7 +34,7 @@ let pwa=fs.readFileSync(pwaPath,'utf8').replace("navigator.serviceWorker.registe
 fs.writeFileSync(pwaPath,pwa);
 
 const swPath='public/sw.js';
-let sw=fs.readFileSync(swPath,'utf8').replace('football-rich-shell-v2','football-rich-shell-v10').replace('football-rich-shell-v7','football-rich-shell-v10').replace('football-rich-shell-v8','football-rich-shell-v10');
+let sw=fs.readFileSync(swPath,'utf8').replace('football-rich-shell-v2','football-rich-shell-v10').replace('football-rich-shell-v7','football-rich-shell-v10').replace('football-rich-shell-v8','football-rich-shell-v10').replace('football-rich-shell-v9','football-rich-shell-v10');
 if (!sw.includes("const CACHE_NAME = 'football-rich-shell-v10'")) throw new Error('Service worker cache version was not upgraded to v6');
 if (!sw.includes('/brand-emblem.svg')) sw=sw.replace('const APP_SHELL = [', "const APP_SHELL = ['/brand-emblem.svg', ");
 fs.writeFileSync(swPath,sw);
