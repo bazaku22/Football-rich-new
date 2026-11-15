@@ -73,13 +73,13 @@ main=main.replaceAll("setMessage('#analysis-import-message',","safeImportMessage
 if(main.includes("setMessage('#analysis-import-message',"))throw Error('Unsafe Analysis import status updater remains');
 if(!main.includes('application/zip')||!main.includes('const zipReports=async file=>'))throw Error('ZIP batch import support missing');
 
-main=main.replace("const APP_VERSION='3.1';","const APP_VERSION='3.2';").replace("const PREVIOUS_APP_VERSION='3.0';","const PREVIOUS_APP_VERSION='3.1';").replaceAll('FOOTBALL RICH · BLACK & GOLD · V3.1','FOOTBALL RICH · BLACK & GOLD · V3.2').replace('<span class="tag">V3.1</span>','<span class="tag">V3.2</span>');
-html=html.replaceAll('main.js?v=20261116-v3-1','main.js?v=20261116-v3-2');
-sw=sw.replaceAll('football-rich-shell-v47','football-rich-shell-v48');
-version.version='3.2';version.previous_version='3.1';version.release='V3.2-beta.1';
+main=main.replace("const APP_VERSION='3.1';","const APP_VERSION='3.3';").replace("const PREVIOUS_APP_VERSION='3.0';","const PREVIOUS_APP_VERSION='3.2';").replaceAll('FOOTBALL RICH · BLACK & GOLD · V3.1','FOOTBALL RICH · BLACK & GOLD · V3.3').replace('<span class="tag">V3.1</span>','<span class="tag">V3.3</span>');
+html=html.replaceAll('main.js?v=20261116-v3-1','main.js?v=20261116-v3-3');
+sw=sw.replaceAll('football-rich-shell-v47','football-rich-shell-v49');
+version.version='3.3';version.previous_version='3.2';version.release='V3.3-beta.1';
 css+='\n/* V3.2 Tools category */\n.tools-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:14px 0}.tools-card{display:flex;min-width:0;min-height:166px;flex-direction:column;align-items:flex-start;gap:9px;padding:17px;text-align:left;color:#e9e3d5;cursor:pointer}.tools-card:hover{border-color:#b78b32;transform:translateY(-1px)}.tools-icon{display:grid;width:38px;height:38px;place-items:center;border:1px solid #66512b;border-radius:11px;background:#211d14;color:#f4d27b;font-size:20px}.tools-card b{color:#f4d27b;font-size:14px}.tools-card small{color:#a99d83;font-size:11px;line-height:1.6}.tools-open{margin-top:auto;color:#d8bd79;font-size:11px;font-weight:750}.fixture-preview-row{display:flex;flex-direction:column;gap:3px;padding:9px;margin:7px 0;border:1px solid #40351f;border-radius:9px;background:#17140f}.fixture-preview-row b{color:#e9e3d5;font-size:11px}.fixture-preview-row small{color:#a99d83;font-size:9px}@media(max-width:700px){.tools-grid{grid-template-columns:minmax(0,1fr)}.tools-card{min-height:0;padding:14px}.tools-card small{font-size:10px}}\n';
 fs.writeFileSync(mainPath,main);fs.writeFileSync(cssPath,css);fs.writeFileSync(htmlPath,html);fs.writeFileSync(swPath,sw);fs.writeFileSync(versionPath,JSON.stringify(version,null,2)+'\n');
 for(const marker of ["['tools', 'เครื่องมือ']","currentView === 'tools'","currentView === 'fixture-import'","currentView === 'result-import'","currentView === 'import'","fixture-import-file","result-import-file","validateAnalysisImport","yellow_card","red_card"])if(!main.includes(marker))throw Error('V3.2 marker missing: '+marker);
 if(main.includes("['import', 'นำเข้ารายงาน']"))throw Error('Analysis Import should be grouped inside Tools');
 if(main.includes('indexedDB.deleteDatabase(')||main.includes('objectStore.clear('))throw Error('Destructive database operation detected');
-console.log('V3.2 Tools category applied; fixture, analysis and result import tools are grouped without clearing local records.');
+console.log('V3.3 Tools category and duplicate report updates applied without clearing local records.');
