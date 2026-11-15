@@ -65,6 +65,14 @@ handler,
 const settings="else if (currentView === 'settings') {";
 if(!main.includes(settings))throw Error('Settings route anchor missing');
 main=main.replace(settings,toolsBranch+'\n'+resultBranch+'\n'+settings);
+
+const importerAnchor="const input=document.querySelector('#analysis-import-file'), preview=document.querySelector('#analysis-import-preview');";
+if(!main.includes(importerAnchor)) throw new Error('Analysis ZIP importer anchor missing');
+main=main.replace(importerAnchor,"const safeImportMessage=(message,kind='notice')=>{const node=root.querySelector('#analysis-import-message');if(node){node.textContent=String(message);node.className='notice '+kind;}else{const fallback=root.querySelector('#analysis-import-preview');if(fallback)fallback.innerHTML='<p class=\\"notice error\\">'+String(message).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]))+'</p>';}}; const input=root.querySelector('#analysis-import-file'), preview=root.querySelector('#analysis-import-preview');");
+main=main.replaceAll("setMessage('#analysis-import-message',","safeImportMessage(");
+if(main.includes("setMessage('#analysis-import-message',"))throw Error('Unsafe Analysis import status updater remains');
+if(!main.includes("accept=\\".json,application/json,.zip,application/zip\\"")||!main.includes('const zipReports=async file=>'))throw Error('ZIP batch import support missing');
+
 main=main.replace("const APP_VERSION='3.1';","const APP_VERSION='3.2';").replace("const PREVIOUS_APP_VERSION='3.0';","const PREVIOUS_APP_VERSION='3.1';").replaceAll('FOOTBALL RICH · BLACK & GOLD · V3.1','FOOTBALL RICH · BLACK & GOLD · V3.2').replace('<span class="tag">V3.1</span>','<span class="tag">V3.2</span>');
 html=html.replaceAll('main.js?v=20261116-v3-1','main.js?v=20261116-v3-2');
 sw=sw.replaceAll('football-rich-shell-v47','football-rich-shell-v48');
