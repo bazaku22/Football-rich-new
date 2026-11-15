@@ -108,13 +108,13 @@ jobs:
           console.log('Service worker source preview:', fs.readFileSync(swFiles[0], 'utf8').slice(0, 1000));
           const swSource = fs.readFileSync(swFiles[0], 'utf8');
           if (!swSource.includes("const CACHE_NAME = 'football-rich-shell-v13'")) throw new Error('Service worker cache version is stale');
-          console.log('Service worker cache version v12 verified.');
+          console.log('Service worker cache version v13 verified.');
           const app = fs.readFileSync(path.join(root,'main.js'),'utf8');
           for (const feature of ['mc-calendar-head','mc-risk-badge','coverPct > 70','coverPct >= 50','probBar +','allUpcomingMatches.map','ยังประเมินความเสี่ยงไม่ได้']) {
-            if (!app.includes(feature)) throw new Error('V1.5 UI feature missing: ' + feature);
+            if (!app.includes(feature)) throw new Error('V1.5.1 UI feature missing: ' + feature);
           }
           if (app.includes('id="match-form"') || app.includes("currentView === 'matches'")) throw new Error('Legacy duplicate fixture/manual-entry UI remains visible');
-          console.log('V1.5 home calendar, AH risk thresholds, 1X2 bar and hidden legacy fixture UI verified.');
+          console.log('V1.5.1 home calendar, AH risk thresholds, 1X2 bar and hidden legacy fixture UI verified.');
           NODE
 
       - name: Diagnose app entry and UI assets
