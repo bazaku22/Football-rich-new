@@ -8,12 +8,14 @@ const sw=fs.readFileSync('dist/sw.js','utf8');
 const version=JSON.parse(fs.readFileSync('dist/app-version.json','utf8'));
 const schema=JSON.parse(fs.readFileSync('../schemas/football-rich-analysis-v1.schema.json','utf8'));
 const importer=fs.readFileSync('../scripts/apply-analysis-import.mjs','utf8');
+const handicap=fs.readFileSync('dist/domain/handicap.js','utf8');
 
 assert.equal(version.version,'3.0');
 assert.ok(html.includes('main.js?v=20261116-v3-0'));
 assert.ok(sw.includes("const CACHE_NAME = 'football-rich-shell-v46'"));
 for(const marker of ["const APP_VERSION='3.0';",'v30-risk-score','v30-confidence','settleLine']) assert.ok(main.includes(marker),'Missing '+marker);
 for(const marker of ['.v30-risk-score','.v30-confidence']) assert.ok(css.includes(marker),'Missing '+marker);
+assert.ok(handicap.includes('0.25')&&handicap.includes('4'),'Domain AH calculator must support positive handicap lines');
 assert.equal(schema.properties.market.properties.handicap_line.minimum,-4);
 assert.equal(schema.properties.market.properties.handicap_line.maximum,4);
 assert.ok(schema.properties.market.properties.selected_team.enum.includes('none'));
