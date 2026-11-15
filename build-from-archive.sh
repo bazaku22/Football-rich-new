@@ -94,7 +94,7 @@ import fs from 'node:fs';
 const file='dist/index.html';
 let html=fs.readFileSync(file,'utf8');
 html=html.replace('<div id="app"></div>','<div id="app"><div class="boot-screen">กำลังเปิด Football rich…</div></div>');
-html=html.replace('<script type="module" src="/main.js"></script>','<script type="module" src="main.js?v=20261115-v1-3" onerror="window.__footballRichModuleError=true"></script>');
+html=html.replace('<script type="module" src="/main.js"></script>','<script type="module" src="main.js?v=20261115-v1-4" onerror="window.__footballRichModuleError=true"></script>');
 if (!html.includes('rel="icon"')) html=html.replace('</head>','  <link rel="icon" type="image/svg+xml" href="/brand-emblem.svg" />\n  <link rel="apple-touch-icon" href="/icon-192.png" />\n</head>');
 // Prevent an endless startup screen if the JavaScript module graph fails.
 const bootGuard = `<script>
