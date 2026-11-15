@@ -16,6 +16,9 @@ for(const marker of ["const APP_VERSION='3.0';",'v30-risk-score','v30-confidence
 for(const marker of ['.v30-risk-score','.v30-confidence']) assert.ok(css.includes(marker),'Missing '+marker);
 assert.equal(schema.properties.market.properties.handicap_line.minimum,-4);
 assert.equal(schema.properties.market.properties.handicap_line.maximum,4);
+assert.ok(schema.properties.market.properties.selected_team.enum.includes('none'));
+assert.ok(schema.properties.market.properties.handicap_line.type.includes('null'));
+assert.ok(importer.includes("obj.market.selected_team === 'none'"));
 assert.ok(importer.includes('Array.from({length:33},(_,i)=>Number((-4+i*0.25).toFixed(2)))'));
 assert.ok(importer.includes('obj.analysis.risk_score'));
 assert.ok(importer.includes('obj.analysis.data_confidence'));
