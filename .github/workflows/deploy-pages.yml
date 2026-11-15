@@ -55,7 +55,8 @@ jobs:
           sed -i '/^node \.\.\/scripts\/apply-v1-14-match-events\.mjs$/a node ../scripts/apply-v1-15-match-detail-ui.mjs' build-from-archive.sh
           sed -i '/^node \.\.\/scripts\/apply-v1-15-match-detail-ui\.mjs$/a node ../scripts/apply-v1-16-confirmation-footer.mjs' build-from-archive.sh
           sed -i '/^node \.\.\/scripts\/apply-v1-16-confirmation-footer\.mjs$/a node ../scripts/apply-v1-17-compact-match-detail.mjs' build-from-archive.sh
-          sed -i '/^node \.\.\/scripts\/apply-v1-17-compact-match-detail\.mjs$/a node ../scripts/apply-v1-18-hide-finished-list.mjs\n          sed -i \'/^node \.\.\/scripts\/apply-v1-18-hide-finished-list\.mjs$/a node ../scripts/apply-v1-19-unified-status-center.mjs\' build-from-archive.sh'
+          sed -i '/^node \.\.\/scripts\/apply-v1-17-compact-match-detail\.mjs$/a node ../scripts/apply-v1-18-hide-finished-list.mjs' build-from-archive.sh
+          sed -i '/^node \.\.\/scripts\/apply-v1-18-hide-finished-list\.mjs$/a node ../scripts/apply-v1-19-unified-status-center.mjs' build-from-archive.sh
 
       - name: Build Football rich
         run: bash build-from-archive.sh
