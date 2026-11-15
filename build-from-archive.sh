@@ -138,6 +138,8 @@ fs.appendFileSync('src/styles/main.css', '\n.boot-screen{min-height:100vh;displa
 console.log('Brand icon, install icon, startup fallback and service worker registration prepared.');
 NODE
 
+bash ../scripts/apply-v1-5-ui.sh
+
 # GitHub Pages project sites are served beneath /Football-rich-new/.
 # Prefix public asset URLs without rewriting JavaScript source: broad sed replacement
 # corrupts regex literals such as /[&<>"']/g by treating the closing quote + slash as a path.
