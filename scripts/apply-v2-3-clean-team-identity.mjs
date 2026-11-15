@@ -30,7 +30,7 @@ const replacement=String.raw`const nationalFlags = {
  guernsey:'🇬🇬',greenland:'🇬🇱',hongkong:'🇭🇰',jersey:'🇯🇪',faroeislands:'🇫🇴',gibraltar:'🇬🇮',macau:'🇲🇴',macao:'🇲🇴',taiwan:'🇹🇼',curacao:'🇨🇼',
  unitedkingdom:'🇬🇧',greatbritain:'🇬🇧',britain:'🇬🇧',uk:'🇬🇧',northernireland:'🇬🇧',englandnationalteam:'🇬🇧',
  democraticrepublicofthecongo:'🇨🇩',drcongo:'🇨🇩',congo:'🇨🇬',tanzania:'🇹🇿',zambia:'🇿🇲',zimbabwe:'🇿🇼',cameroon:'🇨🇲',burkinafaso:'🇧🇫',guinea:'🇬🇳',guineabissau:'🇬🇼',
- unitedstatesofamerica:'🇺🇸',unitedrepublicoftanzania:'🇹🇿',saintkittsandnevis:'🇰🇳',trinidadandtobago:'🇹🇹',dominicanrepublic:'🇩🇴',el salvador:'🇸🇻'
+ unitedstatesofamerica:'🇺🇸',unitedrepublicoftanzania:'🇹🇿',saintkittsandnevis:'🇰🇳',trinidadandtobago:'🇹🇹',dominicanrepublic:'🇩🇴',elsalvador:'🇸🇻'
 };
 const flagFor = name => {
  const key=String(name||'').toLowerCase().normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').replace(/[^a-z0-9]/g,'');
