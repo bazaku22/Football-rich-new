@@ -41,7 +41,7 @@ fs.writeFileSync(pwaPath,pwa);
 
 const swPath='public/sw.js';
 let sw=fs.readFileSync(swPath,'utf8').replace('football-rich-shell-v2','football-rich-shell-v3');
-if (!sw.includes('/brand-emblem.svg')) sw=sw.replace("'/Football-rich-new/icon-192.png'", "'/Football-rich-new/brand-emblem.svg', '/Football-rich-new/icon-192.png'");
+if (!sw.includes('/brand-emblem.svg')) sw=sw.replace('const APP_SHELL = [', "const APP_SHELL = ['/brand-emblem.svg', ");
 fs.writeFileSync(swPath,sw);
 
 const manifestPath='public/manifest.webmanifest';
@@ -63,6 +63,13 @@ fs.appendFileSync('src/styles/main.css', `
 NODE
 
 npm install --no-audit --no-fund
+npm install --no-save --no-package-lock sharp
+node --input-type=module <<'NODE'
+import sharp from 'sharp';
+await sharp('public/brand-emblem.svg').resize(192,192).png().toFile('public/icon-192.png');
+await sharp('public/brand-emblem.svg').resize(512,512).png().toFile('public/icon-512.png');
+console.log('Generated matching 192px and 512px Android PWA icons.');
+NODE
 sed -i 's/const first = -lowerMagnitude;/const first = lowerMagnitude === 0 ? 0 : -lowerMagnitude;/' src/domain/handicap.ts
 npm run build
 
