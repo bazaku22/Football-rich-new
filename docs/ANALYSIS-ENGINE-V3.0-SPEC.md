@@ -35,11 +35,11 @@ These are V3.0 starting weights, not empirically validated coefficients. Retain 
 
 ## 4. Two-sided AH market comparison
 - Enumerate only handicap lines actually verified in the market, both selected teams, positive and negative lines, quarter increments, within -4.00 to +4.00.
-- handicap_line is applied to selected_team: negative means the selected team gives a handicap; positive means it receives one.
+- handicap_line is applied to selected_team: negative means the selected team gives a handicap; positive means it receives one. If no verified line exists, selected_team=none and handicap_line=null.
 - Calculate five settlement outcomes for every candidate. cover_probability = full_win + half_win.
 - Main recommendation ranks positive-settlement probability first, then full-win probability, lower loss probability, lower risk score, and evidence/price freshness as tie-breakers.
 - Decimal odds and source/time are market snapshots only. Do not calculate EV, Fair Odds, Value Bet, or profit simulations.
-- If no verified candidate has sufficient evidence, PASS or NO RECOMMENDATION.
+- If no verified candidate or market line exists, PASS or NO RECOMMENDATION; use selected_team=none and handicap_line=null rather than inventing a market line.
 
 ## 5. Risk score (initial bands)
 Each component is a 0–100 risk score:
