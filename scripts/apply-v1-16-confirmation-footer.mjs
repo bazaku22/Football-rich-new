@@ -2,7 +2,7 @@ import fs from 'node:fs';
 const mainPath='dist/main.js', htmlPath='dist/index.html', swPath='dist/sw.js';
 let main=fs.readFileSync(mainPath,'utf8'), html=fs.readFileSync(htmlPath,'utf8'), sw=fs.readFileSync(swPath,'utf8');
 
-const historySourcePattern = /\\s*\\+\\s*' · '\\s*\\+\\s*esc\\(old\\.source\\s*\\|\\|\\s*'ไม่ระบุแหล่ง'\\)/;
+const historySourcePattern = /\s*\+\s*' · '\s*\+\s*esc\(old\.source\s*\|\|\s*'ไม่ระบุแหล่ง'\)/;
 main=main.replace(historySourcePattern,'');
 
 // Remove the complete top metadata fragment by locating the next review section.
