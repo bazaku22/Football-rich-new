@@ -84,8 +84,13 @@ jobs:
           sed -i '/^node \.\.\/scripts\/apply-v3-0-analysis-engine\.mjs && node \.\.\/scripts\/test-v3-0-analysis-engine\.mjs$/a node ../scripts/apply-v3-1-existing-only-import.mjs && node ../scripts/test-v3-1-existing-only-import.mjs' build-from-archive.sh
           sed -i '/^node \.\.\/scripts\/apply-v3-1-existing-only-import\.mjs && node \.\.\/scripts\/test-v3-1-existing-only-import\.mjs$/a node ../scripts/apply-v3-2-tools-center.mjs && node ../scripts/test-v3-2-tools-center.mjs' build-from-archive.sh
 
+      - name: Syntax-check V3.2 import scripts
+        run: |
+          node --check scripts/apply-v3-2-tools-center.mjs
+          node --check scripts/test-v3-2-tools-center.mjs
+
       - name: Build Football rich
-        run: bash build-from-archive.sh
+        run: bash -euo pipefail build-from-archive.sh
 
       - name: Run smoke tests
         working-directory: football-rich-v1
@@ -109,10 +114,10 @@ jobs:
           }
           fs.writeFileSync(file,html);
           const swFile='football-rich-v1/dist/sw.js';
-          let sw=fs.readFileSync(swFile,'utf8').replaceAll('football-rich-shell-v46','football-rich-shell-v48');
-          if (!sw.includes("const CACHE_NAME = 'football-rich-shell-v48'")) throw new Error('Could not apply final V3.1 service worker cache version');
+          let sw=fs.readFileSync(swFile,'utf8').replaceAll('football-rich-shell-v47','football-rich-shell-v48').replaceAll('football-rich-shell-v46','football-rich-shell-v48');
+          if (!sw.includes("const CACHE_NAME = 'football-rich-shell-v48'")) throw new Error('Could not apply final V3.2 service worker cache version');
           fs.writeFileSync(swFile,sw);
-          console.log('Final V3.1 app entry, Noto Sans Thai font link and service worker cache version verified.');
+          console.log('Final V3.2 app entry, Noto Sans Thai font link and service worker cache version verified.');
           NODE
 
       - name: Audit generated PWA files
