@@ -6,7 +6,7 @@ const startMarker='window.__footballRichOpenMatchDetail = matchId => {';
 const endMarker='        // V1.27: match detail buttons call the exposed handler directly.';
 const start=main.indexOf(startMarker), end=main.indexOf(endMarker,start);
 if(start<0 || end<0 || end<=start) throw new Error('V1.30 global match detail handler boundaries not found');
-const replacement = String.raw\`window.__footballRichOpenMatchDetail = async matchId => {
+const replacement = String.raw`window.__footballRichOpenMatchDetail = async matchId => {
           const requestId=++detailRequestId;
           if(!detailModal.open) detailModal.showModal();
           document.body.classList.add('mc-detail-open');
@@ -50,7 +50,7 @@ const replacement = String.raw\`window.__footballRichOpenMatchDetail = async mat
             console.error('Football rich V1.31 detail data load failed:',error);
             detailContent.textContent='โหลดรายละเอียดไม่สำเร็จ: '+(error instanceof Error?error.message:'เกิดข้อผิดพลาด');
           }
-        };\`;
+        };`;
 main=main.slice(0,start)+replacement+main.slice(end);
 const marker='/* V1.30: one stable capture handler for every Match Center detail button. */';
 if(!main.includes(marker)) throw new Error('V1.30 delegated click handler marker missing');
