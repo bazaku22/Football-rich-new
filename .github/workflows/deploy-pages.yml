@@ -85,6 +85,7 @@ jobs:
           sed -i '/^node \.\.\/scripts\/apply-v3-1-existing-only-import\.mjs && node \.\.\/scripts\/test-v3-1-existing-only-import\.mjs$/a node ../scripts/apply-v3-2-tools-center.mjs && node ../scripts/test-v3-2-tools-center.mjs' build-from-archive.sh
           sed -i '/^node \.\.\/scripts\/apply-v3-2-tools-center\.mjs && node \.\.\/scripts\/test-v3-2-tools-center\.mjs$/a node ../scripts/apply-v3-4-combined-import.mjs' build-from-archive.sh
           sed -i '/^node \.\.\/scripts\/apply-v3-4-combined-import\.mjs$/a node ../scripts/test-v3-4-combined-import.mjs' build-from-archive.sh
+          sed -i '/^node \.\.\/scripts\/test-v3-4-combined-import\.mjs$/a node ../scripts/apply-v3-5-result-template-export.mjs && node ../scripts/test-v3-5-result-template-export.mjs' build-from-archive.sh
 
       - name: Syntax-check V3.4 combined import scripts
         run: |
@@ -92,6 +93,8 @@ jobs:
           node --check scripts/test-v3-2-tools-center.mjs
           node --check scripts/apply-v3-4-combined-import.mjs
           node --check scripts/test-v3-4-combined-import.mjs
+          node --check scripts/apply-v3-5-result-template-export.mjs
+          node --check scripts/test-v3-5-result-template-export.mjs
 
       - name: Build Football rich
         run: bash -euo pipefail build-from-archive.sh
