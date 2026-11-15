@@ -108,7 +108,7 @@ jobs:
           }
           fs.writeFileSync(file,html);
           const swFile='football-rich-v1/dist/sw.js';
-          let sw=fs.readFileSync(swFile,'utf8').replaceAll('football-rich-shell-v47','football-rich-shell-v47');
+          let sw=fs.readFileSync(swFile,'utf8').replaceAll('football-rich-shell-v46','football-rich-shell-v47');
           if (!sw.includes("const CACHE_NAME = 'football-rich-shell-v47'")) throw new Error('Could not apply final V3.1 service worker cache version');
           fs.writeFileSync(swFile,sw);
           console.log('Final V3.1 app entry, Noto Sans Thai font link and service worker cache version verified.');
@@ -173,7 +173,7 @@ jobs:
           if (app.includes('id="match-form"')) throw new Error('Legacy duplicate fixture/manual-entry UI remains visible');
           if (!fs.existsSync(path.join(root,'app-version.json'))) throw new Error('App version manifest missing');
           const appVersion = JSON.parse(fs.readFileSync(path.join(root,'app-version.json'),'utf8'));
-          if (appVersion.version !== '3.0') throw new Error('App version manifest is stale');
+          if (appVersion.version !== '3.1') throw new Error('App version manifest is stale');
           if (app.includes('กำไรจำลองสุทธิ') || app.includes("card('ผลชำระเดิมพัน'")) throw new Error('V1.9 non-gambling Performance cleanup failed');
           const appCss = fs.readFileSync(path.join(root,'styles/main.css'),'utf8');
           const navStart = app.indexOf('const navItems = [');
