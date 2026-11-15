@@ -1,0 +1,10 @@
+import fs from 'node:fs';
+const path='dist/main.js';
+let main=fs.readFileSync(path,'utf8');
+const old="root.addEventListener('click', event => { const target=event.target.closest('button');";
+const next="document.addEventListener('click', event => { const target=event.target.closest('button');";
+if(main.includes(old)) main=main.replace(old,next);
+else if(!main.includes(next)) throw new Error('Notification click handler anchor missing');
+if(!main.includes(next)) throw new Error('Notification bell click handler was not moved to document');
+fs.writeFileSync(path,main);
+console.log('V1.7 notification bell click handler remains active after moving it into the header.');
