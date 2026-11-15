@@ -115,7 +115,7 @@ if (!css.includes('/* Football rich V1.3 team marks and country flags */')) css 
 
 
 const resetCardAnchor = "${card('ข้อมูลและความเป็นส่วนตัว'";
-const resetCard = `${card('เริ่มโปรแกรมแข่งขันใหม่', '<p class="muted">ลบโปรแกรมแข่งขันเก่า บทวิเคราะห์ ข้อมูลค้นคว้า คำทำนาย ผลแข่งขัน และประวัติผลงานทั้งหมด เพื่อเริ่มชุดข้อมูลใหม่ โดยเก็บการตั้งค่าแอปไว้</p><p class="notice">คำเตือน: การลบนี้ย้อนกลับไม่ได้ แนะนำให้ดาวน์โหลดข้อมูลสำรอง JSON ก่อน</p><button class="danger" id="reset-match-data">ลบข้อมูลการแข่งขันเก่าและเริ่มใหม่</button>')}`;
+const resetCard = `\${card('เริ่มโปรแกรมแข่งขันใหม่', '<p class="muted">ลบโปรแกรมแข่งขันเก่า บทวิเคราะห์ ข้อมูลค้นคว้า คำทำนาย ผลแข่งขัน และประวัติผลงานทั้งหมด เพื่อเริ่มชุดข้อมูลใหม่ โดยเก็บการตั้งค่าแอปไว้</p><p class="notice">คำเตือน: การลบนี้ย้อนกลับไม่ได้ แนะนำให้ดาวน์โหลดข้อมูลสำรอง JSON ก่อน</p><button class="danger" id="reset-match-data">ลบข้อมูลการแข่งขันเก่าและเริ่มใหม่</button>')}`;
 if (main.includes(resetCardAnchor) && !main.includes('id="reset-match-data"')) main = main.replace(resetCardAnchor, resetCard + "\\n      " + resetCardAnchor);
 
 const resetListenerAnchor = "document.querySelector('#export-csv').addEventListener('click', async () =>";
