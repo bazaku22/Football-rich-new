@@ -31,7 +31,7 @@ const logic = [
 "        root.addEventListener('click',event=>{const button=event.target.closest('[data-open-match-detail]');if(button&&root.contains(button))openMatchDetail(button.dataset.openMatchDetail||'');});",
 "        const closeMatchDetail=()=>{detailModal.hidden=true;document.body.classList.remove('mc-detail-open');};",
 "        detailModal.querySelector('[data-detail-close]').addEventListener('click',closeMatchDetail);",
-"        detailModal.addEventListener('click',e=>{if(e.target===detailModal)closeMatchDetail();if(e.target.closest('[data-detail-analysis]')){const mid=activeDetailMatchId;closeMatchDetail();selectedMatchId=mid;switchView('analysis');}});",
+"        detailModal.addEventListener('click',e=>{if(e.target===detailModal)closeMatchDetail();});",
 "        document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!detailModal.hidden)closeMatchDetail();});"
 ].join('\n');
 main=main.slice(0,at)+logic+'\n'+main.slice(at);
