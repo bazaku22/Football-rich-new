@@ -1,0 +1,392 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://bazaku22.github.io/Football-rich-new/schemas/football-rich-analysis-v1.schema.json",
+  "title": "Football rich Analysis Import v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "report_type",
+    "report_id",
+    "created_at",
+    "analysis_as_of",
+    "match",
+    "market",
+    "analysis",
+    "recommendation",
+    "evidence"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "report_type": {
+      "const": "football-rich-analysis"
+    },
+    "report_id": {
+      "type": "string",
+      "minLength": 8
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "analysis_as_of": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "match": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "competition",
+        "home_team",
+        "away_team",
+        "kickoff_at",
+        "timezone"
+      ],
+      "properties": {
+        "competition": {
+          "type": "string",
+          "minLength": 1
+        },
+        "country": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "home_team": {
+          "type": "string",
+          "minLength": 1
+        },
+        "away_team": {
+          "type": "string",
+          "minLength": 1
+        },
+        "home_table_position": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1
+        },
+        "away_table_position": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1
+        },
+        "kickoff_at": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-time"
+        },
+        "timezone": {
+          "type": "string"
+        },
+        "match_status": {
+          "enum": [
+            "scheduled",
+            "live",
+            "finished",
+            "unknown"
+          ]
+        },
+        "match_id_external": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "market": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "market_type",
+        "selected_team",
+        "handicap_line",
+        "decimal_odds",
+        "odds_checked_at"
+      ],
+      "properties": {
+        "market_type": {
+          "const": "asian_handicap"
+        },
+        "selected_team": {
+          "enum": [
+            "home",
+            "away"
+          ]
+        },
+        "handicap_line": {
+          "type": "number",
+          "minimum": -3,
+          "maximum": 3
+        },
+        "decimal_odds": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "exclusiveMinimum": 1
+        },
+        "odds_checked_at": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-time"
+        },
+        "bookmaker_or_source": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "analysis": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "favorite_side",
+        "form_summary",
+        "home_away_summary",
+        "team_news_summary",
+        "match_outcome_probabilities",
+        "handicap_settlement_probabilities",
+        "cover_probability",
+        "probability_status",
+        "risk_level",
+        "reasoning",
+        "limitations"
+      ],
+      "properties": {
+        "favorite_side": {
+          "enum": [
+            "home",
+            "away",
+            "none"
+          ]
+        },
+        "form_summary": {
+          "type": "string"
+        },
+        "home_away_summary": {
+          "type": "string"
+        },
+        "team_news_summary": {
+          "type": "string"
+        },
+        "match_outcome_probabilities": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "additionalProperties": false,
+          "required": [
+            "home_win",
+            "draw",
+            "away_win"
+          ],
+          "properties": {
+            "home_win": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "draw": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "away_win": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            }
+          }
+        },
+        "handicap_settlement_probabilities": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "additionalProperties": false,
+          "required": [
+            "full_win",
+            "half_win",
+            "push",
+            "half_loss",
+            "full_loss"
+          ],
+          "properties": {
+            "full_win": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "half_win": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "push": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "half_loss": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "full_loss": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            }
+          }
+        },
+        "cover_probability": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 1
+        },
+        "probability_status": {
+          "enum": [
+            "estimated",
+            "insufficient_data"
+          ]
+        },
+        "risk_level": {
+          "enum": [
+            "low",
+            "medium",
+            "high",
+            "undetermined"
+          ]
+        },
+        "reasoning": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "limitations": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "recommendation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "selected_team",
+        "handicap_line",
+        "cover_probability",
+        "summary"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "recommended",
+            "provisional",
+            "pass",
+            "no_recommendation"
+          ]
+        },
+        "selected_team": {
+          "enum": [
+            "home",
+            "away",
+            "none"
+          ]
+        },
+        "handicap_line": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "cover_probability": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 1
+        },
+        "summary": {
+          "type": "string"
+        },
+        "stake_note": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "publisher",
+          "url",
+          "checked_at",
+          "claim"
+        ],
+        "properties": {
+          "publisher": {
+            "type": "string"
+          },
+          "url": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "uri"
+          },
+          "checked_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "claim": {
+            "type": "string"
+          },
+          "reliability_note": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      }
+    },
+    "notes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}
