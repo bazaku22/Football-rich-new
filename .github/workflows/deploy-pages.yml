@@ -44,6 +44,7 @@ jobs:
           sed -i '/^node \.\.\/scripts\/apply-v1-3-fixes\.mjs$/a node ../scripts/apply-v1-4-batch-import.mjs' build-from-archive.sh
           sed -i '/^bash \.\.\/scripts\/apply-v1-5-ui\.sh$/a base64 -d ../scripts/apply-v1-6-features.mjs.gz.b64 | gzip -dc > /tmp/apply-v1-6-features.mjs && node /tmp/apply-v1-6-features.mjs' build-from-archive.sh
           sed -i '/^base64 -d \.\.\/scripts\/apply-v1-6-features\.mjs\.gz\.b64 /a base64 -d ../scripts/apply-v1-7-ui.mjs.b64 > /tmp/apply-v1-7-ui.mjs && node /tmp/apply-v1-7-ui.mjs' build-from-archive.sh
+          sed -i '/^base64 -d \.\.\/scripts\/apply-v1-7-ui\.mjs\.b64 /a node ../scripts/apply-v1-7-notification-delegation.mjs' build-from-archive.sh
 
       - name: Build Football rich
         run: bash build-from-archive.sh
