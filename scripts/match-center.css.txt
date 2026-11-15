@@ -36,3 +36,5 @@
 .mc-muted{font-size:11px;color:#a99d83;line-height:1.6}
 @media(max-width:900px){.mc-cards{grid-template-columns:1fr}}
 @media(max-width:650px){.mc-cards{grid-template-columns:1fr}.mc-team{font-size:13px}.mc-score{font-size:26px}.mc-prob b{font-size:14px}.sidebar nav{grid-template-columns:repeat(5,minmax(0,1fr))}.nav-link{font-size:10px;padding:7px 2px}}
+
+.mc-history{margin-top:10px;border-top:1px solid #40351f;padding-top:8px;color:#b9b1a2;font-size:11px}.mc-history summary{cursor:pointer;color:#f4d27b}.mc-history-row{padding:7px 0;border-bottom:1px solid #30291d;line-height:1.5}
