@@ -36,7 +36,7 @@ const cssPatch=`
 .mc-team-mark.mc-team-crest img{display:block;width:100%;height:100%;object-fit:contain;padding:0;border:0;border-radius:0;background:transparent}
 @media(max-width:650px){.mc-team-mark.mc-team-crest{flex-basis:32px;width:32px;height:36px}}
 `;
-if (!css.includes('V1.11: render real club crests')) css+='\\n'+cssPatch;
+if (!css.includes('V1.11: render real club crests')) css+='\n'+cssPatch;
 
 main=main.replace("const APP_VERSION='1.10';","const APP_VERSION='1.11';")
            .replace("const PREVIOUS_APP_VERSION='1.9';","const PREVIOUS_APP_VERSION='1.10';");
