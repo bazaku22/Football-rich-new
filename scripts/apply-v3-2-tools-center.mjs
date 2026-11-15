@@ -4,7 +4,7 @@ const mainPath='dist/main.js',cssPath='dist/styles/main.css',htmlPath='dist/inde
 let main=fs.readFileSync(mainPath,'utf8'),css=fs.readFileSync(cssPath,'utf8'),html=fs.readFileSync(htmlPath,'utf8'),sw=fs.readFileSync(swPath,'utf8');
 const version=JSON.parse(fs.readFileSync(versionPath,'utf8'));
 if(!main.includes("const APP_VERSION='3.1';")||!html.includes('main.js?v=20261116-v3-1')||!sw.includes("const CACHE_NAME = 'football-rich-shell-v47'"))throw Error('V3.2 expected V3.1 build anchors missing');
-if(!main.includes("else if (currentView === 'import')")||!main.includes('validateAnalysisImport'))throw Error('Existing Analysis Import route missing');
+if(!main.includes("else if(currentView==='import')")||!main.includes('validateAnalysisImport'))throw Error('Existing Analysis Import route missing');
 if(!main.includes("else if (currentView === 'settings')"))throw Error('Settings route missing');
 
 if(main.includes("['import', 'นำเข้ารายงาน']"))main=main.replace("['import', 'นำเข้ารายงาน']","['tools', 'เครื่องมือ']");
