@@ -13,7 +13,8 @@ assert.ok(html.includes('main.js?v=20261116-v3-4'));
 assert.ok(sw.includes("const CACHE_NAME = 'football-rich-shell-v50'"));
 
 const toolsStart=main.indexOf("currentView === 'tools'");
-const importStart=main.indexOf("else if (currentView === 'import') {",toolsStart);
+const importMatch=toolsStart<0?null:/else if\s*\(currentView\s*===\s*['"]import['"]\s*\)\s*\{/.exec(main.slice(toolsStart));
+const importStart=importMatch?toolsStart+importMatch.index:-1;
 const toolsBlock=main.slice(toolsStart,importStart);
 assert.ok(toolsStart>=0&&importStart>toolsStart,'Tools Center route must exist before combined importer');
 assert.equal((toolsBlock.match(/data-tool-target=/g)||[]).length,2,'Tools Center should show exactly two tools');
@@ -21,7 +22,6 @@ assert.ok(toolsBlock.includes('นำเข้าโปรแกรมพร้�
 assert.ok(toolsBlock.includes('สรุปผลการแข่งขัน'));
 
 for(const marker of [
-  "currentView === 'import'",
   "currentView === 'result-import'",
   "MATCH + ANALYSIS IMPORT",
   "football-rich-analysis-batch",
@@ -35,6 +35,7 @@ for(const marker of [
   "sameCompetition(a.competition,b.competition)"
 ]) assert.ok(main.includes(marker),'Missing combined import feature: '+marker);
 
+assert.ok(/currentView\s*===\s*['"]import['"]/.test(main));
 assert.ok(!main.includes('fixture-import'));
 assert.ok(!main.includes('analysis-import-existing-only'));
 assert.ok(main.includes('application/json'));
