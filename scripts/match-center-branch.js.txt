@@ -1,14 +1,13 @@
 else if (currentView === 'matches') {
         const resultByMatch = new Map(d.results.map(r => [r.matchId, r]));
         const upcomingMatches = d.matches.filter(m => !resultByMatch.has(m.id)).slice().sort((a,b) => {
-          const ta = Date.parse(maybeDate(a.kickoffAt)) || Number.MAX_SAFE_INTEGER;
-          const tb = Date.parse(maybeDate(b.kickoffAt)) || Number.MAX_SAFE_INTEGER;
+          const ta = Date.parse(a.kickoffAt || '') || Number.MAX_SAFE_INTEGER;
+          const tb = Date.parse(b.kickoffAt || '') || Number.MAX_SAFE_INTEGER;
           return ta - tb;
         });
         const finishedMatches = d.matches.filter(m => resultByMatch.has(m.id)).slice().sort((a,b) =>
           String(resultByMatch.get(b.id)?.verifiedAt || '').localeCompare(String(resultByMatch.get(a.id)?.verifiedAt || ''))
         );
-        const maybeDate = value => value || '';
         const latestAnalysis = matchId => d.analyses.filter(a => a.matchId === matchId).slice().sort((a,b) => String(b.createdAt).localeCompare(String(a.createdAt)))[0];
         const latestPrediction = matchId => d.predictions.filter(p => p.matchId === matchId).slice().sort((a,b) => String(b.createdAt).localeCompare(String(a.createdAt)))[0];
         const percent = value => typeof value === 'number' && Number.isFinite(value) ? value.toFixed(1) + '%' : '—';
@@ -97,9 +96,9 @@ else if (currentView === 'matches') {
             report_type:'football-rich-result',
             result_id:'fr-result-' + new Date().toISOString().replace(/[-:.TZ]/g,'').slice(0,14),
             created_at:nowISO(),
-            verified_at:nowISO(),
-            source:'ระบุแหล่งยืนยันผลการแข่งขัน',
-            matches:upcomingMatches.map(m => ({match_id:m.id,home_team:m.homeTeam,away_team:m.awayTeam,home_goals:0,away_goals:0,events:[]}))
+            verified_at:'',
+            source:'กรุณาระบุแหล่งยืนยันผลการแข่งขันจริง',
+            matches:upcomingMatches.map(m => ({match_id:m.id,home_team:m.homeTeam,away_team:m.awayTeam,home_goals:null,away_goals:null,events:[]}))
           };
           const blob = new Blob([JSON.stringify(template,null,2)], {type:'application/json'});
           const url = URL.createObjectURL(blob);
