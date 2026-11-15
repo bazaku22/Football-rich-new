@@ -45,7 +45,7 @@
 3. ใช้ score probability model (Independent Poisson ใน V3.0) สร้าง score matrix และคำนวณ home_win, draw, away_win จาก matrix เดียวกัน
 4. ความน่าจะเป็น 1X2 ต้องรวม 100% และแยกจาก AH settlement อย่างเด็ดขาด
 5. อย่าปรับเปอร์เซ็นต์เพื่อให้ดูมั่นใจ หากข้อมูลขัดแย้งให้สะท้อนใน Risk Score และ limitations
-6. หากไม่มีข้อมูลพื้นฐานพอสร้าง Expected Goals อย่างมีเหตุผล ให้ null และ probability_status=insufficient_data
+6. หากไม่มีข้อมูลพื้นฐานพอสร้าง Expected Goals อย่างมีเหตุผล ให้ละเว้น expected_goals และกำหนด probability_status=insufficient_data; ห้ามใส่ null ใน expected_goals เพราะ schema รับเป็น object เท่านั้น
 
 ## 4) การวิเคราะห์ AH ทั้งสองฝั่ง
 - วิเคราะห์ทีมเหย้าและทีมเยือน ไม่ยึดว่าทีมต่อคือทีมที่ควรเลือก
@@ -57,7 +57,7 @@
 - คำนวณทุกเส้นโดย split quarter line เป็นสองเส้นครึ่งตามกติกา AH
 - เลือกคำแนะนำหลักจากตัวเลือกที่มีอยู่จริง โดยพิจารณา positive-settlement probability (full_win + half_win) เป็นหลัก; หากใกล้เคียงกันให้พิจารณา full_win ที่สูงกว่า, loss probability ที่ต่ำกว่า, Risk Score ที่ต่ำกว่า และความครบถ้วนของราคา/หลักฐาน
 - ราคา decimal odds เป็น snapshot เพื่อเปรียบเทียบและตรวจสอบเท่านั้น ห้ามคำนวณ EV/Fair Odds/Value และห้ามเรียกตัวเลือกที่ odds สูงกว่าว่า "คุ้มค่า" จาก odds อย่างเดียว
-- ถ้าไม่มีตัวเลือกที่มีข้อมูลเพียงพอหรือไม่มีตัวเลือกที่เหมาะสม ให้ PASS / NO RECOMMENDATION; ห้ามบังคับเลือก
+- ถ้าไม่มีตัวเลือกที่มีข้อมูลเพียงพอหรือไม่มีเส้นตลาดที่ยืนยันได้ ให้ PASS / NO RECOMMENDATION; ใช้ market.selected_team=none, market.handicap_line=null, decimal_odds=null เมื่อไม่มีตลาดที่ยืนยัน ห้ามสร้างเส้นสมมติหรือบังคับเลือก
 
 ## 5) Risk Score และ Data Confidence
 Risk Score เป็นคะแนนความไม่แน่นอน 0–100 (คะแนนสูง = ความเสี่ยงสูง) ไม่ใช่โอกาสแพ้และไม่ใช่ 100 ลบ Cover Probability
@@ -91,7 +91,7 @@ Data Confidence (0–100) เป็นการประเมินความ
 ใช้ schema_version=1.0.0 และ report_type=football-rich-analysis สำหรับรายงานเดี่ยว หรือ football-rich-analysis-batch สำหรับหลายคู่
 - required fields เดิมต้องครบ; optional fields V3.0 ได้แก่ risk_score, data_confidence, risk_components, factor_assessments, model_calibration, candidate_handicaps
 - match, market, analysis, recommendation, evidence ต้องตรง schema
-- market.selected_team คือทีมที่เลือกได้ทั้ง home/away; market.handicap_line รองรับค่าบวก/ลบ
+- market.selected_team คือทีมที่เลือกได้ home/away หรือ none เมื่อไม่มีเส้นตลาดที่ยืนยัน; market.handicap_line รองรับค่าบวก/ลบ หรือ null เฉพาะเมื่อ selected_team=none
 - recommendation.selected_team และ recommendation.handicap_line ต้องตรงกับ market
 - expected_goals ต้องมี basis
 - ตรวจ 1X2 รวม 1.0; AH settlement รวม 1.0; cover_probability เท่ากับ full_win+half_win (คลาดเคลื่อนได้ไม่เกิน 0.005)
