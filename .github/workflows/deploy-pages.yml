@@ -112,7 +112,8 @@ jobs:
           done
           echo "=== GENERATED JS FILES ==="
           find dist -maxdepth 2 -type f -name '*.js' -printf '%p %s bytes\\n'
-\n      - name: Upload Pages artifact
+
+      - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: football-rich-v1/dist
