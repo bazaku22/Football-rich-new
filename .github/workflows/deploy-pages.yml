@@ -26,6 +26,9 @@ jobs:
         with:
           node-version: 22
 
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+
       - name: Extract V1 source
         run: unzip -q -o football-rich-v1-test-candidate-0.5.0.zip -d .
 
@@ -35,6 +38,48 @@ jobs:
 
       - name: Build Football rich
         run: bash build-from-archive.sh
+
+      - name: Audit generated PWA files
+        working-directory: football-rich-v1
+        shell: bash
+        run: |
+          echo "=== Generated files relevant to PWA ==="
+          find dist -type f | sort | grep -Ei 'manifest|service.?worker|sw\\.js|icon|favicon|apple-touch' || true
+          echo "=== Manifest and install metadata ==="
+          node <<'NODE'
+          const fs = require('fs');
+          const path = require('path');
+          const root = path.resolve('dist');
+          const files = [];
+          function walk(dir) {
+            for (const ent of fs.readdirSync(dir, {withFileTypes:true})) {
+              const p = path.join(dir, ent.name);
+              if (ent.isDirectory()) walk(p);
+              else files.push(p);
+            }
+          }
+          walk(root);
+          const manifests = files.filter(p => /manifest.*\\.(webmanifest|json)$/i.test(p));
+          console.log('Manifest files:', manifests.map(p => path.relative(root,p)));
+          for (const file of manifests) {
+            const m = JSON.parse(fs.readFileSync(file,'utf8'));
+            console.log(JSON.stringify({
+              name:m.name, short_name:m.short_name, display:m.display,
+              start_url:m.start_url, scope:m.scope,
+              icons:(m.icons||[]).map(i=>({src:i.src,sizes:i.sizes,type:i.type,purpose:i.purpose}))
+            }, null, 2));
+            for (const icon of (m.icons||[])) {
+              const rel = icon.src.replace(/^\\//,'');
+              const candidates = [path.resolve(root, rel), path.resolve(path.dirname(file), icon.src)];
+              console.log('ICON', icon.src, 'exists=', candidates.some(p=>fs.existsSync(p)));
+            }
+          }
+          const swFiles = files.filter(p => /(^|\\/)(sw|service-worker)(\\.min)?\\.js$/i.test(p));
+          console.log('Service worker candidates:', swFiles.map(p=>path.relative(root,p)));
+          const html = files.filter(p=>p.endsWith('.html')).map(p=>fs.readFileSync(p,'utf8')).join('\\n');
+          console.log('HTML manifest links:', [...html.matchAll(/<link[^>]+rel=["']manifest["'][^>]*>/gi)].map(m=>m[0]));
+          console.log('HTML service worker registration references:', /serviceWorker\\.register/.test(html));
+          NODE
 
       - name: Run smoke tests
         working-directory: football-rich-v1
