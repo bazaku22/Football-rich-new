@@ -1,6 +1,6 @@
 # Football rich Result Import Format v1.0
 
-**Status:** Implemented in Match Center V1.2  
+**Status:** Extended in Football rich V1.14  
 **Purpose:** Import verified final scores and optional goal events into the local Football rich app.
 
 ## Envelope
@@ -25,10 +25,10 @@ Optional `home_team` and `away_team` labels are checked against the local fixtur
 ## Result and events
 
 - `home_goals` and `away_goals` must be non-negative integers.
-- `events` is optional. Each event currently represents a goal and may include `minute`, `scorer`, and `assist`.
+- `events` is optional and may contain `goal`, `yellow_card`, or `red_card` events.\n- Every event requires `type` and `team` (`home` or `away`).\n- Goal events may include `minute`, `scorer`, and `assist`. Card events may include `minute` and `scorer` (the player receiving the card).\n- Events are displayed in match-minute order. Added event types remain optional, so older goal-only Result JSON files remain compatible.
 - `team` must be `home` or `away`.
 - Scorer and assist details should be included only when verified. Omit unavailable details; never invent them.
-- Events may be incomplete. The importer does not assume every goal event or assist is available.
+- Events may be incomplete. The importer does not assume every goal event, assist, or card event is available. Red cards should only be included when explicitly confirmed by a source.
 
 ## Safe import and correction behavior
 
