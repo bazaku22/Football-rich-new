@@ -59,7 +59,7 @@ jobs:
             }
           }
           walk(root);
-          const manifests = files.filter(p => /manifest.*\\.(webmanifest|json)$/i.test(p));
+          const manifests = files.filter(p => /manifest.(webmanifest|json)/i.test(path.basename(p)));
           console.log('Manifest files:', manifests.map(p => path.relative(root,p)));
           for (const file of manifests) {
             const m = JSON.parse(fs.readFileSync(file,'utf8'));
@@ -69,16 +69,16 @@ jobs:
               icons:(m.icons||[]).map(i=>({src:i.src,sizes:i.sizes,type:i.type,purpose:i.purpose}))
             }, null, 2));
             for (const icon of (m.icons||[])) {
-              const rel = icon.src.replace(/^\\//,'');
+              const rel = icon.src.startsWith('/') ? icon.src.slice(1) : icon.src;
               const candidates = [path.resolve(root, rel), path.resolve(path.dirname(file), icon.src)];
               console.log('ICON', icon.src, 'exists=', candidates.some(p=>fs.existsSync(p)));
             }
           }
-          const swFiles = files.filter(p => /(^|\\/)(sw|service-worker)(\\.min)?\\.js$/i.test(p));
+          const swFiles = files.filter(p => ['sw.js','service-worker.js','sw.min.js','service-worker.min.js'].includes(path.basename(p).toLowerCase()));
           console.log('Service worker candidates:', swFiles.map(p=>path.relative(root,p)));
-          const html = files.filter(p=>p.endsWith('.html')).map(p=>fs.readFileSync(p,'utf8')).join('\\n');
-          console.log('HTML manifest links:', [...html.matchAll(/<link[^>]+rel=["']manifest["'][^>]*>/gi)].map(m=>m[0]));
-          console.log('HTML service worker registration references:', /serviceWorker\\.register/.test(html));
+          const html = files.filter(p=>p.endsWith('.html')).map(p=>fs.readFileSync(p,'utf8')).join('\n');
+          console.log('HTML contains manifest link:', html.includes('rel="manifest"') || html.includes("rel='manifest'"));
+          console.log('HTML service worker registration references:', html.includes('serviceWorker.register'));
           NODE
 
       - name: Run smoke tests
