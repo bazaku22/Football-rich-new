@@ -6,7 +6,7 @@ const oldFn='const openMatchDetail=matchId=>{';
 if(!main.includes(oldFn)) throw new Error('V1.27 detail function anchor missing');
 main=main.replace(oldFn,'window.__footballRichOpenMatchDetail = matchId => {');
 const oldButton='data-open-match-detail="\' + esc(m.id) + \'">';
-const newButton='data-open-match-detail="\' + esc(m.id) + \'" onclick="window.__footballRichOpenMatchDetail(this.getAttribute(\'data-open-match-detail\'))">';
+const newButton='data-open-match-detail="\' + esc(m.id) + \'" onclick="window.__footballRichOpenMatchDetail(this.dataset.openMatchDetail)">';
 const count=main.split(oldButton).length-1;
 if(count!==2) throw new Error('V1.27 expected two Match Center detail buttons; found '+count);
 main=main.replaceAll(oldButton,newButton);
