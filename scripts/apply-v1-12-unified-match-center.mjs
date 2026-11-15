@@ -26,14 +26,14 @@ else if (!main.includes('const allMatches = d.matches.slice().sort')) {
 // Render actual club marks in both pre-match and completed match cards.
 // The V1.11 renderer maps knownClubCrests and keeps initials as an image-load fallback.
 const oldUpcomingTeams = `<div class="mc-teams"><div class="mc-team">' + esc(m.homeTeam) + '</div><div class="mc-vs">VS</div><div class="mc-team">' + esc(m.awayTeam) + '</div></div>`;
-const newUpcomingTeams = `<div class="mc-teams">' + teamHtml(m.homeTeam, matchCountry(m,a)) + '<div class="mc-vs">VS</div>' + teamHtml(m.awayTeam, matchCountry(m,a)) + '</div>`;
-if (main.includes(oldUpcomingTeams)) main=main.replace(oldUpcomingTeams,newUpcomingTeams);
-else if (!main.includes(`teamHtml(m.homeTeam, matchCountry(m,a))`)) { const i=main.indexOf('mc-teams'); throw new Error('V1.12 upcoming team crest insertion anchor missing. Context: '+main.slice(Math.max(0,i-350),i+650)); }
+const crestUpcoming = `teamHtml(m.homeTeam, matchCountry(m,a), crestFor(m,a,'home'))`;
+if (main.includes(oldUpcomingTeams)) main=main.replace(oldUpcomingTeams,`<div class="mc-teams">' + ${crestUpcoming} + '<div class="mc-vs">VS</div>' + teamHtml(m.awayTeam, matchCountry(m,a), crestFor(m,a,'away')) + '</div>`);
+else if (!main.includes(crestUpcoming)) throw new Error('V1.12 upcoming card is missing the shared team/crest renderer');
 
 const oldFinishedTeams = `<div class="mc-teams"><div class="mc-team">' + esc(m.homeTeam) + '</div><div class="mc-score">' + Number(r.homeGoals) + ' – ' + Number(r.awayGoals) + '</div><div class="mc-team">' + esc(m.awayTeam) + '</div></div>`;
-const newFinishedTeams = `<div class="mc-teams">' + teamHtml(m.homeTeam, matchCountry(m,a)) + '<div class="mc-score">' + Number(r.homeGoals) + ' – ' + Number(r.awayGoals) + '</div>' + teamHtml(m.awayTeam, matchCountry(m,a)) + '</div>`;
-if (main.includes(oldFinishedTeams)) main=main.replace(oldFinishedTeams,newFinishedTeams);
-else if (!main.includes(`teamHtml(m.homeTeam, matchCountry(m,a)) + '<div class="mc-score">`)) throw new Error('V1.12 finished team crest insertion anchor missing');
+const crestFinished = `teamHtml(m.homeTeam, matchCountry(m,a), crestFor(m,a,'home'))`;
+if (main.includes(oldFinishedTeams)) main=main.replace(oldFinishedTeams,`<div class="mc-teams">' + ${crestFinished} + '<div class="mc-score">' + Number(r.homeGoals) + ' – ' + Number(r.awayGoals) + '</div>' + teamHtml(m.awayTeam, matchCountry(m,a), crestFor(m,a,'away')) + '</div>`);
+else if (!main.includes(crestFinished)) throw new Error('V1.12 finished card is missing the shared team/crest renderer');
 
 // Keep kickoff time visible on finished cards as well as the completed status.
 const oldFinishedHeader = `<div class="mc-card-head"><span>' + esc(m.league) + '</span><span class="tag">ยืนยันผลแล้ว</span></div>`;
