@@ -39,6 +39,17 @@ jobs:
       - name: Build Football rich
         run: bash build-from-archive.sh
 
+      - name: Run smoke tests
+        working-directory: football-rich-v1
+        run: npm run test:smoke
+
+      - name: Run unit tests
+        working-directory: football-rich-v1
+        run: npm test
+
+      - name: Rebuild final PWA with Pages base path and service worker registration
+        run: bash build-from-archive.sh
+
       - name: Audit generated PWA files
         working-directory: football-rich-v1
         shell: bash
@@ -69,7 +80,7 @@ jobs:
               icons:(m.icons||[]).map(i=>({src:i.src,sizes:i.sizes,type:i.type,purpose:i.purpose}))
             }, null, 2));
             for (const icon of (m.icons||[])) {
-              const rel = icon.src.startsWith('/') ? icon.src.slice(1) : icon.src;
+              const rel = path.basename(icon.src);
               const candidates = [path.resolve(root, rel), path.resolve(path.dirname(file), icon.src)];
               console.log('ICON', icon.src, 'exists=', candidates.some(p=>fs.existsSync(p)));
             }
@@ -78,16 +89,12 @@ jobs:
           console.log('Service worker candidates:', swFiles.map(p=>path.relative(root,p)));
           const html = files.filter(p=>p.endsWith('.html')).map(p=>fs.readFileSync(p,'utf8')).join('\n');
           console.log('HTML contains manifest link:', html.includes('rel="manifest"') || html.includes("rel='manifest'"));
-          console.log('HTML service worker registration references:', html.includes('serviceWorker.register'));
+          console.log('HTML service worker registration references:', html.includes('navigator.serviceWorker.register'));
+          if (!swFiles.length || !html.includes('navigator.serviceWorker.register')) {
+            throw new Error('PWA installability check failed: service worker file or registration is missing');
+          }
+          console.log('Service worker source preview:', fs.readFileSync(swFiles[0], 'utf8').slice(0, 1000));
           NODE
-
-      - name: Run smoke tests
-        working-directory: football-rich-v1
-        run: npm run test:smoke
-
-      - name: Run unit tests
-        working-directory: football-rich-v1
-        run: npm test
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
