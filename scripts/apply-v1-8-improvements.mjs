@@ -1,0 +1,30 @@
+import fs from 'node:fs';
+
+const mainPath='dist/main.js';
+const cssPath='dist/styles/main.css';
+const swPath='dist/sw.js';
+const htmlPath='dist/index.html';
+let main=fs.readFileSync(mainPath,'utf8');
+let css=fs.readFileSync(cssPath,'utf8');
+let sw=fs.readFileSync(swPath,'utf8');
+let html=fs.readFileSync(htmlPath,'utf8');
+
+const oldFlag = `if (flag) return '<span class="mc-team-mark mc-team-mark-national" aria-label="' + esc(name) + '"><i class="fr-national-flag">' + flag + '</i></span>';`;
+const newFlag = `if (flag) return '<span class="fr-national-flag-wrap" role="img" aria-label="' + esc(name) + '"><i class="fr-national-flag">' + flag + '</i></span>';`;
+if (!main.includes(oldFlag)) throw new Error('V1.7 national flag renderer anchor missing');
+main=main.replace(oldFlag,newFlag);
+css += `\n/* V1.8: national flags stand alone; remove the enclosing circular badge. */\n.fr-national-flag-wrap{display:inline-flex;flex:0 0 42px;width:42px;height:42px;align-items:center;justify-content:center;background:transparent;border:0;border-radius:0;box-shadow:none;overflow:visible}\n.fr-national-flag-wrap .fr-national-flag{display:block;position:static;width:auto;height:auto;padding:0;margin:0;border:0;border-radius:0;background:transparent;font-style:normal;font-size:34px;line-height:1;filter:drop-shadow(0 1px 2px #0008)}\n@media(max-width:650px){.fr-national-flag-wrap{flex-basis:36px;width:36px;height:36px}.fr-national-flag-wrap .fr-national-flag{font-size:30px}}\n`;
+main=main.replaceAll('V1.7','V1.8');
+html=html.replace('main.js?v=20261115-v1-7','main.js?v=20261115-v1-8');
+sw=sw.replaceAll('football-rich-shell-v15','football-rich-shell-v16');
+const anchor='render().catch(showFatal);';
+if (!main.includes(anchor)) throw new Error('App startup anchor missing for update checker');
+const checker = `// V1.8 release notifications: announce this update once and detect future releases while online.\n(function installReleaseUpdateCheck(){\n  const APP_VERSION='1.8';\n  const PREVIOUS_APP_VERSION='1.7';\n  const STORAGE_KEY='footballRichLastNotifiedVersion';\n  const compare=(a,b)=>{const aa=String(a||'0').split('.').map(Number),bb=String(b||'0').split('.').map(Number);for(let i=0;i<Math.max(aa.length,bb.length);i++){const x=aa[i]||0,y=bb[i]||0;if(x!==y)return x-y;}return 0;};\n  let checking=false;\n  const check=async()=>{if(checking||!navigator.onLine)return;checking=true;try{const url=new URL('app-version.json',document.baseURI);url.searchParams.set('check',String(Date.now()));const response=await fetch(url.href,{cache:'no-store'});if(!response.ok)throw new Error('version check unavailable');const data=await response.json();const remote=String(data.version||'');if(!/^\\d+(?:\\.\\d+){1,2}$/.test(remote))throw new Error('invalid app version');const last=localStorage.getItem(STORAGE_KEY)||'';if(compare(remote,APP_VERSION)>0){if(last!==remote){localStorage.setItem(STORAGE_KEY,remote);window.__frNotify?.('มี Football rich เวอร์ชันใหม่ V'+remote+' แล้ว ปิดแอปแล้วเปิดใหม่เพื่ออัปเดต','success');}}else if(compare(APP_VERSION,PREVIOUS_APP_VERSION)>0&&(!last||compare(APP_VERSION,last)>0)){localStorage.setItem(STORAGE_KEY,APP_VERSION);window.__frNotify?.('Football rich อัปเดตเป็นเวอร์ชัน V'+APP_VERSION+' แล้ว','success');}}catch(error){console.info('Football rich version check skipped:',error?.message||error);}finally{checking=false;}};\n  check();window.addEventListener('online',check);document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')check();});\n})();\n`;
+main=main.replace(anchor,checker+'\n'+anchor);
+fs.writeFileSync(mainPath,main);fs.writeFileSync(cssPath,css);fs.writeFileSync(swPath,sw);fs.writeFileSync(htmlPath,html);
+fs.writeFileSync('dist/app-version.json',JSON.stringify({version:'1.8',release:'V1.8'})+'\\n');
+if(!main.includes('fr-national-flag-wrap')||main.includes('mc-team-mark mc-team-mark-national'))throw new Error('Standalone flag renderer audit failed');
+if(!main.includes('installReleaseUpdateCheck')||!main.includes('footballRichLastNotifiedVersion'))throw new Error('Release notification checker missing');
+if(!html.includes('main.js?v=20261115-v1-8'))throw new Error('App cache-bust not updated');
+if(!sw.includes(\"const CACHE_NAME = 'football-rich-shell-v16'\"))throw new Error('Service worker cache not updated');
+console.log('V1.8 patch: standalone national flags, one-time release toast, online version check, cache v16.');
