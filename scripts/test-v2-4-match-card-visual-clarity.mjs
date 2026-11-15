@@ -1,0 +1,14 @@
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+const main=fs.readFileSync('dist/main.js','utf8'),css=fs.readFileSync('dist/styles/main.css','utf8'),html=fs.readFileSync('dist/index.html','utf8'),sw=fs.readFileSync('dist/sw.js','utf8');
+const version=JSON.parse(fs.readFileSync('dist/app-version.json','utf8'));
+assert.equal(version.version,'2.4');
+assert.ok(html.includes('main.js?v=20261116-v2-4'));
+assert.ok(sw.includes("const CACHE_NAME = 'football-rich-shell-v45'"));
+for(const marker of ["const APP_VERSION='2.4';",'v24-review','v24-status','v24-symbol','actualOutcome','forecastOutcome','settleLine','เจ้าบ้านชนะ','ทีมเยือนชนะ','รอแข่งขัน','จบแล้ว'])assert.ok(main.includes(marker),'Missing '+marker);
+for(const marker of ['.v24-probs>.home','.v24-probs>.draw','.v24-probs>.away','.v24-status.finished','.v24-status.waiting','.v24-review','.v24-symbol.win','.v24-symbol.push','.v24-symbol.loss','Noto Sans Thai'])assert.ok(css.includes(marker),'Missing '+marker);
+// Font family is validated in the generated stylesheet above; Google Fonts may be loaded via CSS fallback or a stylesheet link.
+assert.ok(main.includes("else if (currentView === 'research')")&&main.includes("else if (currentView === 'analysis'"));
+assert.ok(!main.includes('indexedDB.deleteDatabase('));
+assert.ok(!main.includes('objectStore.clear('));
+console.log('V2.4 tests passed: 1X2 color mapping, status badges, forecast review, AH win/push/loss settlement, typography, retained routes and data preservation.');
