@@ -171,7 +171,7 @@ jobs:
           for (const feature of ['installReleaseUpdateCheck','footballRichLastNotifiedVersion','footballRichNotificationsV1','fr-notification-header-button','fr-notification-unread-label','readAt:null','ศูนย์แจ้งเตือน']) {
             if (!app.includes(feature)) throw new Error('V1.5.1 UI feature missing: ' + feature);
           }
-          if (!app.includes('fixture-import-file') || !app.includes('result-import-file') || !app.includes('currentView === \'tools\'') || !app.includes('currentView === \'fixture-import\'') || !app.includes('currentView === \'result-import\'') || !app.includes('validateAnalysisImport')) throw new Error('V3.2 Tools import routes are missing');
+          if (!app.includes('fixture-import-file') || !app.includes('result-import-file') || !app.includes('currentView === \'tools\'') || !app.includes('currentView === \'fixture-import\'') || !app.includes('currentView === \'result-import\'') || !app.includes('analysis-import-existing-only')) throw new Error('V3.2 Tools import routes are missing');
           if (!fs.existsSync(path.join(root,'app-version.json'))) throw new Error('App version manifest missing');
           const appVersion = JSON.parse(fs.readFileSync(path.join(root,'app-version.json'),'utf8'));
           if (appVersion.version !== '3.2') throw new Error('App version manifest is stale');
