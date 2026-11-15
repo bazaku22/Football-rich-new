@@ -77,6 +77,7 @@ jobs:
           sed -i '/^node \.\.\/scripts\/test-v1-32-match-detail-renderer\.mjs$/a node ../scripts/apply-v1-33-remove-match-center-ui.mjs' build-from-archive.sh
           sed -i '/^node \.\.\/scripts\/apply-v1-33-remove-match-center-ui\.mjs$/a node ../scripts/test-v1-33-match-center-removal.mjs' build-from-archive.sh
           sed -i '/^node \.\.\/scripts\/test-v1-33-match-center-removal\.mjs$/a node ../scripts/apply-v2-1-match-center.mjs && node ../scripts/test-v2-1-match-center.mjs' build-from-archive.sh
+          sed -i '/^node \.\.\/scripts\/apply-v2-1-match-center\.mjs && node \.\.\/scripts\/test-v2-1-match-center\.mjs$/a node ../scripts/apply-v2-2-crest-and-national-flags.mjs && node ../scripts/test-v2-2-crest-and-national-flags.mjs' build-from-archive.sh
 
       - name: Build Football rich
         run: bash build-from-archive.sh
@@ -137,12 +138,12 @@ jobs:
           }
           const index = fs.readFileSync(path.join(root,'index.html'),'utf8');
           if (!index.includes('__footballRichBootGuardInstalled')) throw new Error('Startup watchdog missing from final HTML');
-          if (!index.includes('main.js?v=20261116-v2-1')) throw new Error('Cache-busted app entry missing from final HTML');
+          if (!index.includes('main.js?v=20261116-v2-2')) throw new Error('Cache-busted app entry missing from final HTML');
           if (!fs.existsSync(path.join(root,'main.js'))) throw new Error('App entry main.js missing from final output');
           console.log('Startup watchdog, cache-busted app entry and main.js verified.');
           console.log('Service worker source preview:', fs.readFileSync(swFiles[0], 'utf8').slice(0, 1000));
           const swSource = fs.readFileSync(swFiles[0], 'utf8');
-          if (!swSource.includes("const CACHE_NAME = 'football-rich-shell-v42'")) throw new Error('Service worker cache version is stale');
+          if (!swSource.includes("const CACHE_NAME = 'football-rich-shell-v43'")) throw new Error('Service worker cache version is stale');
           console.log('Service worker cache version v13 verified.');
           const app = fs.readFileSync(path.join(root,'main.js'),'utf8');
           for (const feature of ['installReleaseUpdateCheck','footballRichLastNotifiedVersion','footballRichNotificationsV1','fr-notification-header-button','fr-notification-unread-label','readAt:null','ศูนย์แจ้งเตือน']) {
@@ -151,7 +152,7 @@ jobs:
           if (app.includes('id="match-form"')) throw new Error('Legacy duplicate fixture/manual-entry UI remains visible');
           if (!fs.existsSync(path.join(root,'app-version.json'))) throw new Error('App version manifest missing');
           const appVersion = JSON.parse(fs.readFileSync(path.join(root,'app-version.json'),'utf8'));
-          if (appVersion.version !== '2.1') throw new Error('App version manifest is stale');
+          if (appVersion.version !== '2.2') throw new Error('App version manifest is stale');
           if (app.includes('กำไรจำลองสุทธิ') || app.includes("card('ผลชำระเดิมพัน'")) throw new Error('V1.9 non-gambling Performance cleanup failed');
           const appCss = fs.readFileSync(path.join(root,'styles/main.css'),'utf8');
           const navStart = app.indexOf('const navItems = [');
