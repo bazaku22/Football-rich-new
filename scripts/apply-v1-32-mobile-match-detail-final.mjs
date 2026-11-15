@@ -5,7 +5,7 @@ let main=fs.readFileSync(mainPath,'utf8'), html=fs.readFileSync(htmlPath,'utf8')
 if(!main.includes("const APP_VERSION='1.31';") || !html.includes('main.js?v=20261116-v1-31') || !sw.includes("const CACHE_NAME = 'football-rich-shell-v39'")) throw new Error('V1.32 expected V1.31 build anchors missing');
 
 // Audit the two real templates emitted by Match Center, not synthetic test buttons.
-const realButtonTemplate='data-open-match-detail="\' + esc(m.id) + \'" onclick="window.__footballRichOpenMatchDetail(this.dataset.openMatchDetail)">';
+const realButtonTemplate='data-open-match-detail="\' + esc(m.id) + \'">';
 const realTemplateCount=main.split(realButtonTemplate).length-1;
 if(realTemplateCount!==2) throw new Error('V1.32 expected actual upcoming + finished renderer templates; found '+realTemplateCount);
 main=main.replaceAll(' onclick="window.__footballRichOpenMatchDetail(this.dataset.openMatchDetail)"','');
