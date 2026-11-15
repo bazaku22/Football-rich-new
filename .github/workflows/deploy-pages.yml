@@ -93,7 +93,20 @@ jobs:
         run: npm test
 
       - name: Rebuild final PWA with Pages base path and service worker registration
-        run: bash build-from-archive.sh
+        run: |
+          bash build-from-archive.sh
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          const file='football-rich-v1/dist/index.html';
+          let html=fs.readFileSync(file,'utf8');
+          html=html.replace(/(src=["'][^"']*main\\.js)(?:\\?[^"']*)?(["'])/g, '$1?v=20261116-v2-4$2');
+          if (!html.includes('main.js?v=20261116-v2-4')) throw new Error('Could not apply final V2.4 cache-busted app entry');
+          if (!html.includes('fonts.googleapis.com/css2?family=Inter')) {
+            html=html.replace('</head>', '<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Thai:wght@400;500;600;700;800&display=swap" rel="stylesheet></head>');
+          }
+          fs.writeFileSync(file,html);
+          console.log('Final V2.4 app entry cache-bust and Noto Sans Thai font link verified.');
+          NODE
 
       - name: Audit generated PWA files
         working-directory: football-rich-v1
