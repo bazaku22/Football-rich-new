@@ -5,7 +5,15 @@ let main=fs.readFileSync(mainPath,'utf8');
 let css=fs.readFileSync(cssPath,'utf8');
 let html=fs.readFileSync(htmlPath,'utf8');
 let sw=fs.readFileSync(swPath,'utf8');
+const handicapPath='dist/domain/handicap.js';
+let handicap=fs.readFileSync(handicapPath,'utf8');
 const version=JSON.parse(fs.readFileSync(versionPath,'utf8'));
+
+const oldHandicapList='0, -0.25, -0.5, -0.75, -1, -1.25, -1.5, -1.75, -2, -2.25, -2.5, -2.75, -3, -3.25, -3.5, -3.75, -4';
+const newHandicapList='-4, -3.75, -3.5, -3.25, -3, -2.75, -2.5, -2.25, -2, -1.75, -1.5, -1.25, -1, -0.75, -0.5, -0.25, 0, 0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2, 2.25, 2.5, 2.75, 3, 3.25, 3.5, 3.75, 4';
+if(handicap.includes(oldHandicapList)) handicap=handicap.replace(oldHandicapList,newHandicapList);
+else if(!handicap.includes('4')) throw new Error('Could not verify the AH calculator line range');
+fs.writeFileSync(handicapPath,handicap);
 
 if(!main.includes("const APP_VERSION='2.4';")) throw new Error('V3.0 expected V2.4 main bundle anchor missing');
 if(!html.includes('main.js?v=20261116-v2-4')) throw new Error('V3.0 expected V2.4 HTML cache anchor missing');
