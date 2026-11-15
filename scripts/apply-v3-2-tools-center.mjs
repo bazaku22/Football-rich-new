@@ -7,8 +7,12 @@ if(!main.includes("const APP_VERSION='3.1';")||!html.includes('main.js?v=2026111
 if(!/currentView\s*===\s*['"]import['"]/.test(main)||!main.includes('analysis-import-existing-only'))throw Error('Existing safe Analysis Import route missing');
 if(!main.includes("else if (currentView === 'settings')"))throw Error('Settings route missing');
 
-if(main.includes("['import', 'นำเข้ารายงาน']"))main=main.replace("['import', 'นำเข้ารายงาน']","['tools', 'เครื่องมือ']");
-else if(!main.includes("['tools', 'เครื่องมือ']"))throw Error('Analysis Import navigation item missing');
+const navStart=main.indexOf('const navItems = ['),navEnd=main.indexOf('];',navStart);
+if(navStart<0||navEnd<=navStart)throw Error('Navigation array not found');
+const navBlock=main.slice(navStart,navEnd);
+const importNav=navBlock.match(/\[\s*['"]import['"]\s*,\s*['"][^'"]*['"]\s*\]/);
+if(importNav)main=main.slice(0,navStart)+navBlock.replace(importNav[0],"['tools', 'เครื่องมือ']")+main.slice(navEnd);
+else if(!navBlock.includes("['tools', 'เครื่องมือ']"))throw Error('Import navigation item missing in: '+navBlock.slice(0,500));
 
 const toolsBranch = [
 "else if (currentView === 'tools') {",
