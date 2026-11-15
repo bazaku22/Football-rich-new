@@ -13,7 +13,8 @@ const frProbabilityModel = (expectedGoals, selectedTeam, handicapLine) => {
     return values;
   };
   const split = (line) => {
-    if (![-0.25,-0.5,-0.75,-1,-1.25,-1.5,-1.75,-2].some(v => Math.abs(v - line) < 1e-9)) throw new RangeError('Unsupported Asian Handicap line.');
+    if (![0,-0.25,-0.5,-0.75,-1,-1.25,-1.5,-1.75,-2].some(v => Math.abs(v - line) < 1e-9)) throw new RangeError('Unsupported Asian Handicap line.');
+    if (Math.abs(line) < 1e-9) return [0, 0];
     if (Math.abs(line * 4) % 2 !== 1) return [line, line];
     const magnitude = Math.floor(Math.abs(line) * 2) / 2;
     return [magnitude === 0 ? 0 : -magnitude, -(magnitude + 0.5)];
