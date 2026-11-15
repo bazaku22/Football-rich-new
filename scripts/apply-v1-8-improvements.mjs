@@ -26,5 +26,5 @@ fs.writeFileSync('dist/app-version.json',JSON.stringify({version:'1.8',release:'
 if(!main.includes('fr-national-flag-wrap')||main.includes('mc-team-mark mc-team-mark-national'))throw new Error('Standalone flag renderer audit failed');
 if(!main.includes('installReleaseUpdateCheck')||!main.includes('footballRichLastNotifiedVersion'))throw new Error('Release notification checker missing');
 if(!html.includes('main.js?v=20261115-v1-8'))throw new Error('App cache-bust not updated');
-if(!sw.includes(\"const CACHE_NAME = 'football-rich-shell-v16'\"))throw new Error('Service worker cache not updated');
+if(!sw.includes("const CACHE_NAME = 'football-rich-shell-v16'"))throw new Error('Service worker cache not updated');
 console.log('V1.8 patch: standalone national flags, one-time release toast, online version check, cache v16.');
