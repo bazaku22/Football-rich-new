@@ -4,8 +4,9 @@ let main=fs.readFileSync(mainPath,'utf8'),css=fs.readFileSync(cssPath,'utf8'),ht
 const version=JSON.parse(fs.readFileSync(versionPath,'utf8'));
 if(version.version!=='3.4'||!main.includes("const APP_VERSION='3.4';")||!html.includes('main.js?v=20261116-v3-4')||!sw.includes("const CACHE_NAME = 'football-rich-shell-v50'"))throw Error('V3.5 expected V3.4 build anchors missing');
 const toolsStart=main.indexOf("currentView === 'tools'");
-const resultCard=main.indexOf('data-tool-target=\\\"result-import\\\"',toolsStart);
-const toolsEnd=main.indexOf("else if (currentView === 'result-import')",toolsStart);
+const resultMarker=main.indexOf('result-import',toolsStart);
+const resultCard=main.lastIndexOf('data-tool-target',resultMarker);
+const toolsEnd=main.indexOf("currentView === 'result-import'",resultMarker+1);
 if(toolsStart<0||resultCard<0||toolsEnd<resultCard)throw Error('Could not locate Result Import card before the Result Import route');
 const closeCard="</button></div>'";
 const closeAt=main.indexOf(closeCard,resultCard);
