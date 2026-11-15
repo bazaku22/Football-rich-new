@@ -160,7 +160,7 @@ jobs:
           if (app.includes('data-go="matches"') || !app.includes('ส่วนโปรแกรมแข่งขันกำลังปรับปรุง')) throw new Error('V1.33 Match Center route suspension audit failed');
           if (app.includes('indexedDB.deleteDatabase(') || app.includes('objectStore.clear(')) throw new Error('V1.33 destructive database operation detected');
           for (const dataFile of ['data/database.js','data/schema.js']) if (!fs.existsSync(path.join(root,dataFile))) throw new Error('V1.33 stored match data module missing: '+dataFile);
-          if (!app.includes('currentView === \'matches\'') || !app.includes('currentView === \'research\'')) throw new Error('V1.33 route boundaries were damaged');
+          if (!app.includes('if (currentView === \'dashboard\')') || !app.includes('else if (currentView === \'research\'') || !app.includes('else if (currentView === \'analysis\'')) throw new Error('V1.33 Dashboard replacement or retained routes are missing');
           console.log('V1.9 verified: existing match analysis retained, financial summary cards removed, unread notification center and release metadata updated.');
           NODE
 
