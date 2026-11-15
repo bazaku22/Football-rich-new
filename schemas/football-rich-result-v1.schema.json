@@ -1,0 +1,132 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://bazaku22.github.io/Football-rich-new/schemas/football-rich-result-v1.schema.json",
+  "title": "Football rich Result Import v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "report_type",
+    "result_id",
+    "created_at",
+    "verified_at",
+    "source",
+    "matches"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "report_type": {
+      "const": "football-rich-result"
+    },
+    "result_id": {
+      "type": "string",
+      "minLength": 8
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "verified_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "source": {
+      "type": "string",
+      "minLength": 1
+    },
+    "matches": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 100,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "home_goals",
+          "away_goals"
+        ],
+        "anyOf": [
+          {
+            "required": [
+              "match_id"
+            ]
+          },
+          {
+            "required": [
+              "analysis_report_id"
+            ]
+          }
+        ],
+        "properties": {
+          "match_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "analysis_report_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "home_team": {
+            "type": "string",
+            "minLength": 1
+          },
+          "away_team": {
+            "type": "string",
+            "minLength": 1
+          },
+          "home_goals": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "away_goals": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "events": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "type",
+                "team"
+              ],
+              "properties": {
+                "type": {
+                  "const": "goal"
+                },
+                "minute": {
+                  "oneOf": [
+                    {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 150
+                    },
+                    {
+                      "type": "string",
+                      "maxLength": 8
+                    }
+                  ]
+                },
+                "team": {
+                  "enum": [
+                    "home",
+                    "away"
+                  ]
+                },
+                "scorer": {
+                  "type": "string"
+                },
+                "assist": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
