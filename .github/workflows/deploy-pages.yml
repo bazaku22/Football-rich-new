@@ -135,10 +135,10 @@ jobs:
           if (appVersion.version !== '1.20') throw new Error('App version manifest is stale');
           if (app.includes('กำไรจำลองสุทธิ') || app.includes("card('ผลชำระเดิมพัน'")) throw new Error('V1.9 non-gambling Performance cleanup failed');
           for (const statusClass of ['mc-status-upcoming','mc-status-live','mc-status-finished']) if (!app.includes(statusClass)) throw new Error('V1.20 Match Center status badge missing: '+statusClass);
-          for (const layoutRule of ['.mc-card{box-sizing:border-box;width:100%','.mc-teams{box-sizing:border-box;display:grid;width:100%','.mc-team-name{display:block;box-sizing:border-box;width:100%']) if (!css.includes(layoutRule)) throw new Error('V1.20 mobile Match Center layout missing: '+layoutRule);
+          const appCss = fs.readFileSync(path.join(root,'styles/main.css'),'utf8');
+          for (const layoutRule of ['.mc-card{box-sizing:border-box;width:100%','.mc-teams{box-sizing:border-box;display:grid;width:100%','.mc-team-name{display:block;box-sizing:border-box;width:100%']) if (!appCss.includes(layoutRule)) throw new Error('V1.20 mobile Match Center layout missing: '+layoutRule);
           if (!app.includes('allMatches.map(m => resultByMatch.has(m.id) ? renderFinished(m) : renderUpcoming(m))') || app.includes('allMatches.filter(m => !resultByMatch.has(m.id)).map(renderUpcoming)')) throw new Error('V1.20 unified all-status Match Center audit failed');
           for (const crestUrl of ['machida-zelvia-logo-footylogos.svg','vissel-kobe-logo-footylogos.svg','kashiwa-reysol-logo-footylogos.svg','kawasaki-frontale-logo-footylogos.svg']) if (!app.includes(crestUrl)) throw new Error('V1.13 club crest asset missing: '+crestUrl);
-          const appCss = fs.readFileSync(path.join(root,'styles/main.css'),'utf8');
           for (const feature of ['mc-event-columns','mc-assist-boot','mc-confirmed-at','renderSideEvents','mc-event-minute','eventMinuteKey']) if (!app.includes(feature) && !appCss.includes(feature)) throw new Error('V1.15 match detail UI feature missing: '+feature);
           if (app.includes('แหล่งข้อมูล:') || app.includes('ยืนยันผล:')) throw new Error('V1.16 verbose source or top confirmation metadata remains in match renderer');
           for (const feature of ['mc-card-icon-yellow','mc-card-icon-red','.mc-event-ball']) if (!appCss.includes(feature)) throw new Error('V1.15 event icon style missing: '+feature);
