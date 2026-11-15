@@ -32,6 +32,16 @@ jobs:
       - name: Extract V1 source
         run: unzip -q -o football-rich-v1-test-candidate-0.5.0.zip -d .
 
+      - name: Export V1.1 build patch for source review
+        run: |
+          base64 -d scripts/apply-v1-1-ui.py.gz.b64 | gzip -dc > /tmp/football-rich-v1-1-ui.py
+      - name: Upload V1.1 build patch for source review
+        uses: actions/upload-artifact@v4
+        with:
+          name: football-rich-v1-1-patch-audit
+          path: /tmp/football-rich-v1-1-ui.py
+          retention-days: 1
+
       - name: Scan source for secrets
         run: |
           docker run --rm -v "$PWD:/path" zricethezav/gitleaks:latest detect --source=/path/football-rich-v1 --no-git --redact --exit-code 1
