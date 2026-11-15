@@ -41,6 +41,7 @@ jobs:
           sed -i '/^cd football-rich-v1$/a node ../scripts/apply-analysis-import.mjs' build-from-archive.sh
           sed -i '/^python3 \/tmp\/football-rich-v1-1-ui.py$/a node ../scripts/apply-match-center.mjs' build-from-archive.sh
           sed -i '/^node \.\.\/scripts\/apply-match-center\.mjs$/a node ../scripts/apply-v1-3-fixes.mjs' build-from-archive.sh
+          sed -i '/^node \.\.\/scripts\/apply-v1-3-fixes\.mjs$/a node ../scripts/apply-v1-4-batch-import.mjs' build-from-archive.sh
 
       - name: Build Football rich
         run: bash build-from-archive.sh
