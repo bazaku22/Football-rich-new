@@ -9,22 +9,14 @@ node --input-type=module <<'NODE'
 import fs from 'node:fs';
 
 const emblem = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-  <defs>
-    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#F4D27B"/>
-      <stop offset="0.52" stop-color="#B78B32"/>
-      <stop offset="1" stop-color="#8A641F"/>
-    </linearGradient>
-  </defs>
+  <defs><linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F4D27B"/><stop offset=".52" stop-color="#B78B32"/><stop offset="1" stop-color="#8A641F"/></linearGradient></defs>
   <rect width="512" height="512" rx="112" fill="#121212"/>
-  <path d="M76 160l92 66 88-116 88 116 92-66-38 184H114L76 160z" fill="url(#gold)" stroke="#F4D27B" stroke-width="12" stroke-linejoin="round"/>
-  <circle cx="76" cy="146" r="24" fill="#F4D27B"/><circle cx="256" cy="88" r="24" fill="#F4D27B"/><circle cx="436" cy="146" r="24" fill="#F4D27B"/>
-  <path d="M154 354h204v34H154z" fill="url(#gold)"/>
-  <path d="M194 388h124v30H194z" fill="url(#gold)"/>
-  <path d="M218 418h76v28h-76z" fill="url(#gold)"/>
-  <path d="M154 258h-44v34c0 42 32 72 80 74M358 258h44v34c0 42-32 72-80 74" fill="none" stroke="#F4D27B" stroke-width="22" stroke-linecap="round"/>
-  <path d="M196 246h120v80c0 42-27 72-60 72s-60-30-60-72v-80z" fill="#211D14" stroke="url(#gold)" stroke-width="16"/>
-  <path d="M226 278l30 22 30-22-11 36 20 25h-78l20-25z" fill="url(#gold)"/>
+  <path d="M116 118l74 56 66-91 66 91 74-56-27 126H143z" fill="url(#gold)" stroke="#F4D27B" stroke-width="13" stroke-linejoin="round"/>
+  <circle cx="116" cy="106" r="17" fill="#F4D27B"/><circle cx="256" cy="68" r="18" fill="#F4D27B"/><circle cx="396" cy="106" r="17" fill="#F4D27B"/>
+  <path d="M174 225h164v62c0 61-36 104-82 104s-82-43-82-104z" fill="#211D14" stroke="url(#gold)" stroke-width="17" stroke-linejoin="round"/>
+  <path d="M174 244h-42v31c0 43 27 68 70 72M338 244h42v31c0 43-27 68-70 72" fill="none" stroke="#F4D27B" stroke-width="20" stroke-linecap="round"/>
+  <path d="M238 391h36v43h-36zM190 431h132v27H190z" fill="url(#gold)"/>
+  <path d="M256 248l13 26 29 4-21 20 5 29-26-14-26 14 5-29-21-20 29-4z" fill="url(#gold)"/>
 </svg>`;
 fs.writeFileSync('public/brand-emblem.svg', emblem);
 
@@ -62,6 +54,23 @@ fs.appendFileSync('src/styles/main.css', `
 .mobile-head .brand-mark img { width:38px; height:38px; }
 .hero-emblem { display:flex; align-items:center; justify-content:center; }
 .hero-emblem img { width:min(100%,220px); aspect-ratio:1; object-fit:contain; border-radius:28px; box-shadow:0 18px 52px #0008; }
+/* Dashboard and emblem layout refinement — desktop + Android */
+.brand-mark { flex:0 0 54px; width:54px; height:54px; padding:5px; overflow:hidden; }
+.brand-mark img { width:100%; height:100%; max-width:100%; max-height:100%; object-fit:contain; display:block; }
+.mobile-head .brand-mark { flex-basis:38px; width:38px; height:38px; padding:3px; }
+.hero { gap:clamp(18px,3vw,34px); }
+.hero > div:first-child { flex:1 1 320px; min-width:0; }
+.hero-emblem { flex:0 1 220px; width:220px; min-width:0; padding:0; opacity:1; }
+.hero-emblem img { display:block; width:100%; max-width:220px; height:auto; aspect-ratio:1; object-fit:contain; margin-inline:auto; }
+@media(max-width:650px) {
+  .hero { flex-direction:column; align-items:stretch; gap:18px; padding:22px; }
+  .hero > div:first-child { width:100%; flex:1 1 auto; }
+  .hero-emblem { align-self:center; flex:0 0 auto; width:min(44vw,148px); max-width:148px; padding:0; }
+  .hero-emblem img { width:100%; max-width:148px; height:auto; border-radius:20px; box-shadow:0 10px 28px #0007; }
+  .stats-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .two-col { grid-template-columns:minmax(0,1fr); }
+}
+
 `);
 NODE
 
@@ -121,7 +130,7 @@ if (!html.includes('navigator.serviceWorker.register')) {
   html = html.replace('</body>', registration + '</body>');
 }
 fs.writeFileSync(file,html);
-fs.appendFileSync('src/styles/main.css', "\n/* Dashboard and emblem layout refinement — desktop + Android */\n.brand-mark { flex:0 0 54px; width:54px; height:54px; padding:5px; overflow:hidden; }\n.brand-mark img { width:100%; height:100%; max-width:100%; max-height:100%; object-fit:contain; display:block; }\n.mobile-head .brand-mark { flex-basis:38px; width:38px; height:38px; padding:3px; }\n.hero { gap:clamp(18px,3vw,34px); }\n.hero > div:first-child { flex:1 1 320px; min-width:0; }\n.hero-emblem { flex:0 1 220px; width:220px; min-width:0; padding:0; opacity:1; }\n.hero-emblem img { display:block; width:100%; max-width:220px; height:auto; aspect-ratio:1; object-fit:contain; margin-inline:auto; }\n@media(max-width:650px) {\n  .hero { flex-direction:column; align-items:stretch; gap:18px; padding:22px; }\n  .hero > div:first-child { width:100%; flex:1 1 auto; }\n  .hero-emblem { align-self:center; flex:0 0 auto; width:min(44vw,148px); max-width:148px; padding:0; }\n  .hero-emblem img { width:100%; max-width:148px; height:auto; border-radius:20px; box-shadow:0 10px 28px #0007; }\n  .stats-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }\n  .two-col { grid-template-columns:minmax(0,1fr); }\n}\n");
+ }\n.hero > div:first-child { flex:1 1 320px; min-width:0; }\n.hero-emblem { flex:0 1 220px; width:220px; min-width:0; padding:0; opacity:1; }\n.hero-emblem img { display:block; width:100%; max-width:220px; height:auto; aspect-ratio:1; object-fit:contain; margin-inline:auto; }\n@media(max-width:650px) {\n  .hero { flex-direction:column; align-items:stretch; gap:18px; padding:22px; }\n  .hero > div:first-child { width:100%; flex:1 1 auto; }\n  .hero-emblem { align-self:center; flex:0 0 auto; width:min(44vw,148px); max-width:148px; padding:0; }\n  .hero-emblem img { width:100%; max-width:148px; height:auto; border-radius:20px; box-shadow:0 10px 28px #0007; }\n  .stats-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }\n  .two-col { grid-template-columns:minmax(0,1fr); }\n}\n");
 fs.appendFileSync('src/styles/main.css', '\n.boot-screen{min-height:100vh;display:grid;place-items:center;background:#121212;color:#F4D27B;font:600 16px system-ui,sans-serif}.boot-error{color:#ffb4a9;padding:24px;text-align:center}\n');
 console.log('Brand icon, install icon, startup fallback and service worker registration prepared.');
 NODE
