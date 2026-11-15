@@ -46,8 +46,8 @@ assert.equal(dialog.insertCount,1);
 
 // Construct the tapped buttons from the actual selector shape extracted above,
 // rather than inventing a different attribute or selector for the test.
-const upcomingHtml=actualTemplate.replace('\\' + esc(m.id) + \\'','upcoming-1');
-const finishedHtml=actualTemplate.replace('\\' + esc(m.id) + \\'','finished-2');
+const upcomingHtml=actualTemplate.replace("' + esc(m.id) + '", 'upcoming-1');
+const finishedHtml=actualTemplate.replace("' + esc(m.id) + '", 'finished-2');
 assert.match(upcomingHtml,/data-open-match-detail="upcoming-1"/);
 assert.match(finishedHtml,/data-open-match-detail="finished-2"/);
 const click=async htmlButton=>{
