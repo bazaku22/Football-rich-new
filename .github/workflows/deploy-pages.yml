@@ -69,9 +69,9 @@ jobs:
           sed -i '/^node \.\.\/scripts\/apply-v1-28-capture-match-detail\.mjs$/a node ../scripts/apply-v1-29-direct-match-detail-bindings.mjs' build-from-archive.sh
           sed -i '/^node \.\.\/scripts\/apply-v1-29-direct-match-detail-bindings\.mjs$/a node ../scripts/apply-v1-30-native-match-detail-dialog.mjs' build-from-archive.sh
           sed -i '/^node \.\.\/scripts\/apply-v1-30-native-match-detail-dialog\.mjs$/a node ../scripts/apply-v1-31-scope-safe-match-detail.mjs' build-from-archive.sh
-          sed -i '/^node \.\.\/scripts\/apply-v1-31-scope-safe-match-detail\.mjs$/a node ../scripts/test-v1-31-match-detail-runtime.mjs
-          node ../scripts/apply-v1-32-mobile-match-detail-final.mjs
-          node ../scripts/test-v1-32-match-detail-renderer.mjs' build-from-archive.sh
+          sed -i '/^node \.\.\/scripts\/apply-v1-31-scope-safe-match-detail\.mjs$/a node ../scripts/test-v1-31-match-detail-runtime.mjs' build-from-archive.sh
+          sed -i '/^node \.\.\/scripts\/test-v1-31-match-detail-runtime\.mjs$/a node ../scripts/apply-v1-32-mobile-match-detail-final.mjs' build-from-archive.sh
+          sed -i '/^node \.\.\/scripts\/apply-v1-32-mobile-match-detail-final\.mjs$/a node ../scripts/test-v1-32-match-detail-renderer.mjs' build-from-archive.sh
 
       - name: Build Football rich
         run: bash build-from-archive.sh
@@ -166,7 +166,7 @@ jobs:
           if (!app.includes('window.__footballRichOpenMatchDetail = async matchId =>')) throw new Error('V1.27 global match detail function missing');
           if (!app.includes('V1.31: scope-safe controller') || !app.includes('const d=await records();')) throw new Error('V1.31 match detail data scope repair missing');
           if (!app.includes('V1.32: robust delegated tap handler')) throw new Error('V1.32 robust mobile tap handler missing');
-          const detailTemplate = 'data-open-match-detail="\\' + esc(m.id) + \\'">';
+          const detailTemplate = 'data-open-match-detail="\' + esc(m.id) + \'">';
           if ((app.split(detailTemplate).length - 1) !== 2) throw new Error('V1.32 actual upcoming + finished renderer button templates missing');
           if (app.includes('onclick="window.__footballRichOpenMatchDetail(')) throw new Error('V1.32 stale inline click actions remain');
           if (app.includes('const m=d.matches.find(x=>x.id===matchId); if(!m)return; activeDetailMatchId=matchId;')) throw new Error('V1.30 out-of-scope match detail handler remains');
