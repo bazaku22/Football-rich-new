@@ -37,7 +37,7 @@ const newUpcomingHeader = `<span>' + (hasKickoff ? esc(fmtDate(m.kickoffAt)) : '
 if (!main.includes(oldUpcomingHeader)) throw new Error('V1.19 upcoming card header anchor missing');
 main=main.replace(oldUpcomingHeader,newUpcomingHeader);
 
-const oldFinishedBadge = '<span class="tag">ยืนยันผลแล้ว</span>';
+const oldFinishedBadge = '<b class="tag">จบแล้ว</b>';
 const newFinishedBadge = '<b class="mc-status mc-status-finished">จบแล้ว</b>';
 if (!main.includes(oldFinishedBadge)) throw new Error('V1.19 finished card status anchor missing');
 main=main.replace(oldFinishedBadge,newFinishedBadge);
