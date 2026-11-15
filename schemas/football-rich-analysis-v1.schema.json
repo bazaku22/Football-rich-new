@@ -135,14 +135,18 @@
         "selected_team": {
           "enum": [
             "home",
-            "away"
+            "away",
+            "none"
           ]
         },
         "handicap_line": {
-          "type": "number",
+          "type": [
+            "number",
+            "null"
+          ],
           "minimum": -4,
           "maximum": 4,
-          "description": "Handicap applied to market.selected_team; negative means giving a handicap, positive means receiving a handicap. Supports quarter lines from -4 to +4."
+          "description": "Handicap applied to selected_team; negative means giving a handicap, positive means receiving one. Null only when selected_team is none and no verified line exists."
         },
         "decimal_odds": {
           "type": [
