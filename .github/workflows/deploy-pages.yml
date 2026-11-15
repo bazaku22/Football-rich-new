@@ -42,6 +42,7 @@ jobs:
           sed -i '/^python3 \/tmp\/football-rich-v1-1-ui.py$/a node ../scripts/apply-match-center.mjs' build-from-archive.sh
           sed -i '/^node \.\.\/scripts\/apply-match-center\.mjs$/a node ../scripts/apply-v1-3-fixes.mjs' build-from-archive.sh
           sed -i '/^node \.\.\/scripts\/apply-v1-3-fixes\.mjs$/a node ../scripts/apply-v1-4-batch-import.mjs' build-from-archive.sh
+          sed -i '/^bash \.\.\/scripts\/apply-v1-5-ui\.sh$/a node ../scripts/apply-v1-6-features.mjs' build-from-archive.sh
 
       - name: Build Football rich
         run: bash build-from-archive.sh
@@ -102,19 +103,19 @@ jobs:
           }
           const index = fs.readFileSync(path.join(root,'index.html'),'utf8');
           if (!index.includes('__footballRichBootGuardInstalled')) throw new Error('Startup watchdog missing from final HTML');
-          if (!index.includes('main.js?v=20261115-v1-5-1')) throw new Error('Cache-busted app entry missing from final HTML');
+          if (!index.includes('main.js?v=20261115-v1-6')) throw new Error('Cache-busted app entry missing from final HTML');
           if (!fs.existsSync(path.join(root,'main.js'))) throw new Error('App entry main.js missing from final output');
           console.log('Startup watchdog, cache-busted app entry and main.js verified.');
           console.log('Service worker source preview:', fs.readFileSync(swFiles[0], 'utf8').slice(0, 1000));
           const swSource = fs.readFileSync(swFiles[0], 'utf8');
-          if (!swSource.includes("const CACHE_NAME = 'football-rich-shell-v13'")) throw new Error('Service worker cache version is stale');
+          if (!swSource.includes("const CACHE_NAME = 'football-rich-shell-v14'")) throw new Error('Service worker cache version is stale');
           console.log('Service worker cache version v13 verified.');
           const app = fs.readFileSync(path.join(root,'main.js'),'utf8');
-          for (const feature of ['mc-calendar-head','mc-risk-badge','coverPct > 70','coverPct >= 50','probBar +','allUpcomingMatches.map','ยังประเมินความเสี่ยงไม่ได้']) {
+          for (const feature of ['mc-calendar-head','mc-risk-badge','coverPct >= 60','coverPct >= 45','probBar +','allUpcomingMatches.map','ยังประเมินความเสี่ยงไม่ได้','knownClubCrests','footballRichNotificationsV1','🇧🇴']) {
             if (!app.includes(feature)) throw new Error('V1.5.1 UI feature missing: ' + feature);
           }
           if (app.includes('id="match-form"') || app.includes("currentView === 'matches'")) throw new Error('Legacy duplicate fixture/manual-entry UI remains visible');
-          console.log('V1.5.1 home calendar, AH risk thresholds, 1X2 bar and hidden legacy fixture UI verified.');
+          console.log('V1.6 home calendar, club crests/national flags, revised AH risk thresholds, notification center and hidden legacy fixture UI verified.');
           NODE
 
       - name: Diagnose app entry and UI assets
