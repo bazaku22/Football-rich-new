@@ -85,6 +85,10 @@ NODE
 sed -i 's/const first = -lowerMagnitude;/const first = lowerMagnitude === 0 ? 0 : -lowerMagnitude;/' src/domain/handicap.ts
 npm run build
 
+# Apply the approved V1.1 workflow UI to the generated PWA bundle.
+base64 -d ../scripts/apply-v1-1-ui.py.gz.b64 | gzip -dc > /tmp/football-rich-v1-1-ui.py
+python3 /tmp/football-rich-v1-1-ui.py
+
 node --input-type=module <<'NODE'
 import fs from 'node:fs';
 const file='dist/index.html';
