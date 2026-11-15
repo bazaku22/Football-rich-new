@@ -24,6 +24,7 @@ const block=`// V1.9 local notification center: unread count and safer history c
  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!panel.hidden)open(false)});window.alert=msg=>window.__frNotify(String(msg),/ไม่สำเร็จ|ผิดพลาด|ไม่ถูกต้อง|ไม่สามารถ|พบรายการซ้ำ/i.test(String(msg))?'error':'info');document.addEventListener('click',e=>{if(e.target.closest('#export-json'))window.__frNotify('กำลังเตรียมไฟล์สำรองข้อมูล JSON','info')},true);draw();
 })();`;
 m=m.slice(0,a)+block+m.slice(b);m=m.replace("const APP_VERSION='1.8';","const APP_VERSION='1.9';").replace("const PREVIOUS_APP_VERSION='1.7';","const PREVIOUS_APP_VERSION='1.8';");
+m=m.replaceAll('V1.8','V1.9');
 h=h.replace('main.js?v=20261115-v1-8','main.js?v=20261115-v1-9');s=s.replaceAll('football-rich-shell-v16','football-rich-shell-v17');
 c+=`
 /* V1.9 notification center polish */
