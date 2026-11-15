@@ -18,7 +18,7 @@ const crestResolverReplacement = `const normalizedClubName = String(name || '').
           const safeCrest = (typeof crestUrl === 'string' && /^https?:\\/\\//i.test(crestUrl) ? crestUrl : '') || mappedClubCrest;`;
 main = main.replace(crestResolverAnchor, crestResolverReplacement);
 const oldMarkup = `return '<span class="mc-team-mark" aria-hidden="true"><b>' + esc(initials) + '</b>' + (safeCrest ? '<img src="' + esc(safeCrest) + '" alt="" loading="lazy" onerror="this.remove()">' : '') + '</span>';`;
-const newMarkup = `if (safeCrest) return '<span class="mc-team-mark mc-team-crest" role="img" aria-label="' + esc(name) + '"><img src="' + esc(safeCrest) + '" alt="' + esc(name) + '" loading="lazy" referrerpolicy="no-referrer" onerror="this.parentElement.classList.remove(\'mc-team-crest\');this.outerHTML=\'<span class="mc-team-mark"><b>\' + esc(initials) + \'</b></span>\'"></span>';
+const newMarkup = `if (safeCrest) return '<span class="mc-team-mark mc-team-crest" aria-hidden="true"><img src="' + esc(safeCrest) + '" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.display=\\'none\\';this.nextElementSibling.style.display=\\'block\\'"><b style="display:none">' + esc(initials) + '</b></span>';
           return '<span class="mc-team-mark" aria-hidden="true"><b>' + esc(initials) + '</b></span>';`;
 if (!main.includes(oldMarkup)) throw new Error('Existing team-mark HTML template anchor not found');
 main = main.replace(oldMarkup, newMarkup);
