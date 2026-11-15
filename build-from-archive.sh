@@ -32,7 +32,7 @@ const mainPath='src/main.ts';
 let main=fs.readFileSync(mainPath,'utf8');
 main=main.replaceAll('<div class="brand-mark">♛</div>','<div class="brand-mark"><img src="/brand-emblem.svg" alt="Football rich crown and trophy emblem"></div>');
 main=main.replace('<div class="hero-emblem">♛<span>🏆</span></div>','<div class="hero-emblem"><img src="/brand-emblem.svg" alt="ตรามงกุฎและถ้วยรางวัล Football rich"></div>');
-main="const brandEmblemUrl = new URL('./brand-emblem.svg', import.meta.url).href;\\n"+main;
+main="const brandEmblemUrl = new URL('./brand-emblem.svg', import.meta.url).href;\n"+main;
 main=main.replaceAll('src="/brand-emblem.svg"', 'src="${brandEmblemUrl}"');
 if (main.includes('♛') || main.includes('🏆')) throw new Error('Legacy text emblem remains in app UI');
 fs.writeFileSync(mainPath,main);
