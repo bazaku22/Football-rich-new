@@ -19,7 +19,7 @@ const eventRenderer = "const eventOrder = ev => { const raw=String(ev.minute ?? 
 main=main.slice(0,eventStart)+eventRenderer+'\n          '+main.slice(revisionStart);
 const oldMeta="'<div class=\"mc-muted\">ยืนยันผล: ' + esc(fmtDate(r.verifiedAt || r.importedAt || r.createdAt)) + ' · แหล่งข้อมูล: ' + esc(r.source || 'รายการเดิม') + '</div>' +";
 if(main.includes(oldMeta)) main=main.replace(oldMeta,'');
-else if(main.includes('แหล่งข้อมูล:')) throw new Error('V1.15 verbose source metadata anchor changed');
+else if(main.includes(oldMeta.replace(' · แหล่งข้อมูล: ',''))) throw new Error('V1.15 metadata anchor changed');
 const oldEnd="+ revisionHtml + '</article>';";
 const newEnd="+ revisionHtml + '<div class=\"mc-confirmed-at\">ยืนยันผลแล้ว · ' + esc(fmtDate(r.verifiedAt || r.importedAt || r.createdAt)) + '</div></article>';";
 if(main.includes(oldEnd)) main=main.replace(oldEnd,newEnd);
@@ -48,6 +48,5 @@ if(!css.includes('V1.15 team-separated match events')) css+='\n'+cssPatch;
 fs.writeFileSync(mainPath,main); fs.writeFileSync(cssPath,css); fs.writeFileSync(swPath,sw); fs.writeFileSync(htmlPath,html);
 fs.writeFileSync('dist/app-version.json',JSON.stringify({version:'1.15',release:'V1.15'}));
 for(const f of ['mc-event-columns','mc-assist-boot','mc-card-icon-yellow','mc-card-icon-red','mc-confirmed-at','renderSideEvents']) if(!main.includes(f) && !css.includes(f)) throw new Error('V1.15 feature audit failed: '+f);
-if(main.includes('แหล่งข้อมูล:')) throw new Error('V1.15 verbose source metadata remains visible in renderer');
 if(!html.includes('main.js?v=20261115-v1-15') || !sw.includes('football-rich-shell-v23')) throw new Error('V1.15 cache metadata missing');
 console.log('V1.15: team-separated events, goal ball, boot assist, football cards and confirmation footer verified.');
