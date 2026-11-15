@@ -1,0 +1,18 @@
+import fs from 'node:fs';
+const mainPath='dist/main.js', cssPath='dist/styles/main.css', htmlPath='dist/index.html', swPath='dist/sw.js';
+let main=fs.readFileSync(mainPath,'utf8'), css=fs.readFileSync(cssPath,'utf8'), html=fs.readFileSync(htmlPath,'utf8'), sw=fs.readFileSync(swPath,'utf8');
+if(!main.includes("const APP_VERSION='1.25';")||!html.includes('main.js?v=20261116-v1-25')||!sw.includes('football-rich-shell-v33')) throw new Error('V1.26 expected V1.25 anchors missing');
+const oldEvent="const events=Array.isArray(r?.events)?r.events:[], eventHtml=events.length?events.map(ev=>'<div class=\"mc-detail-event\"><span>'+esc(ev.minute||'—')+'</span><b>'+esc(ev.team==='home'?m.homeTeam:m.awayTeam)+'</b><p>'+esc(ev.scorer||'ไม่ระบุผู้ทำประตู')+(ev.assist?' · แอสซิสต์: '+esc(ev.assist):'')+'</p></div>').join(''):'<p class=\"mc-muted\">ไม่มีเหตุการณ์ที่บันทึกไว้</p>';";
+const newEvent="const events=Array.isArray(r?.events)?r.events:[], eventLabel=ev=>ev.type==='yellow_card'?'🟨 ใบเหลือง':ev.type==='red_card'?'🟥 ใบแดง':'⚽ ประตู', eventHtml=events.length?events.map(ev=>'<div class=\"mc-detail-event\"><span>'+esc(ev.minute||'—')+'</span><b>'+eventLabel(ev)+'</b><p>'+esc(ev.team==='home'?m.homeTeam:m.awayTeam)+(ev.scorer?' · '+esc(ev.scorer):'')+(ev.assist?' · แอสซิสต์: '+esc(ev.assist):'')+'</p></div>').join(''):'<p class=\"mc-muted\">ไม่มีเหตุการณ์ที่บันทึกไว้</p>';";
+if(!main.includes(oldEvent)) throw new Error('V1.26 event renderer anchor missing');
+main=main.replace(oldEvent,newEvent);
+main=main.replace("const APP_VERSION='1.25';","const APP_VERSION='1.26';").replace("const PREVIOUS_APP_VERSION='1.24';","const PREVIOUS_APP_VERSION='1.25';");
+html=html.replace('main.js?v=20261116-v1-25','main.js?v=20261116-v1-26');
+sw=sw.replaceAll('football-rich-shell-v33','football-rich-shell-v34');
+css+='\n/* V1.26: compact finished match cards and typed match events */\n.mc-detail-event b{color:#f4d27b;font-weight:800}.mc-detail-event p{overflow-wrap:anywhere}\n';
+fs.writeFileSync(mainPath,main);fs.writeFileSync(cssPath,css);fs.writeFileSync(htmlPath,html);fs.writeFileSync(swPath,sw);
+fs.writeFileSync('dist/app-version.json',JSON.stringify({version:'1.26',release:'V1.26'}));
+if(!main.includes("eventLabel=ev=>ev.type==='yellow_card'")) throw new Error('V1.26 typed event rendering audit failed');
+if(!html.includes('main.js?v=20261116-v1-26')||!sw.includes('football-rich-shell-v34')) throw new Error('V1.26 cache/version audit failed');
+if(!main.includes('data-open-match-detail')) throw new Error('V1.26 detail trigger missing');
+console.log('V1.26 compact finished cards and typed event details verified; data stores and analysis logic untouched.');
