@@ -80,6 +80,7 @@ jobs:
           sed -i '/^node \.\.\/scripts\/apply-v2-1-match-center\.mjs && node \.\.\/scripts\/test-v2-1-match-center\.mjs$/a node ../scripts/apply-v2-2-crest-and-national-flags.mjs && node ../scripts/test-v2-2-crest-and-national-flags.mjs' build-from-archive.sh
           sed -i '/^node \.\.\/scripts\/apply-v2-2-crest-and-national-flags\.mjs && node \.\.\/scripts\/test-v2-2-crest-and-national-flags\.mjs$/a node ../scripts/apply-v2-3-clean-team-identity.mjs && node ../scripts/test-v2-3-clean-team-identity.mjs' build-from-archive.sh
           sed -i '/^node \.\.\/scripts\/apply-v2-3-clean-team-identity\.mjs && node \.\.\/scripts\/test-v2-3-clean-team-identity\.mjs$/a node ../scripts/apply-v2-4-match-card-visual-clarity.mjs && node ../scripts/test-v2-4-match-card-visual-clarity.mjs' build-from-archive.sh
+          sed -i '/^node \.\.\/scripts\/apply-v2-4-match-card-visual-clarity\.mjs && node \.\.\/scripts\/test-v2-4-match-card-visual-clarity\.mjs$/a node ../scripts/apply-v3-0-analysis-engine.mjs && node ../scripts/test-v3-0-analysis-engine.mjs' build-from-archive.sh
 
       - name: Build Football rich
         run: bash build-from-archive.sh
@@ -99,17 +100,17 @@ jobs:
           import fs from 'node:fs';
           const file='football-rich-v1/dist/index.html';
           let html=fs.readFileSync(file,'utf8');
-          html=html.replace(/(src=["'][^"']*main\.js)(?:\?[^"']*)?(["'])/g, '$1?v=20261116-v2-4$2');
-          if (!html.includes('main.js?v=20261116-v2-4')) throw new Error('Could not apply final V2.4 cache-busted app entry');
+          html=html.replace(/(src=["'][^"']*main\.js)(?:\?[^"']*)?(["'])/g, '$1?v=20261116-v3-0$2');
+          if (!html.includes('main.js?v=20261116-v3-0')) throw new Error('Could not apply final V3.0 cache-busted app entry');
           if (!html.includes('fonts.googleapis.com/css2?family=Inter')) {
             html=html.replace('</head>', '<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Thai:wght@400;500;600;700;800&display=swap" rel="stylesheet></head>');
           }
           fs.writeFileSync(file,html);
           const swFile='football-rich-v1/dist/sw.js';
-          let sw=fs.readFileSync(swFile,'utf8').replaceAll('football-rich-shell-v44','football-rich-shell-v45');
-          if (!sw.includes("const CACHE_NAME = 'football-rich-shell-v45'")) throw new Error('Could not apply final V2.4 service worker cache version');
+          let sw=fs.readFileSync(swFile,'utf8').replaceAll('football-rich-shell-v44','football-rich-shell-v46');
+          if (!sw.includes("const CACHE_NAME = 'football-rich-shell-v46'")) throw new Error('Could not apply final V3.0 service worker cache version');
           fs.writeFileSync(swFile,sw);
-          console.log('Final V2.4 app entry, Noto Sans Thai font link and service worker cache version verified.');
+          console.log('Final V3.0 app entry, Noto Sans Thai font link and service worker cache version verified.');
           NODE
 
       - name: Audit generated PWA files
@@ -157,12 +158,12 @@ jobs:
           }
           const index = fs.readFileSync(path.join(root,'index.html'),'utf8');
           if (!index.includes('__footballRichBootGuardInstalled')) throw new Error('Startup watchdog missing from final HTML');
-          if (!index.includes('main.js?v=20261116-v2-4')) throw new Error('Cache-busted app entry missing from final HTML');
+          if (!index.includes('main.js?v=20261116-v3-0')) throw new Error('Cache-busted app entry missing from final HTML');
           if (!fs.existsSync(path.join(root,'main.js'))) throw new Error('App entry main.js missing from final output');
           console.log('Startup watchdog, cache-busted app entry and main.js verified.');
           console.log('Service worker source preview:', fs.readFileSync(swFiles[0], 'utf8').slice(0, 1000));
           const swSource = fs.readFileSync(swFiles[0], 'utf8');
-          if (!swSource.includes("const CACHE_NAME = 'football-rich-shell-v45'")) throw new Error('Service worker cache version is stale');
+          if (!swSource.includes("const CACHE_NAME = 'football-rich-shell-v46'")) throw new Error('Service worker cache version is stale');
           console.log('Service worker cache version v13 verified.');
           const app = fs.readFileSync(path.join(root,'main.js'),'utf8');
           for (const feature of ['installReleaseUpdateCheck','footballRichLastNotifiedVersion','footballRichNotificationsV1','fr-notification-header-button','fr-notification-unread-label','readAt:null','ศูนย์แจ้งเตือน']) {
@@ -171,7 +172,7 @@ jobs:
           if (app.includes('id="match-form"')) throw new Error('Legacy duplicate fixture/manual-entry UI remains visible');
           if (!fs.existsSync(path.join(root,'app-version.json'))) throw new Error('App version manifest missing');
           const appVersion = JSON.parse(fs.readFileSync(path.join(root,'app-version.json'),'utf8'));
-          if (appVersion.version !== '2.4') throw new Error('App version manifest is stale');
+          if (appVersion.version !== '3.0') throw new Error('App version manifest is stale');
           if (app.includes('กำไรจำลองสุทธิ') || app.includes("card('ผลชำระเดิมพัน'")) throw new Error('V1.9 non-gambling Performance cleanup failed');
           const appCss = fs.readFileSync(path.join(root,'styles/main.css'),'utf8');
           const navStart = app.indexOf('const navItems = [');

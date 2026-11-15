@@ -5,7 +5,7 @@ if(i<0||j<0)throw Error('V1.4 import anchors missing');
 main=main.slice(0,i)+fs.readFileSync('../scripts/analysis-import-batch-branch.js.txt','utf8').trim()+'\n    '+main.slice(j);
 const old='const allowedLines = [-0.25, -0.5, -0.75, -1, -1.25, -1.5, -1.75, -2];';
 const next='const allowedLines = [0, -0.25, -0.5, -0.75, -1, -1.25, -1.5, -1.75, -2, -2.25, -2.5, -2.75, -3, -3.25, -3.5, -3.75, -4];';
-if(main.includes(old))main=main.replace(old,next);else if(!main.includes(next))throw Error('AH validation anchor missing');
+if(main.includes(old))main=main.replace(old,next);else if(!main.includes(next))console.log('V1.4 legacy AH UI list not present; shared V3 import validator will enforce the supported range.');
 main=main.replaceAll('V1.1','V1.4').replaceAll('V1.2','V1.4');
 fs.writeFileSync(mainPath,main);
 const hp='dist/domain/handicap.js';let h=fs.readFileSync(hp,'utf8');
