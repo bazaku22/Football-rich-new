@@ -34,3 +34,12 @@ This repository is the public GitHub Pages deployment source. The app stores rec
 - Sample fixture data is fictional.
 - Android installation, offline behavior and backup/restore must be verified on the target device before relying on the app.
 - This is a test-candidate release, not a claim of completed real-device acceptance testing.
+
+
+## Analysis report import (in progress)
+The canonical interchange format is JSON; PDF is a human-readable companion only.
+- Format specification: [docs/ANALYSIS-IMPORT-SPEC-1.0.md](docs/ANALYSIS-IMPORT-SPEC-1.0.md)
+- JSON Schema: [schemas/football-rich-analysis-v1.schema.json](schemas/football-rich-analysis-v1.schema.json)
+- First sample: [samples/analysis-match-001.json](samples/analysis-match-001.json)
+
+The in-app import screen is not yet released. Do not treat the sample as a confirmed betting recommendation: it deliberately leaves cover probability unset where verified evidence is insufficient.
