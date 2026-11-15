@@ -3,9 +3,9 @@ import fs from 'node:fs';
 const mainPath='dist/main.js', cssPath='dist/styles/main.css', htmlPath='dist/index.html', swPath='dist/sw.js';
 let main=fs.readFileSync(mainPath,'utf8'), css=fs.readFileSync(cssPath,'utf8'), html=fs.readFileSync(htmlPath,'utf8'), sw=fs.readFileSync(swPath,'utf8');
 if(!main.includes("const APP_VERSION='1.24';")||!html.includes('main.js?v=20261116-v1-24')||!sw.includes('football-rich-shell-v32')) throw new Error('V1.25 expected V1.24 build anchors missing');
-if(!main.includes('data-select-match=')||!main.includes("const matchForm = document.querySelector('#match-form');")) throw new Error('V1.25 Match Center anchors missing');
+if(!main.includes('data-select-match')) throw new Error('V1.25 match buttons missing; renderer may have changed');
 main=main.replaceAll('data-select-match=', 'data-open-match-detail=');
-const at=main.indexOf("        const matchForm = document.querySelector('#match-form');");
+const at=main.indexOf('const matchForm');
 const logic = [
 "        root.insertAdjacentHTML('beforeend', '<div id=\"mc-detail-modal\" class=\"mc-detail-overlay\" hidden><section class=\"mc-detail-dialog\" role=\"dialog\" aria-modal=\"true\" aria-labelledby=\"mc-detail-title\"><button type=\"button\" class=\"mc-detail-close\" data-detail-close aria-label=\"ปิด\">×</button><div id=\"mc-detail-content\"></div></section></div>');",
 "        const detailModal=document.querySelector('#mc-detail-modal'), detailContent=document.querySelector('#mc-detail-content');",
