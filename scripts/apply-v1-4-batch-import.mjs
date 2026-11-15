@@ -11,7 +11,7 @@ const hp='dist/domain/handicap.js';let h=fs.readFileSync(hp,'utf8');
 h=h.replace('-0.25, -0.5, -0.75, -1, -1.25, -1.5, -1.75, -2','0, -0.25, -0.5, -0.75, -1, -1.25, -1.5, -1.75, -2, -2.25, -2.5, -2.75, -3, -3.25, -3.5, -3.75, -4');
 if(!h.includes('-3.5'))throw Error('AH calculation range patch failed');fs.writeFileSync(hp,h);
 const cp='dist/styles/main.css';let c=fs.readFileSync(cp,'utf8');if(!c.includes('V1.4 multi-report'))c+='\n/* V1.4 multi-report */\n.import-preview .record{margin-top:12px;padding:14px;border:1px solid #4b4029;border-radius:12px;background:#171510}.import-preview .record-top{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px}\n';fs.writeFileSync(cp,c);
-const sp='dist/sw.js';let sw=fs.readFileSync(sp,'utf8').replaceAll('football-rich-shell-v10','football-rich-shell-v11');if(!sw.includes('football-rich-shell-v11'))throw Error('SW v11 patch failed');fs.writeFileSync(sp,sw);
+const sp='dist/sw.js';let sw=fs.readFileSync(sp,'utf8').replace(/football-rich-shell-v\\d+/g,'football-rich-shell-v11');if(!sw.includes('football-rich-shell-v11'))throw Error('SW v11 patch failed');fs.writeFileSync(sp,sw);
 const ip='dist/index.html';fs.writeFileSync(ip,fs.readFileSync(ip,'utf8').replace('main.js?v=20261115-v1-3','main.js?v=20261115-v1-4'));
 if(!main.includes('zipReports')||!main.includes('นำเข้าทั้งหมด'))throw Error('Batch import audit failed');
 console.log('V1.4 multi-match JSON/ZIP import and AH line range applied.');
