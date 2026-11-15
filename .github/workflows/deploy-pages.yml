@@ -102,8 +102,8 @@ jobs:
           import fs from 'node:fs';
           const file='football-rich-v1/dist/index.html';
           let html=fs.readFileSync(file,'utf8');
-          html=html.replace(/(src=["'][^"']*main\.js)(?:\?[^"']*)?(["'])/g, '$1?v=20261116-v3-1$2');
-          if (!html.includes('main.js?v=20261116-v3-2')) throw new Error('Could not apply final V3.1 cache-busted app entry');
+          html=html.replace(/main\.js(?:\?[^"']*)?/g, 'main.js?v=20261116-v3-2');
+          if (!html.includes('main.js?v=20261116-v3-2')) throw new Error('Could not apply final V3.2 cache-busted app entry');
           if (!html.includes('fonts.googleapis.com/css2?family=Inter')) {
             html=html.replace('</head>', '<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Thai:wght@400;500;600;700;800&display=swap" rel="stylesheet></head>');
           }
