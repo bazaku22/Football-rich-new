@@ -113,6 +113,37 @@ const cssPatch = `
 `;
 if (!css.includes('/* Football rich V1.3 team marks and country flags */')) css += '\n' + cssPatch;
 
+
+const resetCardAnchor = "${card('ข้อมูลและความเป็นส่วนตัว'";
+const resetCard = `${card('เริ่มโปรแกรมแข่งขันใหม่', \`<p class="muted">ลบโปรแกรมแข่งขันเก่า บทวิเคราะห์ ข้อมูลค้นคว้า คำทำนาย ผลแข่งขัน และประวัติผลงานทั้งหมด เพื่อเริ่มชุดข้อมูลใหม่ โดยเก็บการตั้งค่าแอปไว้</p><p class="notice">คำเตือน: การลบนี้ย้อนกลับไม่ได้ แนะนำให้ดาวน์โหลดข้อมูลสำรอง JSON ก่อน</p><button class="danger" id="reset-match-data">ลบข้อมูลการแข่งขันเก่าและเริ่มใหม่</button>`)}`;
+if (main.includes(resetCardAnchor) && !main.includes('id="reset-match-data"')) main = main.replace(resetCardAnchor, resetCard + "\\n      " + resetCardAnchor);
+
+const resetListenerAnchor = "document.querySelector('#export-csv').addEventListener('click', async () =>";
+const resetListener = `document.querySelector('#reset-match-data').addEventListener('click', async () => {
+            const backupFirst = confirm('ก่อนลบ แนะนำให้สำรองข้อมูลทั้งหมดเป็นไฟล์ JSON\\n\\nกด OK เพื่อดาวน์โหลดไฟล์สำรองก่อนดำเนินการ หรือ Cancel เพื่อยกเลิก');
+            if (!backupFirst) return;
+            try {
+                downloadBackupFile(await exportBackup());
+                if (!confirm('ยืนยันลบข้อมูลการแข่งขันเก่าทั้งหมดหรือไม่?\\n\\nจะลบ: แมตช์, บทวิเคราะห์, ข้อมูลค้นคว้า, หลักฐาน, ข่าวทีม, ราคา, คำทำนาย, ผลแข่งขัน และประวัติผลงาน\\n\\nจะเก็บไว้: การตั้งค่าแอป')) return;
+                const storeNames = ['matches','research_records','source_evidence','team_news','market_odds','analyses','predictions','match_results','performance_records'];
+                const db = await openDatabase();
+                const tx = db.transaction(storeNames, 'readwrite');
+                for (const name of storeNames) tx.objectStore(name).clear();
+                await new Promise((resolve, reject) => {
+                    tx.oncomplete = resolve;
+                    tx.onerror = () => reject(tx.error ?? new Error('ลบข้อมูลไม่สำเร็จ'));
+                    tx.onabort = () => reject(tx.error ?? new Error('ยกเลิกการลบข้อมูล'));
+                });
+                selectedMatchId = '';
+                await render();
+                alert('ลบข้อมูลการแข่งขันเก่าเรียบร้อยแล้ว\\nการตั้งค่าแอปยังคงอยู่ พร้อมเริ่มนำเข้าโปรแกรมใหม่');
+            } catch (error) {
+                alert(error instanceof Error ? error.message : 'ไม่สามารถลบข้อมูลได้');
+            }
+        });
+        `;
+if (main.includes(resetListenerAnchor) && !main.includes("querySelector('#reset-match-data')")) main = main.replace(resetListenerAnchor, resetListener + resetListenerAnchor);
+
 if (!main.includes('frProbabilityModel') || !main.includes('teamHtml(m.homeTeam, matchCountry(m,a))')) throw new Error('V1.3 feature audit failed');
 fs.writeFileSync(mainPath, main);
 fs.writeFileSync(cssPath, css);
