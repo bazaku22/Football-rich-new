@@ -1,0 +1,241 @@
+else if (currentView === 'matches') {
+        const resultByMatch = new Map(d.results.map(r => [r.matchId, r]));
+        const upcomingMatches = d.matches.filter(m => !resultByMatch.has(m.id)).slice().sort((a,b) => {
+          const ta = Date.parse(maybeDate(a.kickoffAt)) || Number.MAX_SAFE_INTEGER;
+          const tb = Date.parse(maybeDate(b.kickoffAt)) || Number.MAX_SAFE_INTEGER;
+          return ta - tb;
+        });
+        const finishedMatches = d.matches.filter(m => resultByMatch.has(m.id)).slice().sort((a,b) =>
+          String(resultByMatch.get(b.id)?.verifiedAt || '').localeCompare(String(resultByMatch.get(a.id)?.verifiedAt || ''))
+        );
+        const maybeDate = value => value || '';
+        const latestAnalysis = matchId => d.analyses.filter(a => a.matchId === matchId).slice().sort((a,b) => String(b.createdAt).localeCompare(String(a.createdAt)))[0];
+        const latestPrediction = matchId => d.predictions.filter(p => p.matchId === matchId).slice().sort((a,b) => String(b.createdAt).localeCompare(String(a.createdAt)))[0];
+        const percent = value => typeof value === 'number' && Number.isFinite(value) ? value.toFixed(1) + '%' : '—';
+        const sideName = (match, side) => side === 'home' ? match.homeTeam : side === 'away' ? match.awayTeam : 'ไม่ระบุ';
+        const probCard = (label, value, color) => '<div class="mc-prob ' + color + '"><span>' + label + '</span><b>' + percent(value) + '</b></div>';
+        const renderUpcoming = m => {
+          const a = latestAnalysis(m.id);
+          const p = latestPrediction(m.id);
+          const rec = a?.recommendation;
+          const market = a?.marketSnapshot;
+          const probs = a?.probabilities;
+          const selectedSide = rec?.selected_team || market?.selected_team || p?.snapshot?.selectedTeam;
+          const line = rec?.handicap_line ?? market?.handicap_line ?? p?.selectedLine;
+          const cover = a?.coverProbability;
+          const hasKickoff = !!m.kickoffAt && !Number.isNaN(Date.parse(m.kickoffAt));
+          const stateNote = m.status === 'FINISHED' ? 'รอผลยืนยัน' : m.status === 'CANCELLED' ? 'ยกเลิก/รอตรวจสอบ' : 'ก่อนแข่งขัน';
+          const probHtml = probs
+            ? probCard('เจ้าบ้านชนะ', probs.homeWin, 'home') + probCard('เสมอ', probs.draw, 'draw') + probCard('ทีมเยือนชนะ', probs.awayWin, 'away')
+            : probCard('เจ้าบ้านชนะ', null, 'home') + probCard('เสมอ', null, 'draw') + probCard('ทีมเยือนชนะ', null, 'away');
+          const ahHtml = selectedSide && Number.isFinite(Number(line))
+            ? '<div class="mc-ah"><div>ทีมต่อ: <strong>' + esc(sideName(m, selectedSide)) + ' ' + Number(line).toFixed(2) + '</strong></div><div class="mc-muted">โอกาสผ่านแฮนดิแคป: <strong>' + (typeof cover === 'number' ? percent(cover * 100) : 'ข้อมูลไม่เพียงพอ') + '</strong></div><div class="mc-muted">สถานะ: ' + esc(rec?.status || (p ? 'ยืนยันคำทำนายแล้ว' : 'รอพิจารณา')) + '</div></div>'
+            : '<div class="mc-ah mc-muted">ยังไม่มีคำแนะนำ Asian Handicap ที่มีข้อมูลครบ</div>';
+          return '<article class="panel mc-card"><div class="mc-card-head"><span>' + esc(m.league) + '</span><span>' + (hasKickoff ? esc(fmtDate(m.kickoffAt)) : 'ไม่ระบุเวลาแข่งขัน') + '</span></div><div class="mc-teams"><div class="mc-team">' + esc(m.homeTeam) + '</div><div class="mc-vs">VS</div><div class="mc-team">' + esc(m.awayTeam) + '</div></div><div class="mc-prob-title">โอกาสผลการแข่งขัน · 1X2</div><div class="mc-prob-grid">' + probHtml + '</div>' + ahHtml + (m.notes ? '<p class="mc-muted">' + esc(m.notes) + '</p>' : '') + '<div class="mc-actions"><button class="outline" data-select-match="' + esc(m.id) + '">เปิดวิเคราะห์</button></div><div class="mc-id">MATCH ID: ' + esc(m.id) + '</div><div class="mc-muted">' + stateNote + '</div></article>';
+        };
+        const renderFinished = m => {
+          const r = resultByMatch.get(m.id);
+          const a = latestAnalysis(m.id);
+          const probs = a?.probabilities;
+          const actual = r.homeGoals > r.awayGoals ? 'homeWin' : r.homeGoals < r.awayGoals ? 'awayWin' : 'draw';
+          const outcomeNames = {homeWin:'เจ้าบ้านชนะ',draw:'เสมอ',awayWin:'ทีมเยือนชนะ'};
+          let outcomeReview = 'ไม่มีข้อมูล 1X2 สำหรับประเมิน';
+          if (probs && ['homeWin','draw','awayWin'].every(k => typeof probs[k] === 'number')) {
+            const top = ['homeWin','draw','awayWin'].slice().sort((x,y) => Number(probs[y]) - Number(probs[x]))[0];
+            const ok = top === actual;
+            outcomeReview = (ok ? '✓ ' : '✗ ') + 'แนวโน้ม 1X2 สูงสุด: ' + outcomeNames[top] + ' · ' + percent(probs[top]) + (ok ? ' · ตรงผลจริง' : ' · ไม่ตรงผลจริง');
+          }
+          const predictions = d.predictions.filter(p => p.matchId === m.id && p.status !== 'VOID');
+          let ahReviews = predictions.map(p => {
+            const perf = d.performance.find(v => v.predictionId === p.id);
+            const status = perf?.settlement || (p.status === 'SETTLED' ? 'ยังไม่มีผลประเมิน' : '');
+            const cls = status === 'PUSH' ? 'mc-push' : ['FULL_WIN','HALF_WIN'].includes(status) ? 'mc-correct' : ['FULL_LOSS','HALF_LOSS'].includes(status) ? 'mc-wrong' : '';
+            return '<div class="mc-review-row"><span>AH ' + (p.snapshot?.selectedTeam === 'home' ? 'เจ้าบ้าน' : 'ทีมเยือน') + ' ' + Number(p.selectedLine).toFixed(2) + '</span><b class="' + cls + '">' + esc(statusText[status] || status || 'รอประเมิน') + '</b></div>';
+          }).join('');
+          if (!predictions.length && a?.recommendation && a.recommendation.selected_team !== 'none' && Number.isFinite(Number(a.recommendation.handicap_line))) {
+            const side = a.recommendation.selected_team;
+            const gd = side === 'home' ? r.homeGoals - r.awayGoals : r.awayGoals - r.homeGoals;
+            const result = settleHandicap(gd, Number(a.recommendation.handicap_line), Number(a.marketSnapshot?.decimal_odds) > 1 ? Number(a.marketSnapshot.decimal_odds) : 2);
+            const cls = result.settlement === 'PUSH' ? 'mc-push' : ['FULL_WIN','HALF_WIN'].includes(result.settlement) ? 'mc-correct' : 'mc-wrong';
+            ahReviews = '<div class="mc-review-row"><span>AH ' + esc(sideName(m, side)) + ' ' + Number(a.recommendation.handicap_line).toFixed(2) + '</span><b class="' + cls + '">' + esc(statusText[result.settlement]) + '</b></div>';
+          }
+          if (!ahReviews) ahReviews = '<div class="mc-review-row"><span>Asian Handicap</span><b>ไม่มีคำทำนายที่บันทึก</b></div>';
+          const events = Array.isArray(r.events) ? r.events : [];
+          const eventHtml = events.length
+            ? events.map(ev => '<div class="mc-event"><time>' + esc(ev.minute || '—') + '</time><span>' + esc(ev.team === 'home' ? m.homeTeam : m.awayTeam) + ' · ' + esc(ev.scorer || 'ไม่ระบุผู้ทำประตู') + (ev.assist ? ' (แอสซิสต์: ' + esc(ev.assist) + ')' : '') + '</span></div>').join('')
+            : '<p class="mc-muted">ไม่มีข้อมูลผู้ทำประตูหรือแอสซิสต์ในไฟล์ผลนี้</p>';
+          return '<article class="panel mc-card"><div class="mc-card-head"><span>' + esc(m.league) + '</span><span class="tag">ยืนยันผลแล้ว</span></div><div class="mc-teams"><div class="mc-team">' + esc(m.homeTeam) + '</div><div class="mc-score">' + Number(r.homeGoals) + ' – ' + Number(r.awayGoals) + '</div><div class="mc-team">' + esc(m.awayTeam) + '</div></div><div class="mc-muted">ยืนยันผล: ' + esc(fmtDate(r.verifiedAt || r.importedAt || r.createdAt)) + '</div><div class="mc-review"><div class="mc-review-row"><span>ตรวจสอบแนวโน้ม 1X2</span><b class="' + (outcomeReview.startsWith('✓') ? 'mc-correct' : outcomeReview.startsWith('✗') ? 'mc-wrong' : '') + '">' + esc(outcomeReview) + '</b></div>' + ahReviews + '</div><div class="mc-events"><div class="mc-prob-title">เหตุการณ์และผู้ทำประตู</div>' + eventHtml + '</div><div class="mc-id">MATCH ID: ' + esc(m.id) + ' · RESULT ID: ' + esc(r.importResultId || 'legacy') + '</div>' + (Number(r.revisionNumber) > 1 ? '<div class="mc-muted">มีประวัติแก้ไขผล ' + (Number(r.revisionNumber) - 1) + ' ครั้ง · เก็บ Snapshot ก่อนหน้าไว้</div>' : '') + '</article>';
+        };
+        root.innerHTML = pageTitle('MATCH CENTER · V1.2', 'แมตช์เซ็นเตอร์', 'รวมคู่ก่อนแข่งขันและหลังแข่งขันไว้ในหน้าเดียว · ผลหลังแข่งเปลี่ยนสถานะเมื่อมีการนำเข้าผลที่ยืนยันแล้ว') +
+          '<div class="mc-toolbar"><div class="mc-muted">ก่อนแข่งขันจะไม่ย้ายกลุ่มเพียงเพราะเวลาคิกออฟผ่านไป ต้องมี Result JSON ที่ยืนยันแล้วเท่านั้น</div><button class="outline" id="download-result-template">ดาวน์โหลดแม่แบบ Result JSON</button></div>' +
+          card('เพิ่มคู่แข่งขัน', '<form id="match-form" class="form-grid-form"><label>ลีก<input name="league" required maxlength="80" placeholder="เช่น Premier League"></label><div class="field-row"><label>ทีมเหย้า<input name="homeTeam" required maxlength="80"></label><label>ทีมเยือน<input name="awayTeam" required maxlength="80"></label></div><label>วันและเวลาแข่งขัน<input name="kickoffAt" type="datetime-local"></label><label>บันทึกเพิ่มเติม<textarea name="notes" rows="2" maxlength="500"></textarea></label><button class="primary">บันทึกคู่แข่งขัน</button><p id="match-message" class="notice" role="status"></p></form>') +
+          '<div class="mc-group"><h2>ก่อนแข่งขัน</h2><span class="count">' + upcomingMatches.length + '</span></div><div class="mc-cards">' + (upcomingMatches.length ? upcomingMatches.map(renderUpcoming).join('') : '<div class="panel empty">ไม่มีคู่ที่รอแข่งขัน</div>') + '</div>' +
+          '<div class="mc-group"><h2>หลังแข่งขัน</h2><span class="count">' + finishedMatches.length + '</span></div><div class="mc-cards">' + (finishedMatches.length ? finishedMatches.map(renderFinished).join('') : '<div class="panel empty">ยังไม่มีผลการแข่งขันที่ยืนยันแล้ว</div>') + '</div>' +
+          card('นำเข้าผลการแข่งขัน · Result JSON', '<p class="mc-muted">รองรับหลายคู่ในไฟล์เดียว · ตรวจสอบ Match ID, สกอร์, เหตุการณ์ และผลซ้ำก่อนบันทึก · การแก้ผลเดิมต้องยืนยันและจะเก็บประวัติทุกครั้ง</p><label class="file-label">เลือกไฟล์ผลการแข่งขัน<input id="result-import-file" type="file" accept="application/json,.json"></label><p id="result-import-message" class="notice" role="status">เลือกไฟล์ JSON เพื่อดูตัวอย่างก่อนยืนยัน</p><div id="result-import-preview"></div>', 'mc-import');
+        const matchForm = document.querySelector('#match-form');
+        matchForm.addEventListener('submit', async e => {
+          e.preventDefault();
+          const x = new FormData(matchForm);
+          const home = String(x.get('homeTeam') || '').trim();
+          const away = String(x.get('awayTeam') || '').trim();
+          if (!home || !away || home.toLowerCase() === away.toLowerCase()) {
+            setMessage('#match-message', 'กรุณาระบุชื่อทีมเหย้าและทีมเยือนให้ถูกต้องและไม่ซ้ำกัน', 'error');
+            return;
+          }
+          const kickoffRaw = String(x.get('kickoffAt') || '');
+          const kickoff = kickoffRaw ? new Date(kickoffRaw) : null;
+          if (kickoff && Number.isNaN(kickoff.getTime())) {
+            setMessage('#match-message', 'วันเวลาแข่งขันไม่ถูกต้อง', 'error');
+            return;
+          }
+          await addRecord('matches', {...base(), league:String(x.get('league')).trim(), homeTeam:home, awayTeam:away, kickoffAt:kickoff ? kickoff.toISOString() : '', status:'UPCOMING', notes:String(x.get('notes') || '').trim() || undefined});
+          await render();
+        });
+        document.querySelector('#download-result-template').addEventListener('click', () => {
+          const template = {
+            schema_version:'1.0.0',
+            report_type:'football-rich-result',
+            result_id:'fr-result-' + new Date().toISOString().replace(/[-:.TZ]/g,'').slice(0,14),
+            created_at:nowISO(),
+            verified_at:nowISO(),
+            source:'ระบุแหล่งยืนยันผลการแข่งขัน',
+            matches:upcomingMatches.map(m => ({match_id:m.id,home_team:m.homeTeam,away_team:m.awayTeam,home_goals:0,away_goals:0,events:[]}))
+          };
+          const blob = new Blob([JSON.stringify(template,null,2)], {type:'application/json'});
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a'); a.href=url; a.download='football-rich-result-template.json'; a.click();
+          window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+        });
+        const resultFile = document.querySelector('#result-import-file');
+        const preview = document.querySelector('#result-import-preview');
+        const validateResultPayload = payload => {
+          const fail = message => { throw new TypeError(message); };
+          const validDate = value => typeof value === 'string' && !Number.isNaN(Date.parse(value));
+          if (!payload || typeof payload !== 'object' || Array.isArray(payload)) fail('ไฟล์ต้องเป็น JSON Object');
+          if (payload.schema_version !== '1.0.0' || payload.report_type !== 'football-rich-result') fail('ไม่รองรับ Result JSON เวอร์ชันนี้');
+          if (typeof payload.result_id !== 'string' || payload.result_id.trim().length < 8) fail('result_id ต้องมีอย่างน้อย 8 ตัวอักษร');
+          if (!validDate(payload.created_at) || !validDate(payload.verified_at)) fail('วันเวลารายงานหรือเวลายืนยันผลไม่ถูกต้อง');
+          if (typeof payload.source !== 'string' || !payload.source.trim()) fail('กรุณาระบุแหล่งยืนยันผล');
+          if (!Array.isArray(payload.matches) || payload.matches.length < 1 || payload.matches.length > 100) fail('ต้องมีรายการแข่งขัน 1–100 คู่');
+          const seen = new Set();
+          payload.matches.forEach((item, index) => {
+            if (!item || typeof item !== 'object' || Array.isArray(item)) fail('รายการแข่งขันลำดับ ' + (index + 1) + ' ไม่ถูกต้อง');
+            if (!(typeof item.match_id === 'string' && item.match_id.trim()) && !(typeof item.analysis_report_id === 'string' && item.analysis_report_id.trim())) fail('รายการแข่งขันต้องมี match_id หรือ analysis_report_id');
+            const key = item.match_id || item.analysis_report_id;
+            if (seen.has(key)) fail('มี Match ID ซ้ำภายในไฟล์');
+            seen.add(key);
+            if (!Number.isInteger(item.home_goals) || item.home_goals < 0 || !Number.isInteger(item.away_goals) || item.away_goals < 0) fail('สกอร์ต้องเป็นจำนวนเต็มตั้งแต่ 0 ขึ้นไป');
+            if (item.home_team !== undefined && (typeof item.home_team !== 'string' || !item.home_team.trim())) fail('ชื่อทีมเหย้าในไฟล์ไม่ถูกต้อง');
+            if (item.away_team !== undefined && (typeof item.away_team !== 'string' || !item.away_team.trim())) fail('ชื่อทีมเยือนในไฟล์ไม่ถูกต้อง');
+            if (item.events !== undefined && !Array.isArray(item.events)) fail('events ต้องเป็น Array');
+            (item.events || []).forEach(ev => {
+              if (!ev || typeof ev !== 'object' || ev.type !== 'goal' || !['home','away'].includes(ev.team)) fail('เหตุการณ์ต้องเป็น goal และระบุทีม home/away');
+              if (ev.minute !== undefined && !(typeof ev.minute === 'number' && Number.isFinite(ev.minute) && ev.minute >= 0 && ev.minute <= 150) && !(typeof ev.minute === 'string' && ev.minute.length <= 8)) fail('นาทีที่ทำประตูไม่ถูกต้อง');
+              if (ev.scorer !== undefined && typeof ev.scorer !== 'string') fail('ชื่อผู้ทำประตูไม่ถูกต้อง');
+              if (ev.assist !== undefined && typeof ev.assist !== 'string') fail('ชื่อผู้แอสซิสต์ไม่ถูกต้อง');
+            });
+          });
+        };
+        resultFile.addEventListener('change', async () => {
+          preview.innerHTML = '';
+          const file = resultFile.files?.[0];
+          if (!file) return;
+          if (file.size > 2 * 1024 * 1024) { setMessage('#result-import-message', 'ไฟล์ใหญ่เกิน 2 MB', 'error'); return; }
+          try {
+            const payload = JSON.parse(await file.text());
+            validateResultPayload(payload);
+            if (d.results.some(r => r.importResultId === payload.result_id)) throw new Error('Result ID นี้ถูกนำเข้าแล้ว ระบบป้องกันการนำเข้าซ้ำ');
+            const resolved = payload.matches.map(item => {
+              const linkedAnalysis = item.analysis_report_id ? d.analyses.find(a => a.importReportId === item.analysis_report_id) : null;
+              const match = item.match_id ? d.matches.find(m => m.id === item.match_id) : linkedAnalysis ? d.matches.find(m => m.id === linkedAnalysis.matchId) : null;
+              if (!match) throw new Error('ไม่พบคู่แข่งขันในอุปกรณ์สำหรับ Match ID / Analysis Report ID ที่ระบุ');
+              if (item.home_team && item.home_team.trim().toLowerCase() !== match.homeTeam.trim().toLowerCase()) throw new Error('ชื่อทีมเหย้าไม่ตรงกับ Match ID: ' + match.id);
+              if (item.away_team && item.away_team.trim().toLowerCase() !== match.awayTeam.trim().toLowerCase()) throw new Error('ชื่อทีมเยือนไม่ตรงกับ Match ID: ' + match.id);
+              return {item, match, existing:d.results.find(r => r.matchId === match.id)};
+            });
+            if (new Set(resolved.map(x => x.match.id)).size !== resolved.length) throw new Error('ไฟล์มีคู่แข่งขันซ้ำกัน');
+            const correctionNeeded = resolved.some(x => !!x.existing);
+            preview.innerHTML = '<div class="mc-import-preview">' + resolved.map(x => '<div class="mc-preview-row"><b>' + esc(x.match.homeTeam) + ' ' + x.item.home_goals + ' – ' + x.item.away_goals + ' ' + esc(x.match.awayTeam) + '</b><div class="mc-muted">' + esc(x.match.league) + ' · Match ID ' + esc(x.match.id) + '</div><div class="mc-muted">' + (x.item.events || []).length + ' เหตุการณ์ที่แนบมา' + (x.existing ? ' · มีผลเดิม ต้องยืนยันการแก้ไข' : ' · รายการใหม่') + '</div></div>').join('') +
+              (correctionNeeded ? '<label class="mc-check"><input type="checkbox" id="allow-result-correction"> ยืนยันแก้ไขผลเดิม โดยเก็บ Snapshot และประวัติผลก่อนหน้าไว้</label>' : '') +
+              '<button class="primary" id="confirm-result-import" ' + (correctionNeeded ? 'disabled' : '') + '>ยืนยันนำเข้าผล ' + resolved.length + ' คู่</button></div>';
+            setMessage('#result-import-message', correctionNeeded ? 'ตรวจสอบไฟล์แล้ว · มีผลเดิมอย่างน้อยหนึ่งคู่ ต้องยืนยันการแก้ไขก่อน' : 'ตรวจสอบไฟล์ผ่าน · ยังไม่มีผลซ้ำ กรุณาตรวจตัวอย่างก่อนยืนยัน', 'success');
+            const correctionCheck = document.querySelector('#allow-result-correction');
+            const confirmButton = document.querySelector('#confirm-result-import');
+            if (correctionCheck) correctionCheck.addEventListener('change', () => { confirmButton.disabled = !correctionCheck.checked; });
+            confirmButton.addEventListener('click', async () => {
+              confirmButton.disabled = true;
+              try {
+                const db = await openDatabase();
+                const tx = db.transaction(['matches','match_results','predictions','performance_records'], 'readwrite');
+                let processingError = null;
+                const completion = new Promise((resolve, reject) => {
+                  tx.oncomplete = () => resolve();
+                  tx.onerror = () => reject(processingError || tx.error || new Error('บันทึกผลไม่สำเร็จ'));
+                  tx.onabort = () => reject(processingError || tx.error || new Error('ยกเลิกการบันทึกผล'));
+                });
+                const matchReq = tx.objectStore('matches').getAll();
+                const resultReq = tx.objectStore('match_results').getAll();
+                const predictionReq = tx.objectStore('predictions').getAll();
+                const performanceReq = tx.objectStore('performance_records').getAll();
+                const requests = [matchReq,resultReq,predictionReq,performanceReq];
+                let ready = 0;
+                const process = () => {
+                  try {
+                    const currentMatches = matchReq.result;
+                    const currentResults = resultReq.result;
+                    const currentPredictions = predictionReq.result;
+                    const currentPerformance = performanceReq.result;
+                    if (currentResults.some(r => r.importResultId === payload.result_id)) throw new Error('Result ID นี้ถูกนำเข้าไปแล้ว');
+                    const correctionAllowed = !!document.querySelector('#allow-result-correction')?.checked;
+                    for (const entry of resolved) {
+                      const match = currentMatches.find(m => m.id === entry.match.id);
+                      if (!match) throw new Error('คู่แข่งขันถูกลบหรือเปลี่ยนแปลงระหว่างตรวจสอบ');
+                      const item = entry.item;
+                      const old = currentResults.find(r => r.matchId === match.id);
+                      if (old && !correctionAllowed) throw new Error('มีผลเดิมอยู่แล้ว ต้องยืนยันการแก้ไขก่อน');
+                      const history = Array.isArray(old?.revisionHistory) ? old.revisionHistory.slice() : [];
+                      if (old) history.push({revision:Number(old.revisionNumber || 1), recordedAt:nowISO(), resultId:old.importResultId || null, homeGoals:old.homeGoals, awayGoals:old.awayGoals, verifiedAt:old.verifiedAt || null, source:old.source || null, events:old.events || []});
+                      const resultRecord = old
+                        ? {...old, homeGoals:item.home_goals, awayGoals:item.away_goals, verifiedAt:payload.verified_at, updatedAt:nowISO(), importedAt:nowISO(), importResultId:payload.result_id, source:payload.source, events:item.events || [], revisionNumber:Number(old.revisionNumber || 1) + 1, revisionHistory:history}
+                        : {...base(), matchId:match.id, homeGoals:item.home_goals, awayGoals:item.away_goals, verifiedAt:payload.verified_at, importedAt:nowISO(), importResultId:payload.result_id, source:payload.source, events:item.events || [], revisionNumber:1, revisionHistory:[]};
+                      tx.objectStore('match_results').put(resultRecord);
+                      match.status = 'FINISHED'; match.updatedAt = nowISO();
+                      tx.objectStore('matches').put(match);
+                      const matchPredictions = currentPredictions.filter(p => p.matchId === match.id && ['CONFIRMED','SETTLED'].includes(p.status));
+                      for (const pred of matchPredictions) {
+                        const isHome = pred.snapshot?.selectedTeam === 'home';
+                        const goalDiff = isHome ? item.home_goals - item.away_goals : item.away_goals - item.home_goals;
+                        const settlement = settleHandicap(goalDiff, pred.selectedLine, pred.selectedOdds);
+                        const prior = currentPerformance.find(v => v.predictionId === pred.id);
+                        const perfHistory = Array.isArray(prior?.revisionHistory) ? prior.revisionHistory.slice() : [];
+                        if (prior) perfHistory.push({settlement:prior.settlement, simulatedProfit:prior.simulatedProfit, evaluatedAt:prior.evaluatedAt});
+                        const perfRecord = prior
+                          ? {...prior, settlement:settlement.settlement, simulatedProfit:settlement.netReturnPerUnit, evaluatedAt:nowISO(), updatedAt:nowISO(), revisionHistory:perfHistory}
+                          : {...base(), predictionId:pred.id, settlement:settlement.settlement, simulatedProfit:settlement.netReturnPerUnit, evaluatedAt:nowISO(), revisionHistory:[]};
+                        tx.objectStore('performance_records').put(perfRecord);
+                        pred.status = 'SETTLED'; pred.updatedAt = nowISO();
+                        tx.objectStore('predictions').put(pred);
+                      }
+                    }
+                  } catch (error) {
+                    processingError = error;
+                    try { tx.abort(); } catch (_) {}
+                  }
+                };
+                requests.forEach(req => {
+                  req.onsuccess = () => { ready += 1; if (ready === requests.length) process(); };
+                  req.onerror = () => { processingError = req.error || new Error('อ่านข้อมูลในเครื่องไม่สำเร็จ'); try { tx.abort(); } catch (_) {} };
+                });
+                await completion;
+                setMessage('#result-import-message', 'นำเข้าผลสำเร็จ ' + resolved.length + ' คู่ · อัปเดตสถานะหลังแข่งขันและประเมินคำทำนายแล้ว', 'success');
+                await render();
+              } catch (error) {
+                confirmButton.disabled = false;
+                setMessage('#result-import-message', error instanceof Error ? error.message : 'ไม่สามารถนำเข้าผลการแข่งขันได้', 'error');
+              }
+            });
+          } catch (error) {
+            setMessage('#result-import-message', error instanceof Error ? error.message : 'อ่านหรือเชื่อมโยงไฟล์ผลไม่สำเร็จ', 'error');
+          }
+        });
+    }
