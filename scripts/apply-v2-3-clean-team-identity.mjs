@@ -13,8 +13,9 @@ if(!main.includes("const APP_VERSION='2.2';") ||
 }
 
 const markStart=main.indexOf('const mark=name=>{');
+const flagsStart=main.lastIndexOf('const nationalFlags = {',markStart);
 const markEnd=main.indexOf('};',markStart)+2;
-if(markStart<0 || markEnd<=markStart) throw Error('V2.2 team mark renderer anchor missing');
+if(markStart<0 || flagsStart<0 || markEnd<=markStart) throw Error('V2.2 team identity renderer anchors missing');
 
 const replacement=String.raw`const nationalFlags = {
  argentina:'🇦🇷',australia:'🇦🇺',austria:'🇦🇹',albania:'🇦🇱',algeria:'🇩🇿',angola:'🇦🇴',armenia:'🇦🇲',azerbaijan:'🇦🇿',
@@ -42,7 +43,7 @@ const mark=name=>{
  if(flag)return '<span class="v23-team-mark v23-flag" role="img" aria-label="ธงชาติ '+esc(n)+'">'+flag+'</span>';
  return '<span class="v23-team-mark v23-crest">'+(logo?'<img src="'+logo+'" alt="'+esc(n)+'" loading="lazy" referrerpolicy="no-referrer" onerror="this.parentElement.innerHTML=\'<b>'+esc(initial||'?')+'</b>\'">':'<b>'+esc(initial||'?')+'</b>')+'</span>';
 };`;
-main=main.slice(0,markStart)+replacement+main.slice(markEnd);
+main=main.slice(0,flagsStart)+replacement+main.slice(markEnd);
 main=main.replace("const APP_VERSION='2.2';","const APP_VERSION='2.3';")
   .replace("const PREVIOUS_APP_VERSION='2.1';","const PREVIOUS_APP_VERSION='2.2';")
   .replaceAll('FOOTBALL RICH · BLACK & GOLD · V2.2','FOOTBALL RICH · BLACK & GOLD · V2.3')
