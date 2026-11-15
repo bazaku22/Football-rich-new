@@ -40,7 +40,8 @@ let pwa=fs.readFileSync(pwaPath,'utf8').replace("navigator.serviceWorker.registe
 fs.writeFileSync(pwaPath,pwa);
 
 const swPath='public/sw.js';
-let sw=fs.readFileSync(swPath,'utf8').replace('football-rich-shell-v5','football-rich-shell-v5');
+let sw=fs.readFileSync(swPath,'utf8').replace('football-rich-shell-v2','football-rich-shell-v6').replace('football-rich-shell-v5','football-rich-shell-v6');
+if (!sw.includes("const CACHE_NAME = 'football-rich-shell-v6'")) throw new Error('Service worker cache version was not upgraded to v6');
 if (!sw.includes('/brand-emblem.svg')) sw=sw.replace('const APP_SHELL = [', "const APP_SHELL = ['/brand-emblem.svg', ");
 fs.writeFileSync(swPath,sw);
 
@@ -83,15 +84,24 @@ if (!html.includes('rel="icon"')) html=html.replace('</head>','  <link rel="icon
 // Prevent an endless startup screen if the JavaScript module graph fails.
 const bootGuard = `<script>
   window.__footballRichModuleError = false;
-  window.addEventListener('error', () => { window.__footballRichModuleError = true; });
-  window.addEventListener('unhandledrejection', () => { window.__footballRichModuleError = true; });
+  window.__footballRichBootErrorDetail = '';
+  window.addEventListener('error', (event) => {
+    window.__footballRichModuleError = true;
+    window.__footballRichBootErrorDetail = event.message || 'JavaScript runtime error';
+  });
+  window.addEventListener('unhandledrejection', (event) => {
+    window.__footballRichModuleError = true;
+    const reason = event.reason;
+    window.__footballRichBootErrorDetail = reason && reason.message ? reason.message : String(reason || 'Unhandled promise rejection');
+  });
   window.setTimeout(() => {
     const app = document.getElementById('app');
     if (app && !app.querySelector('.app-shell')) {
       const detail = window.__footballRichModuleError
         ? 'ไฟล์ JavaScript หรือโมดูลที่จำเป็นโหลดไม่สำเร็จ'
         : 'แอปไม่สามารถเริ่มทำงานได้ภายในเวลาที่กำหนด';
-      app.innerHTML = '<div class="boot-screen boot-error"><div><b>เปิด Football rich ไม่สำเร็จ</b><p>' + detail + '</p><button onclick="location.reload()">ลองโหลดใหม่</button><p>ข้อมูลที่บันทึกไว้ยังไม่ถูกลบ</p></div></div>';
+      const diagnostic = window.__footballRichBootErrorDetail ? '<small>' + String(window.__footballRichBootErrorDetail).replace(/[&<>\"']/g, '') + '</small>' : '';
+      app.innerHTML = '<div class="boot-screen boot-error"><div><b>เปิด Football rich ไม่สำเร็จ</b><p>' + detail + '</p>' + diagnostic + '<button onclick="location.reload()">ลองโหลดใหม่</button><p>ข้อมูลที่บันทึกไว้ยังไม่ถูกลบ</p></div></div>';
     }
   }, 10000);
 </script>`;
