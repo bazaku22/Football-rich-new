@@ -65,11 +65,17 @@
           "minLength": 1
         },
         "home_team_crest_url": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "format": "uri"
         },
         "away_team_crest_url": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "format": "uri"
         },
         "home_table_position": {
@@ -135,7 +141,8 @@
         "handicap_line": {
           "type": "number",
           "minimum": -4,
-          "maximum": 0
+          "maximum": 4,
+          "description": "Handicap applied to market.selected_team; negative means giving a handicap, positive means receiving a handicap. Supports quarter lines from -4 to +4."
         },
         "decimal_odds": {
           "type": [
@@ -322,6 +329,251 @@
             }
           },
           "description": "Expected goals estimated from verified pre-match evidence; used by the app's Independent Poisson calculator when outcome probabilities are omitted."
+        },
+        "risk_score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Risk score 0-100; higher means more uncertainty/risk. Weighted score from risk_components."
+        },
+        "data_confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Evidence/data confidence score, separate from outcome probability and risk score."
+        },
+        "risk_components": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "data_completeness",
+            "form_instability",
+            "factor_disagreement",
+            "lineup_uncertainty",
+            "market_volatility"
+          ],
+          "properties": {
+            "data_completeness": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100
+            },
+            "form_instability": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100
+            },
+            "factor_disagreement": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100
+            },
+            "lineup_uncertainty": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100
+            },
+            "market_volatility": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100
+            }
+          },
+          "description": "Each component is a risk score from 0-100; weighted 30/25/20/15/10 respectively."
+        },
+        "factor_assessments": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "recent_form_5": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "head_to_head": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "key_players": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "injuries_suspensions": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "home_away_form": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "scoring_conceding_rates": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "opponent_strength": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "schedule_motivation_tactics": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          }
+        },
+        "model_calibration": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "status",
+            "settled_sample_size",
+            "brier_score_1x2",
+            "brier_score_ah"
+          ],
+          "properties": {
+            "status": {
+              "enum": [
+                "not_calibrated",
+                "monitoring",
+                "evaluated"
+              ]
+            },
+            "settled_sample_size": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "brier_score_1x2": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "minimum": 0,
+              "maximum": 2
+            },
+            "brier_score_ah": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "minimum": 0,
+              "maximum": 2
+            },
+            "note": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          }
+        },
+        "candidate_handicaps": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "selected_team",
+              "handicap_line",
+              "handicap_settlement_probabilities",
+              "cover_probability",
+              "risk_score"
+            ],
+            "properties": {
+              "selected_team": {
+                "enum": [
+                  "home",
+                  "away"
+                ]
+              },
+              "handicap_line": {
+                "type": "number",
+                "minimum": -4,
+                "maximum": 4
+              },
+              "handicap_settlement_probabilities": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "full_win",
+                  "half_win",
+                  "push",
+                  "half_loss",
+                  "full_loss"
+                ],
+                "properties": {
+                  "full_win": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1
+                  },
+                  "half_win": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1
+                  },
+                  "push": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1
+                  },
+                  "half_loss": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1
+                  },
+                  "full_loss": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1
+                  }
+                }
+              },
+              "cover_probability": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1
+              },
+              "risk_score": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 100
+              },
+              "decimal_odds": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "exclusiveMinimum": 1
+              },
+              "source": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "odds_checked_at": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "format": "date-time"
+              }
+            }
+          }
         }
       }
     },
