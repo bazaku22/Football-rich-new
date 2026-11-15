@@ -1,0 +1,64 @@
+{
+  "schema_version": "1.0.0",
+  "report_type": "football-rich-analysis",
+  "report_id": "fr-match-001-20261115",
+  "created_at": "2026-11-15T15:53:00+07:00",
+  "analysis_as_of": "2026-11-15T15:53:00+07:00",
+  "match": {
+    "competition": "Czech Republic First League (ชื่อรายการตามที่ผู้ใช้แจ้ง)",
+    "country": "Czech Republic",
+    "home_team": "Bohemians Praha 1905 B",
+    "away_team": "Králův Dvůr",
+    "home_table_position": 12,
+    "away_table_position": 1,
+    "kickoff_at": null,
+    "timezone": "Asia/Bangkok",
+    "match_status": "unknown",
+    "match_id_external": null
+  },
+  "market": {
+    "market_type": "asian_handicap",
+    "selected_team": "away",
+    "handicap_line": -0.5,
+    "decimal_odds": 1.93,
+    "odds_checked_at": "2026-11-15T15:53:00+07:00",
+    "bookmaker_or_source": "ราคาหน้าเว็บ/แอปที่ผู้ใช้แจ้ง"
+  },
+  "analysis": {
+    "favorite_side": "away",
+    "form_summary": "ข้อมูลอันดับ 12 เทียบอันดับ 1 ตามที่ผู้ใช้แจ้ง สนับสนุนทิศทางทีมเยือนในเบื้องต้น แต่ยังไม่มีชุดสถิติฟอร์มล่าสุดที่ตรวจสอบแหล่งต้นทางได้ในไฟล์นี้",
+    "home_away_summary": "ยังไม่มีข้อมูลเหย้า-เยือนที่ยืนยันแหล่งที่มาได้เพียงพอสำหรับคำนวณโอกาสผ่านราคา",
+    "team_news_summary": "ยังไม่มีรายชื่อ 11 ตัวจริง ข่าวผู้เล่นบาดเจ็บหรือแบนที่ยืนยันได้",
+    "match_outcome_probabilities": null,
+    "handicap_settlement_probabilities": null,
+    "cover_probability": null,
+    "probability_status": "insufficient_data",
+    "risk_level": "undetermined",
+    "reasoning": [
+      "อันดับตารางที่ผู้ใช้แจ้งคือ Bohemians Praha 1905 B อันดับ 12 และ Králův Dvůr อันดับ 1 จึงเอนเอียงไปทางทีมเยือนในเชิงความแข็งแกร่งเบื้องต้น",
+      "ราคาแฮนดิแคปที่ผู้ใช้แจ้งคือทีมเยือน -0.50 ที่ราคา 1.93",
+      "ยังไม่ควรแปลงความได้เปรียบด้านอันดับเป็นเปอร์เซ็นต์ผ่านแฮนดิแคปโดยไม่มีข้อมูลฟอร์ม เหย้า-เยือน และความพร้อมทีมที่ตรวจสอบได้"
+    ],
+    "limitations": [
+      "ไม่มี URL แหล่งข้อมูลต้นทางที่ยืนยันอันดับและสถิติในขณะจัดทำไฟล์",
+      "ไม่มีเวลาแข่งขันที่ยืนยันได้ จึงเว้น kickoff_at เป็น null",
+      "ไม่มีข้อมูลตัวจริงและข่าวทีมที่ยืนยันได้",
+      "cover_probability ยังไม่ประเมิน เพราะข้อมูลไม่เพียงพอ"
+    ]
+  },
+  "recommendation": {
+    "status": "provisional",
+    "selected_team": "away",
+    "handicap_line": -0.5,
+    "cover_probability": null,
+    "summary": "ทิศทางเบื้องต้นเอนเอียง Králův Dvůr -0.50 ตามอันดับที่ผู้ใช้แจ้ง แต่ยังไม่ใช่คำแนะนำเดิมพันที่ยืนยันแล้ว เนื่องจากข้อมูลประกอบไม่เพียงพอ",
+    "stake_note": "รอตรวจสอบข้อมูลก่อนแข่งเพิ่มเติม ไม่ควรตีความ provisional เป็นคำแนะนำให้ลงเดิมพัน"
+  },
+  "evidence": [],
+  "notes": [
+    "Match #001 — ไฟล์ตัวอย่างสำหรับทดสอบรูปแบบนำเข้าเท่านั้น",
+    "ราคา 1.93 เป็นข้อมูลตลาดที่ผู้ใช้แจ้ง ไม่ได้นำมาใช้เป็นเกณฑ์เลือกเดิมพัน",
+    "ไฟล์นี้ไม่มี Fair Odds หรือ EV ตามหลักการวิเคราะห์ใหม่ของผู้ใช้",
+    "หากการแข่งขันเริ่มแล้วหรือจบแล้ว ห้ามนำรายงานนี้ไปใช้เป็นคำแนะนำก่อนแข่ง"
+  ]
+}
