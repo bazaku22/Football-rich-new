@@ -19,7 +19,9 @@ else if (currentView === 'matches') {
           const rec = a?.recommendation;
           const market = a?.marketSnapshot;
           const probs = a?.probabilities;
-          const selectedSide = rec?.selected_team || market?.selected_team || p?.snapshot?.selectedTeam;
+          const recSide = ['home','away'].includes(rec?.selected_team) ? rec.selected_team : null;
+          const marketSide = ['home','away'].includes(market?.selected_team) ? market.selected_team : null;
+          const selectedSide = recSide || marketSide || p?.snapshot?.selectedTeam;
           const line = rec?.handicap_line ?? market?.handicap_line ?? p?.selectedLine;
           const cover = a?.coverProbability;
           const hasKickoff = !!m.kickoffAt && !Number.isNaN(Date.parse(m.kickoffAt));
@@ -40,9 +42,16 @@ else if (currentView === 'matches') {
           const outcomeNames = {homeWin:'เจ้าบ้านชนะ',draw:'เสมอ',awayWin:'ทีมเยือนชนะ'};
           let outcomeReview = 'ไม่มีข้อมูล 1X2 สำหรับประเมิน';
           if (probs && ['homeWin','draw','awayWin'].every(k => typeof probs[k] === 'number')) {
-            const top = ['homeWin','draw','awayWin'].slice().sort((x,y) => Number(probs[y]) - Number(probs[x]))[0];
-            const ok = top === actual;
-            outcomeReview = (ok ? '✓ ' : '✗ ') + 'แนวโน้ม 1X2 สูงสุด: ' + outcomeNames[top] + ' · ' + percent(probs[top]) + (ok ? ' · ตรงผลจริง' : ' · ไม่ตรงผลจริง');
+            const keys = ['homeWin','draw','awayWin'];
+            const maxProbability = Math.max(...keys.map(k => Number(probs[k])));
+            const leaders = keys.filter(k => Math.abs(Number(probs[k]) - maxProbability) < 1e-9);
+            if (leaders.length === 1) {
+              const top = leaders[0];
+              const ok = top === actual;
+              outcomeReview = (ok ? '✓ ' : '✗ ') + 'แนวโน้ม 1X2 สูงสุด: ' + outcomeNames[top] + ' · ' + percent(probs[top]) + (ok ? ' · ตรงผลจริง' : ' · ไม่ตรงผลจริง');
+            } else {
+              outcomeReview = 'ความน่าจะเป็น 1X2 สูงสุดเท่ากัน · ไม่สรุปผู้ชนะจากแนวโน้ม';
+            }
           }
           const predictions = d.predictions.filter(p => p.matchId === m.id && p.status !== 'VOID');
           let ahReviews = predictions.map(p => {
@@ -65,7 +74,8 @@ else if (currentView === 'matches') {
           const eventHtml = events.length
             ? events.map(ev => '<div class="mc-event"><time>' + esc(ev.minute || '—') + '</time><span>' + esc(ev.team === 'home' ? m.homeTeam : m.awayTeam) + ' · ' + esc(ev.scorer || 'ไม่ระบุผู้ทำประตู') + (ev.assist ? ' (แอสซิสต์: ' + esc(ev.assist) + ')' : '') + '</span></div>').join('')
             : '<p class="mc-muted">ไม่มีข้อมูลผู้ทำประตูหรือแอสซิสต์ในไฟล์ผลนี้</p>';
-          return '<article class="panel mc-card"><div class="mc-card-head"><span>' + esc(m.league) + '</span><span class="tag">ยืนยันผลแล้ว</span></div><div class="mc-teams"><div class="mc-team">' + esc(m.homeTeam) + '</div><div class="mc-score">' + Number(r.homeGoals) + ' – ' + Number(r.awayGoals) + '</div><div class="mc-team">' + esc(m.awayTeam) + '</div></div><div class="mc-muted">ยืนยันผล: ' + esc(fmtDate(r.verifiedAt || r.importedAt || r.createdAt)) + '</div><div class="mc-review"><div class="mc-review-row"><span>ตรวจสอบแนวโน้ม 1X2</span><b class="' + (outcomeReview.startsWith('✓') ? 'mc-correct' : outcomeReview.startsWith('✗') ? 'mc-wrong' : '') + '">' + esc(outcomeReview) + '</b></div>' + ahReviews + '</div><div class="mc-events"><div class="mc-prob-title">เหตุการณ์และผู้ทำประตู</div>' + eventHtml + '</div><div class="mc-id">MATCH ID: ' + esc(m.id) + ' · RESULT ID: ' + esc(r.importResultId || 'legacy') + '</div>' + (Number(r.revisionNumber) > 1 ? '<div class="mc-muted">มีประวัติแก้ไขผล ' + (Number(r.revisionNumber) - 1) + ' ครั้ง · เก็บ Snapshot ก่อนหน้าไว้</div>' : '') + '</article>';
+          const revisionHtml = Array.isArray(r.revisionHistory) && r.revisionHistory.length ? '<details class="mc-history"><summary>ดูประวัติผลก่อนแก้ไข (' + r.revisionHistory.length + ')</summary>' + r.revisionHistory.slice().reverse().map(old => '<div class="mc-history-row">ครั้งที่ ' + Number(old.revision || 1) + ' · ' + Number(old.homeGoals) + '–' + Number(old.awayGoals) + ' · ' + esc(old.source || 'ไม่ระบุแหล่ง') + ' · ' + esc(fmtDate(old.verifiedAt || old.recordedAt || '')) + '</div>').join('') + '</details>' : '';
+          return '<article class="panel mc-card"><div class="mc-card-head"><span>' + esc(m.league) + '</span><span class="tag">ยืนยันผลแล้ว</span></div><div class="mc-teams"><div class="mc-team">' + esc(m.homeTeam) + '</div><div class="mc-score">' + Number(r.homeGoals) + ' – ' + Number(r.awayGoals) + '</div><div class="mc-team">' + esc(m.awayTeam) + '</div></div><div class="mc-muted">ยืนยันผล: ' + esc(fmtDate(r.verifiedAt || r.importedAt || r.createdAt)) + '</div><div class="mc-review"><div class="mc-review-row"><span>ตรวจสอบแนวโน้ม 1X2</span><b class="' + (outcomeReview.startsWith('✓') ? 'mc-correct' : outcomeReview.startsWith('✗') ? 'mc-wrong' : '') + '">' + esc(outcomeReview) + '</b></div>' + ahReviews + '</div><div class="mc-events"><div class="mc-prob-title">เหตุการณ์และผู้ทำประตู</div>' + eventHtml + '</div><div class="mc-id">MATCH ID: ' + esc(m.id) + ' · RESULT ID: ' + esc(r.importResultId || 'legacy') + '</div>' + (Number(r.revisionNumber) > 1 ? '<div class="mc-muted">มีประวัติแก้ไขผล ' + (Number(r.revisionNumber) - 1) + ' ครั้ง · เก็บ Snapshot ก่อนหน้าไว้</div>' : '') + revisionHtml + '</article>';
         };
         root.innerHTML = pageTitle('MATCH CENTER · V1.2', 'แมตช์เซ็นเตอร์', 'รวมคู่ก่อนแข่งขันและหลังแข่งขันไว้ในหน้าเดียว · ผลหลังแข่งเปลี่ยนสถานะเมื่อมีการนำเข้าผลที่ยืนยันแล้ว') +
           '<div class="mc-toolbar"><div class="mc-muted">ก่อนแข่งขันจะไม่ย้ายกลุ่มเพียงเพราะเวลาคิกออฟผ่านไป ต้องมี Result JSON ที่ยืนยันแล้วเท่านั้น</div><button class="outline" id="download-result-template">ดาวน์โหลดแม่แบบ Result JSON</button></div>' +
@@ -96,7 +106,7 @@ else if (currentView === 'matches') {
           const template = {
             schema_version:'1.0.0',
             report_type:'football-rich-result',
-            result_id:'fr-result-' + new Date().toISOString().replace(/[-:.TZ]/g,'').slice(0,14),
+            result_id:'fr-result-' + crypto.randomUUID(),
             created_at:nowISO(),
             verified_at:'',
             source:'กรุณาระบุแหล่งยืนยันผลการแข่งขันจริง',
