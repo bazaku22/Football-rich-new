@@ -94,7 +94,7 @@ if (main.includes(oldCard)) main = main.replace(oldCard, newCard);
 else if (!main.includes('const teamHtml = (name, country)')) throw new Error('V1.3 team badge helper anchor missing');
 
 const oldUpcoming = `return '<article class="panel mc-card"><div class="mc-card-head"><span>' + esc(m.league) + '</span><span>' + (hasKickoff ? esc(fmtDate(m.kickoffAt)) : 'ไม่ระบุเวลาแข่งขัน') + '</span></div><div class="mc-teams"><div class="mc-team">' + esc(m.homeTeam) + '</div><div class="mc-vs">VS</div><div class="mc-team">' + esc(m.awayTeam) + '</div></div><div class="mc-prob-title">โอกาสผลการแข่งขัน · 1X2</div>`;
-const newUpcoming = `return '<article class="panel mc-card"><div class="mc-card-head"><span>' + esc(m.league) + '</span><span>' + (hasKickoff ? esc(fmtDate(m.kickoffAt)) : 'ไม่ระบุเวลาแข่งขัน') + '</span></div><div class="mc-teams">' + teamHtml(m.homeTeam, matchCountry(m,a)) + '<div class="mc-vs">VS</div>' + teamHtml(m.awayTeam, matchCountry(m,a)) + '</div><div class="mc-prob-title">โอกาสผลการแข่งขัน · 1X2</div>';`;
+const newUpcoming = `return '<article class="panel mc-card"><div class="mc-card-head"><span>' + esc(m.league) + '</span><span>' + (hasKickoff ? esc(fmtDate(m.kickoffAt)) : 'ไม่ระบุเวลาแข่งขัน') + '</span></div><div class="mc-teams">' + teamHtml(m.homeTeam, matchCountry(m,a)) + '<div class="mc-vs">VS</div>' + teamHtml(m.awayTeam, matchCountry(m,a)) + '</div><div class="mc-prob-title">โอกาสผลการแข่งขัน · 1X2</div>' +`;
 if (main.includes(oldUpcoming)) main = main.replace(oldUpcoming, newUpcoming);
 else if (!main.includes("teamHtml(m.homeTeam, matchCountry(m,a))")) throw new Error('V1.3 upcoming team display anchor missing');
 
