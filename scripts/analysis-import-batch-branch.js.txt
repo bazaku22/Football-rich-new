@@ -52,8 +52,8 @@ else if (currentView === 'import') {
       const old=await records(),oldIds=new Set(old.analyses.map(a=>a.importReportId));
       if(ids.some(id=>oldIds.has(id)))throw Error('มี report_id ที่เคยนำเข้าแล้ว กรุณาตรวจสอบไฟล์');
       const updateExistingOnly=document.querySelector('#analysis-import-existing-only')?.checked!==false;
-      const normTeam=v=>String(v??'').normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').toLowerCase().replace(/\\s+/g,' ').trim().replace('czechia','czech republic').replace('turkiye','turkey');
-      const normComp=v=>String(v??'').toLowerCase().replace(/[—–]/g,'-').replace(/\\s+/g,' ').trim();
+      const normTeam=v=>String(v??'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/\s+/g,' ').trim().replace('czechia','czech republic').replace('turkiye','turkey');
+      const normComp=v=>String(v??'').toLowerCase().replace(/[—–]/g,'-').replace(/\s+/g,' ').trim();
       const sameCompetition=(a,b)=>{const x=normComp(a),y=normComp(b);return x===y||x.startsWith(y+' ')||y.startsWith(x+' ')||x.includes('uefa nations league')&&y.includes('uefa nations league');};
       const sameKickoff=(a,b)=>{const x=Date.parse(a??''),y=Date.parse(b??'');return Number.isFinite(x)&&Number.isFinite(y)&&Math.abs(x-y)<=120000;};
       const plan=items.map(({report})=>{
