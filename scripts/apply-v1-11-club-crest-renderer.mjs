@@ -28,7 +28,7 @@ const newRenderer=`const teamMark = (name, country) => {
           return '<span class="mc-team-mark" aria-hidden="true"><b>' + esc(initials) + '</b>' + (flag ? '<i>' + flag + '</i>' : '') + '</span>';
         };`;
 if (main.includes(oldRenderer)) main=main.replace(oldRenderer,newRenderer);
-else if (!main.includes('mc-team-crest') || !main.includes('knownClubCrests[rawName]')) { const hits=[...main.matchAll(/mc-team-mark/g)].map(m=>main.slice(Math.max(0,m.index-260),Math.min(main.length,m.index+360))); console.log('V1.11 DIAGNOSTIC team-mark contexts:',JSON.stringify(hits.slice(0,12))); throw new Error('V1.11 renderer anchor mismatch; inspect diagnostic contexts above'); }
+else if (!main.includes('mc-team-crest') || !main.includes('knownClubCrests[rawName]')) { const hits=[...main.matchAll(/mc-team-mark/g)].map(m=>main.slice(Math.max(0,m.index-1800),Math.min(main.length,m.index+1200))); console.log('V1.11 DIAGNOSTIC team-mark contexts:',JSON.stringify(hits.slice(0,12))); throw new Error('V1.11 renderer anchor mismatch; inspect diagnostic contexts above'); }
 
 const cssPatch=`
 /* V1.11: render real club crests without the initials badge circle */
