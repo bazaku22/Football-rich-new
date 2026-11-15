@@ -4,7 +4,7 @@ let main=fs.readFileSync(mainPath,'utf8'), css=fs.readFileSync(cssPath,'utf8'), 
 const eventStart=main.indexOf('const eventOrder = ev =>');
 const revisionStart=main.indexOf('const revisionHtml =',eventStart);
 if(eventStart<0 || revisionStart<0) throw new Error('V1.15 event renderer anchors missing');
-const eventRenderer = "const eventOrder = ev => { const raw=String(ev.minute ?? ''); const match=raw.match(/^(\\\\d+)(?:\\\\+(\\\\d+))?$/); return match ? Number(match[1]) + Number(match[2] || 0)/100 : 999; };\\n" +
+const eventRenderer = "const eventOrder = ev => { const raw=String(ev.minute ?? ''); const parts=raw.split('+'); return Number(parts[0]) + Number(parts[1] || 0)/100; };\\n" +
 "          const renderSideEvents = side => {\\n" +
 "            const sideEvents = events.filter(ev => ev.team === side).slice().sort((a,b)=>eventOrder(a)-eventOrder(b));\\n" +
 "            if (!sideEvents.length) return '<p class=\\"mc-muted mc-no-events\\">ไม่มีเหตุการณ์ที่บันทึกไว้</p>';\\n" +
