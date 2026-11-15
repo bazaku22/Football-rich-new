@@ -66,6 +66,9 @@ main=replaceOnce(main,
 const oldGuard="if(updateExistingOnly&&plan.some(x=>!x.match||!latest.matches.some(m=>m.id===x.match.id)))throw Error('แมตช์เดิมเปลี่ยนแปลงหรือไม่พบแล้ว กรุณาตรวจสอบใหม่ · ไม่มีการบันทึกข้อมูล');";
 const newGuard=oldGuard+"for(const item of plan){const candidates=latest.matches.filter(x=>sameCompetition(x.league,item.report.match.competition)&&normTeam(x.homeTeam)===normTeam(item.report.match.home_team)&&normTeam(x.awayTeam)===normTeam(item.report.match.away_team)&&sameKickoff(x.kickoffAt,item.report.match.kickoff_at));if(item.match?!candidates.some(x=>x.id===item.match.id):candidates.length)throw Error('รายการแข่งขันเปลี่ยนแปลงระหว่างตรวจสอบ กรุณาเลือกไฟล์อีกครั้ง · ไม่มีการบันทึกข้อมูล');}";
 main=replaceOnce(main,oldGuard,newGuard,'concurrent fixture identity check');
+main=replaceOnce(main,"});\\n      const pct=x=>x==null?'—':(Number(x)*100).toFixed(1)+'%';",
+"});\\n      for(let i=0;i<plan.length;i++)for(let j=i+1;j<plan.length;j++){const a=plan[i].report.match,b=plan[j].report.match;if(sameCompetition(a.competition,b.competition)&&normTeam(a.home_team)===normTeam(b.home_team)&&normTeam(a.away_team)===normTeam(b.away_team)&&sameKickoff(a.kickoff_at,b.kickoff_at))throw Error('พบโปรแกรมแข่งขันซ้ำในไฟล์ แม้ชื่อรายการจะต่างรูปแบบกัน: '+a.home_team+' vs '+a.away_team); }\\n      const pct=x=>x==null?'—':(Number(x)*100).toFixed(1)+'%';",
+'normalized duplicate fixture rejection');
 
 main=replaceOnce(main,
 "'นำเข้าสำเร็จครบ '+items.length+' คู่ · อัปเดตรายงานเดิม '+updatedReports+' รายงาน'",
