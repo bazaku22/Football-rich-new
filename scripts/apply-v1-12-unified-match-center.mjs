@@ -17,7 +17,7 @@ const newLists = `        const allMatches = d.matches.slice().sort((a,b) => {
           const resultDiff = time(ar?.verifiedAt || ar?.importedAt || ar?.createdAt) - time(br?.verifiedAt || br?.importedAt || br?.createdAt);
           return resultDiff || String(a.id).localeCompare(String(b.id));
         });`;
-if (listStart >= 0 && listEnd > listStart) main = main.slice(0,listStart) + newLists + '\\n        ' + main.slice(listEnd);
+if (listStart >= 0 && listEnd > listStart) main = main.slice(0,listStart) + newLists + '\n        ' + main.slice(listEnd);
 else if (!main.includes('const allMatches = d.matches.slice().sort')) {
   const diagnostic = main.indexOf('upcomingMatches');
   throw new Error('V1.12 match list sorting anchor missing. Context: ' + main.slice(Math.max(0,diagnostic-120),diagnostic+900));
