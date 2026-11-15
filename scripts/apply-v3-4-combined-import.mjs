@@ -82,8 +82,10 @@ sw=sw.replaceAll('football-rich-shell-v49','football-rich-shell-v50');
 version.version='3.4';version.previous_version='3.3';version.release='V3.4-beta.1';
 css+='\n/* V3.4 combined fixture + analysis import */\n.tools-grid{grid-template-columns:repeat(2,minmax(0,1fr))}@media(max-width:700px){.tools-grid{grid-template-columns:minmax(0,1fr)}}\n';
 
-for(const marker of ["data-tool-target=\\\"import\\\"","data-tool-target=\\\"result-import\\\"","MATCH + ANALYSIS IMPORT","football-rich-analysis-batch","sameKickoff(x.kickoffAt,report.match.kickoff_at)","สร้าง Match ID ใหม่","result-import-file","currentView === 'result-import'"])if(!main.includes(marker))throw Error('V3.4 combined importer marker missing: '+marker);
-if(main.includes("data-tool-target=\\\"fixture-import\\\"")||main.includes("currentView === 'fixture-import'"))throw Error('Old standalone Fixture Import remains visible');
+const toolsBlock=main.slice(toolsStart,main.indexOf("else if (currentView === 'import') {",toolsStart));
+if((toolsBlock.match(/data-tool-target=/g)||[]).length!==2||!toolsBlock.includes('นำเข้าโปรแกรมพร้อมบทวิเคราะห์'))throw Error('Tools Center must expose exactly two tools');
+for(const marker of ["MATCH + ANALYSIS IMPORT","football-rich-analysis-batch","sameKickoff(x.kickoffAt,report.match.kickoff_at)","สร้าง Match ID ใหม่","result-import-file","currentView === 'result-import'"])if(!main.includes(marker))throw Error('V3.4 combined importer marker missing: '+marker);
+if(main.includes('fixture-import')||main.includes("currentView === 'fixture-import'"))throw Error('Old standalone Fixture Import remains visible');
 if(main.includes('analysis-import-existing-only'))throw Error('Old update-only checkbox remains');
 if(main.includes('indexedDB.deleteDatabase(')||main.includes('objectStore.clear('))throw Error('Destructive database operation detected');
 fs.writeFileSync(mainPath,main);fs.writeFileSync(cssPath,css);fs.writeFileSync(htmlPath,html);fs.writeFileSync(swPath,sw);fs.writeFileSync(versionPath,JSON.stringify(version,null,2)+'\n');
