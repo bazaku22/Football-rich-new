@@ -76,11 +76,6 @@ main=replaceOnce(main,
 "'นำเข้าสำเร็จครบ '+items.length+' คู่ · อัปเดตรายงานเดิม '+updatedReports+' รายงาน'",
 "'นำเข้าสำเร็จครบ '+items.length+' คู่ · สร้าง Match ID ใหม่ '+plan.filter(x=>!x.match).length+' คู่ · ใช้ Match ID เดิม '+plan.filter(x=>!!x.match).length+' คู่ · เพิ่มเวอร์ชันรายงานเดิม '+updatedReports+' รายงาน'",
 'import completion summary');
-main=replaceOnce(main,
-"'บันทึกครบ '+items.length+' คู่แล้ว · อัปเดตรายงาน report_id เดิม '+updatedReports+' รายการด้วยบทวิเคราะห์เวอร์ชันใหม่ · ใช้ Match ID เดิม · เก็บประวัติทุกเวอร์ชัน และไม่เขียนทับผลการแข่งขันหรือคำทำนายเดิม'",
-"'บันทึกครบ '+items.length+' คู่แล้ว · สร้าง Match ID ใหม่ '+plan.filter(x=>!x.match).length+' คู่ · ใช้ Match ID เดิม '+plan.filter(x=>!!x.match).length+' คู่ · เพิ่มเวอร์ชัน report_id เดิม '+updatedReports+' รายการ · เก็บประวัติเดิมและไม่เขียนทับผลการแข่งขัน'",
-'import completion details');
-
 main=main.replace("const APP_VERSION='3.3';","const APP_VERSION='3.4';")
  .replace("const PREVIOUS_APP_VERSION='3.2';","const PREVIOUS_APP_VERSION='3.3';")
  .replaceAll('FOOTBALL RICH · BLACK & GOLD · V3.3','FOOTBALL RICH · BLACK & GOLD · V3.4')
