@@ -8,9 +8,12 @@ const replaceOnce=(source,from,to,label)=>{const i=source.indexOf(from);if(i<0)t
 if(version.version!=='3.3'||!main.includes("const APP_VERSION='3.3';")||!html.includes('main.js?v=20261116-v3-3')||!sw.includes("const CACHE_NAME = 'football-rich-shell-v49'"))throw Error('V3.4 expected V3.3 build anchors missing');
 
 // Tools Center B: replace Fixture Import + Analysis Import with one combined import entry.
-const fixtureCard=main.indexOf("'<button class=\\\"panel tools-card\\\" data-tool-target=\\\"fixture-import\\\"");
-const resultCard=main.indexOf("'<button class=\\\"panel tools-card\\\" data-tool-target=\\\"result-import\\\"");
-if(fixtureCard<0||resultCard<=fixtureCard)throw Error('Could not locate the two old import cards in Tools Center');
+const toolsStart=main.indexOf("currentView === 'tools'");
+const fixtureText=main.indexOf('fixture-import',toolsStart);
+const resultText=main.indexOf('result-import',fixtureText);
+const fixtureCard=main.lastIndexOf("'<button",fixtureText);
+const resultCard=main.lastIndexOf("'<button",resultText);
+if(toolsStart<0||fixtureCard<0||resultCard<=fixtureCard)throw Error('Could not locate the two old import cards in Tools Center');
 const combinedCard="'<button class=\\\"panel tools-card\\\" data-tool-target=\\\"import\\\"><span class=\\\"tools-icon\\\">◈</span><b>นำเข้าโปรแกรมพร้อมบทวิเคราะห์</b><small>สร้าง Match ID และผูกบทวิเคราะห์จาก JSON ชุดเดียว</small><span class=\\\"tools-open\\\">เปิดเครื่องมือ ›</span></button>'+\\n    ";
 main=main.slice(0,fixtureCard)+combinedCard+main.slice(resultCard);
 
@@ -23,10 +26,10 @@ main=main.slice(0,fixtureRoute)+main.slice(resultRoute);
 // Rename the existing analysis importer as the combined fixture + analysis workflow.
 main=replaceOnce(main,"pageTitle('ANALYSIS IMPORT','นำเข้ารายงานวิเคราะห์','เลือก JSON แบบชุด หรือ ZIP ที่มี JSON หลายคู่ แล้วนำเข้าพร้อมกันในครั้งเดียว')",
 "pageTitle('MATCH + ANALYSIS IMPORT','นำเข้าโปรแกรมพร้อมบทวิเคราะห์','นำเข้า JSON ชุดเดียว · สร้าง Match ID อัตโนมัติและเชื่อมบทวิเคราะห์ให้ทุกคู่')",'combined importer heading');
-main=replaceOnce(main,"card('เลือกไฟล์รายงาน','<p class=\\\"muted\\\">Football rich Analysis v1.0.0 · JSON หรือ ZIP · สูงสุด 20 MB · ไม่เกิน 100 คู่</p>",
-"card('เลือกไฟล์โปรแกรมพร้อมบทวิเคราะห์','<p class=\\\"muted\\\">Football rich Analysis Batch v1.0.0 · JSON 1 ไฟล์ · 1–100 คู่ · แต่ละรายงานต้องมีรายการแข่งขัน ทีม และเวลาเตะ</p>",'combined importer file card');
-main=replaceOnce(main,'เลือกไฟล์ JSON / ZIP<input id=\\\"analysis-import-file\\\" type=\\\"file\\\" accept=\\\".json,application/json,.zip,application/zip\\">',
-'เลือกไฟล์ JSON<input id=\\\"analysis-import-file\\\" type=\\\"file\\\" accept=\\\".json,application/json\\">','JSON-only file picker');
+main=replaceOnce(main,"card('เลือกไฟล์รายงาน',","card('เลือกไฟล์โปรแกรมพร้อมบทวิเคราะห์',",'combined importer file card');
+main=replaceOnce(main,'Football rich Analysis v1.0.0 · JSON หรือ ZIP · สูงสุด 20 MB · ไม่เกิน 100 คู่',
+'Football rich Analysis Batch v1.0.0 · JSON 1 ไฟล์ · 1–100 คู่ · แต่ละรายงานต้องมีรายการแข่งขัน ทีม และเวลาเตะ',
+'combined importer description');
 
 // Remove the old update-only checkbox from the combined workflow.
 const importHeading=main.indexOf("pageTitle('MATCH + ANALYSIS IMPORT'");
