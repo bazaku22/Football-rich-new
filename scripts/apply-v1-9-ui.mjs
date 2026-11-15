@@ -3,7 +3,7 @@ const mp='dist/main.js',cp='dist/styles/main.css',sp='dist/sw.js',hp='dist/index
 let m=fs.readFileSync(mp,'utf8'),c=fs.readFileSync(cp,'utf8'),s=fs.readFileSync(sp,'utf8'),h=fs.readFileSync(hp,'utf8');
 const profit='<div class="stat panel"><small>กำไรจำลองสุทธิ</small><strong>'+ '$' + '{fmtNum(profit)}</strong><span>หน่วยเดิมพันจำลอง</span></div>';
 if(!m.includes(profit))throw Error('profit card anchor missing');m=m.replace(profit,'');
-const settlement='$'+'{card(\\'ผลชำระเดิมพัน\\',settled.length?\\'<div class="metrics">\\'+[\\'FULL_WIN\\',\\'HALF_WIN\\',\\'PUSH\\',\\'HALF_LOSS\\',\\'FULL_LOSS\\'].map(k=>\\'<span>\\'+statusText[k]+\\' <b>\\'+settled.filter(p=>p.settlement===k).length+\\'</b></span>\\').join(\\'\\')+\\'</div>\\':\\'<p class="muted">ยังไม่มีผลที่ตัดสินแล้ว</p>\\')}';
+const settlement = `\${card('ผลชำระเดิมพัน',settled.length?'<div class="metrics">'+['FULL_WIN','HALF_WIN','PUSH','HALF_LOSS','FULL_LOSS'].map(k=>'<span>'+statusText[k]+' <b>'+settled.filter(p=>p.settlement===k).length+'</b></span>').join('')+'</div>':'<p class="muted">ยังไม่มีผลที่ตัดสินแล้ว</p>')}`;
 if(!m.includes(settlement))throw Error('settlement card anchor missing');m=m.replace(settlement,'');
 m=m.replace("pageTitle('PERFORMANCE INTELLIGENCE','ผลงานและความแม่นยำ','ประเมินจากผลจริงที่บันทึกไว้ · แยกผลชำระแฮนดิแคปและความน่าจะเป็น')","pageTitle('PERFORMANCE INTELLIGENCE','ผลงานและความแม่นยำ','ประเมินความแม่นยำจากผลการแข่งขันจริงและโอกาสผ่านแฮนดิแคป')");
 m=m.replace("const profit=settled.reduce((sum,p)=>sum+Number(p.simulatedProfit||0),0);",'');
