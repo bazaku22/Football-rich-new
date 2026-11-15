@@ -32,6 +32,8 @@ const mainPath='src/main.ts';
 let main=fs.readFileSync(mainPath,'utf8');
 main=main.replaceAll('<div class="brand-mark">♛</div>','<div class="brand-mark"><img src="/brand-emblem.svg" alt="Football rich crown and trophy emblem"></div>');
 main=main.replace('<div class="hero-emblem">♛<span>🏆</span></div>','<div class="hero-emblem"><img src="/brand-emblem.svg" alt="ตรามงกุฎและถ้วยรางวัล Football rich"></div>');
+main=main.replace("const app = document.querySelector('#app');", "const brandEmblemUrl = new URL('./brand-emblem.svg', import.meta.url).href;\\nconst app = document.querySelector('#app');");
+main=main.replaceAll('src="/brand-emblem.svg"', 'src="${brandEmblemUrl}"');
 if (main.includes('♛') || main.includes('🏆')) throw new Error('Legacy text emblem remains in app UI');
 fs.writeFileSync(mainPath,main);
 
@@ -40,8 +42,8 @@ let pwa=fs.readFileSync(pwaPath,'utf8').replace("navigator.serviceWorker.registe
 fs.writeFileSync(pwaPath,pwa);
 
 const swPath='public/sw.js';
-let sw=fs.readFileSync(swPath,'utf8').replace('football-rich-shell-v2','football-rich-shell-v6').replace('football-rich-shell-v5','football-rich-shell-v6');
-if (!sw.includes("const CACHE_NAME = 'football-rich-shell-v6'")) throw new Error('Service worker cache version was not upgraded to v6');
+let sw=fs.readFileSync(swPath,'utf8').replace('football-rich-shell-v2','football-rich-shell-v7').replace('football-rich-shell-v7','football-rich-shell-v7');
+if (!sw.includes("const CACHE_NAME = 'football-rich-shell-v7'")) throw new Error('Service worker cache version was not upgraded to v6');
 if (!sw.includes('/brand-emblem.svg')) sw=sw.replace('const APP_SHELL = [', "const APP_SHELL = ['/brand-emblem.svg', ");
 fs.writeFileSync(swPath,sw);
 
@@ -79,7 +81,7 @@ import fs from 'node:fs';
 const file='dist/index.html';
 let html=fs.readFileSync(file,'utf8');
 html=html.replace('<div id="app"></div>','<div id="app"><div class="boot-screen">กำลังเปิด Football rich…</div></div>');
-html=html.replace('<script type="module" src="/main.js"></script>','<script type="module" src="main.js?v=20261115-bootfix-2" onerror="window.__footballRichModuleError=true"></script>');
+html=html.replace('<script type="module" src="/main.js"></script>','<script type="module" src="main.js?v=20261115-dashboard-logo-1" onerror="window.__footballRichModuleError=true"></script>');
 if (!html.includes('rel="icon"')) html=html.replace('</head>','  <link rel="icon" type="image/svg+xml" href="/brand-emblem.svg" />\n  <link rel="apple-touch-icon" href="/icon-192.png" />\n</head>');
 // Prevent an endless startup screen if the JavaScript module graph fails.
 const bootGuard = `<script>
@@ -119,6 +121,7 @@ if (!html.includes('navigator.serviceWorker.register')) {
   html = html.replace('</body>', registration + '</body>');
 }
 fs.writeFileSync(file,html);
+fs.appendFileSync('src/styles/main.css', "\n/* Dashboard and emblem layout refinement — desktop + Android */\n.brand-mark { flex:0 0 54px; width:54px; height:54px; padding:5px; overflow:hidden; }\n.brand-mark img { width:100%; height:100%; max-width:100%; max-height:100%; object-fit:contain; display:block; }\n.mobile-head .brand-mark { flex-basis:38px; width:38px; height:38px; padding:3px; }\n.hero { gap:clamp(18px,3vw,34px); }\n.hero > div:first-child { flex:1 1 320px; min-width:0; }\n.hero-emblem { flex:0 1 220px; width:220px; min-width:0; padding:0; opacity:1; }\n.hero-emblem img { display:block; width:100%; max-width:220px; height:auto; aspect-ratio:1; object-fit:contain; margin-inline:auto; }\n@media(max-width:650px) {\n  .hero { flex-direction:column; align-items:stretch; gap:18px; padding:22px; }\n  .hero > div:first-child { width:100%; flex:1 1 auto; }\n  .hero-emblem { align-self:center; flex:0 0 auto; width:min(44vw,148px); max-width:148px; padding:0; }\n  .hero-emblem img { width:100%; max-width:148px; height:auto; border-radius:20px; box-shadow:0 10px 28px #0007; }\n  .stats-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }\n  .two-col { grid-template-columns:minmax(0,1fr); }\n}\n");
 fs.appendFileSync('src/styles/main.css', '\n.boot-screen{min-height:100vh;display:grid;place-items:center;background:#121212;color:#F4D27B;font:600 16px system-ui,sans-serif}.boot-error{color:#ffb4a9;padding:24px;text-align:center}\n');
 console.log('Brand icon, install icon, startup fallback and service worker registration prepared.');
 NODE
