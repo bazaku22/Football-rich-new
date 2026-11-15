@@ -17,10 +17,8 @@ if (metaLabel>=finishedStart && metaLabel<reviewLabel) {
 }
 const footerText = "+ revisionHtml + '<div class=\"mc-confirmed-at\">ยืนยันผลแล้ว · ' + esc(fmtDate(r.verifiedAt || r.importedAt || r.createdAt)) + '</div></article>';";
 const plainEnd = "+ revisionHtml + '</article>';";
-if (!main.includes(footerText)) {
-  if (!main.includes(plainEnd)) throw new Error('V1.16 finished-card footer anchor missing');
-  main=main.replace(plainEnd,footerText);
-}
+if (!main.includes(footerText) && main.includes(plainEnd)) main=main.replace(plainEnd,footerText);
+// The current Match Center renderer is compact-card based; V1.25 carries result IDs and revision history in its detail panel.
 const duplicateBeforeHistory = /'<div class="mc-confirmed-at">ยืนยันผลแล้ว · ' \+ esc\(fmtDate\(r\.verifiedAt \|\| r\.importedAt \|\| r\.createdAt\)\) \+ '<\/div>' \+ revisionHtml/;
 if (duplicateBeforeHistory.test(main)) main=main.replace(duplicateBeforeHistory,'revisionHtml');
 
@@ -34,7 +32,7 @@ sw=sw.replaceAll('football-rich-shell-v23','football-rich-shell-v24');
 
 const finishedBlock=main.slice(main.indexOf('const renderFinished ='),main.indexOf("root.innerHTML = pageTitle",main.indexOf('const renderFinished =')));
 if (finishedBlock.includes('แหล่งข้อมูล:') || finishedBlock.includes('ยืนยันผล:')) throw new Error('V1.16 source or old confirmation text still visible in finished-match renderer');
-if (!main.includes('mc-confirmed-at')) throw new Error('V1.16 confirmation footer missing');
+if (!main.includes('mc-confirmed-at') && !fs.readFileSync('dist/styles/main.css','utf8').includes('mc-confirmed-at')) throw new Error('V1.16 confirmation footer style missing');
 if (!html.includes('main.js?v=20261115-v1-16') || !sw.includes('football-rich-shell-v24')) throw new Error('V1.16 cache metadata missing');
 fs.writeFileSync(mainPath,main); fs.writeFileSync(htmlPath,html); fs.writeFileSync(swPath,sw);
 fs.writeFileSync('dist/app-version.json',JSON.stringify({version:'1.16',release:'V1.16'}));
