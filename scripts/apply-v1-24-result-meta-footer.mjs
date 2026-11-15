@@ -1,13 +1,16 @@
 import fs from 'node:fs';
 const mainPath='dist/main.js', cssPath='dist/styles/main.css', htmlPath='dist/index.html', swPath='dist/sw.js';
 let main=fs.readFileSync(mainPath,'utf8'), css=fs.readFileSync(cssPath,'utf8'), html=fs.readFileSync(htmlPath,'utf8'), sw=fs.readFileSync(swPath,'utf8');
-const idStart = main.indexOf("'<div class=\"mc-id\">MATCH ID: ' + esc(m.id)");
-const footerEndMarker = "+ revisionHtml + '</article>';";
-const footerEnd = idStart < 0 ? -1 : main.indexOf(footerEndMarker,idStart);
-if (idStart < 0 || footerEnd < 0) throw new Error('V1.24 could not locate MATCH ID-to-history footer boundaries');
-const newFooter = `'<section class="mc-result-meta"><div class="mc-id-block"><span class="mc-meta-label">รหัสรายการ</span><div class="mc-id">MATCH ID: ' + esc(m.id) + '</div><div class="mc-id">RESULT ID: ' + esc(r.importResultId || 'legacy') + '</div></div>' + (Number(r.revisionNumber) > 1 ? '<div class="mc-snapshot-note"><span class="mc-meta-label">ประวัติการแก้ไข</span><p>แก้ไขผลแล้ว ' + (Number(r.revisionNumber) - 1) + ' ครั้ง · เก็บ Snapshot ก่อนหน้าไว้</p></div>' : '') + (revisionHtml ? '<div class="mc-history-wrap">' + revisionHtml + '</div>' : '') + '</section></article>';`;
-main=main.slice(0,idStart)+newFooter+main.slice(footerEnd+footerEndMarker.length);
-const cssPatch = `
+const idPos=main.indexOf('MATCH ID:');
+const revisionPos=idPos<0?-1:main.indexOf('revisionHtml',idPos);
+const articleToken="'</article>'";
+const articleEnd=revisionPos<0?-1:main.indexOf(articleToken,revisionPos);
+const divPos=idPos<0?-1:main.lastIndexOf('<div',idPos);
+const quoteStart=divPos<0?-1:main.lastIndexOf("'",divPos);
+if(idPos<0||revisionPos<0||articleEnd<0||quoteStart<0) throw new Error('V1.24 could not locate result footer: id='+idPos+', revision='+revisionPos+', article='+articleEnd+', div='+divPos);
+const newFooter=`'<section class="mc-result-meta"><div class="mc-id-block"><span class="mc-meta-label">รหัสรายการ</span><div class="mc-id">MATCH ID: ' + esc(m.id) + '</div><div class="mc-id">RESULT ID: ' + esc(r.importResultId || 'legacy') + '</div></div>' + (Number(r.revisionNumber) > 1 ? '<div class="mc-snapshot-note"><span class="mc-meta-label">ประวัติการแก้ไข</span><p>แก้ไขผลแล้ว ' + (Number(r.revisionNumber) - 1) + ' ครั้ง · เก็บ Snapshot ก่อนหน้าไว้</p></div>' : '') + (revisionHtml ? '<div class="mc-history-wrap">' + revisionHtml + '</div>' : '') + '</section></article>'`;
+main=main.slice(0,quoteStart)+newFooter+main.slice(articleEnd+articleToken.length);
+const cssPatch=`
 /* V1.24: full-width readable result metadata and snapshot history footer */
 .mc-result-meta{display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:10px!important;width:100%!important;max-width:100%!important;min-width:0!important;box-sizing:border-box!important;margin-top:14px!important;padding-top:12px!important;border-top:1px solid #40351f!important}
 .mc-id-block,.mc-snapshot-note,.mc-history-wrap{display:block!important;width:100%!important;max-width:100%!important;min-width:0!important;box-sizing:border-box!important}
@@ -19,12 +22,12 @@ const cssPatch = `
 .mc-history summary{display:block!important;width:100%!important;max-width:100%!important;min-width:0!important;white-space:normal!important;line-height:1.5!important;overflow-wrap:anywhere!important;writing-mode:horizontal-tb!important}
 .mc-history-row{display:block!important;width:100%!important;max-width:100%!important;min-width:0!important;white-space:normal!important;overflow-wrap:anywhere!important;line-height:1.6!important}
 `;
-if (!css.includes('V1.24: full-width readable result metadata and snapshot history footer')) css += String.fromCharCode(10)+cssPatch;
-if (!main.includes("const APP_VERSION='1.23';")) throw new Error('V1.24 expected app version 1.23');
+if(!css.includes('V1.24: full-width readable result metadata and snapshot history footer')) css+=String.fromCharCode(10)+cssPatch;
+if(!main.includes("const APP_VERSION='1.23';")) throw new Error('V1.24 expected app version 1.23');
 main=main.replace("const APP_VERSION='1.23';","const APP_VERSION='1.24';").replace("const PREVIOUS_APP_VERSION='1.22';","const PREVIOUS_APP_VERSION='1.23';");
-if (!html.includes('main.js?v=20261116-v1-23')) throw new Error('V1.24 cache anchor missing in HTML');
+if(!html.includes('main.js?v=20261116-v1-23')) throw new Error('V1.24 HTML cache anchor missing');
 html=html.replace('main.js?v=20261116-v1-23','main.js?v=20261116-v1-24');
-if (!sw.includes('football-rich-shell-v31')) throw new Error('V1.24 service worker cache anchor missing');
+if(!sw.includes('football-rich-shell-v31')) throw new Error('V1.24 service worker cache anchor missing');
 sw=sw.replaceAll('football-rich-shell-v31','football-rich-shell-v32');
 fs.writeFileSync(mainPath,main);fs.writeFileSync(cssPath,css);fs.writeFileSync(htmlPath,html);fs.writeFileSync(swPath,sw);
 fs.writeFileSync('dist/app-version.json',JSON.stringify({version:'1.24',release:'V1.24'}));
