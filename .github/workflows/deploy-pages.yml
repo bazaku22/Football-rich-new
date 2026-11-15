@@ -130,7 +130,9 @@ jobs:
           if (appVersion.version !== '1.15') throw new Error('App version manifest is stale');
           if (app.includes('กำไรจำลองสุทธิ') || app.includes("card('ผลชำระเดิมพัน'")) throw new Error('V1.9 non-gambling Performance cleanup failed');
           for (const crestUrl of ['machida-zelvia-logo-footylogos.svg','vissel-kobe-logo-footylogos.svg','kashiwa-reysol-logo-footylogos.svg','kawasaki-frontale-logo-footylogos.svg']) if (!app.includes(crestUrl)) throw new Error('V1.13 club crest asset missing: '+crestUrl);
-          for (const feature of ['mc-event-columns','mc-assist-boot','mc-card-icon-yellow','mc-card-icon-red','mc-confirmed-at','renderSideEvents']) if (!app.includes(feature)) throw new Error('V1.15 match detail UI feature missing: '+feature);
+          const appCss = fs.readFileSync(path.join(root,'styles/main.css'),'utf8');
+          for (const feature of ['mc-event-columns','mc-assist-boot','mc-confirmed-at','renderSideEvents']) if (!app.includes(feature) && !appCss.includes(feature)) throw new Error('V1.15 match detail UI feature missing: '+feature);
+          for (const feature of ['mc-card-icon-yellow','mc-card-icon-red','.mc-event-ball']) if (!appCss.includes(feature)) throw new Error('V1.15 event icon style missing: '+feature);
           if (app.includes('แหล่งข้อมูล:')) throw new Error('V1.15 verbose source metadata remains visible in app renderer');
           console.log('V1.9 verified: existing match analysis retained, financial summary cards removed, unread notification center and release metadata updated.');
           NODE
