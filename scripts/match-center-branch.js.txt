@@ -27,7 +27,7 @@ else if (currentView === 'matches') {
           const probHtml = probs
             ? probCard('เจ้าบ้านชนะ', probs.homeWin, 'home') + probCard('เสมอ', probs.draw, 'draw') + probCard('ทีมเยือนชนะ', probs.awayWin, 'away')
             : probCard('เจ้าบ้านชนะ', null, 'home') + probCard('เสมอ', null, 'draw') + probCard('ทีมเยือนชนะ', null, 'away');
-          const ahHtml = selectedSide && Number.isFinite(Number(line))
+          const ahHtml = selectedSide && typeof line === 'number' && Number.isFinite(line)
             ? '<div class="mc-ah"><div>ทีมต่อ: <strong>' + esc(sideName(m, selectedSide)) + ' ' + Number(line).toFixed(2) + '</strong></div><div class="mc-muted">โอกาสผ่านแฮนดิแคป: <strong>' + (typeof cover === 'number' ? percent(cover * 100) : 'ข้อมูลไม่เพียงพอ') + '</strong></div><div class="mc-muted">สถานะ: ' + esc(rec?.status || (p ? 'ยืนยันคำทำนายแล้ว' : 'รอพิจารณา')) + '</div></div>'
             : '<div class="mc-ah mc-muted">ยังไม่มีคำแนะนำ Asian Handicap ที่มีข้อมูลครบ</div>';
           return '<article class="panel mc-card"><div class="mc-card-head"><span>' + esc(m.league) + '</span><span>' + (hasKickoff ? esc(fmtDate(m.kickoffAt)) : 'ไม่ระบุเวลาแข่งขัน') + '</span></div><div class="mc-teams"><div class="mc-team">' + esc(m.homeTeam) + '</div><div class="mc-vs">VS</div><div class="mc-team">' + esc(m.awayTeam) + '</div></div><div class="mc-prob-title">โอกาสผลการแข่งขัน · 1X2</div><div class="mc-prob-grid">' + probHtml + '</div>' + ahHtml + (m.notes ? '<p class="mc-muted">' + esc(m.notes) + '</p>' : '') + '<div class="mc-actions"><button class="outline" data-select-match="' + esc(m.id) + '">เปิดวิเคราะห์</button></div><div class="mc-id">MATCH ID: ' + esc(m.id) + '</div><div class="mc-muted">' + stateNote + '</div></article>';
@@ -49,14 +49,16 @@ else if (currentView === 'matches') {
             const perf = d.performance.find(v => v.predictionId === p.id);
             const status = perf?.settlement || (p.status === 'SETTLED' ? 'ยังไม่มีผลประเมิน' : '');
             const cls = status === 'PUSH' ? 'mc-push' : ['FULL_WIN','HALF_WIN'].includes(status) ? 'mc-correct' : ['FULL_LOSS','HALF_LOSS'].includes(status) ? 'mc-wrong' : '';
-            return '<div class="mc-review-row"><span>AH ' + (p.snapshot?.selectedTeam === 'home' ? 'เจ้าบ้าน' : 'ทีมเยือน') + ' ' + Number(p.selectedLine).toFixed(2) + '</span><b class="' + cls + '">' + esc(statusText[status] || status || 'รอประเมิน') + '</b></div>';
+            const reviewLabel = status === 'PUSH' ? '= คืนทุน' : ['FULL_WIN','HALF_WIN'].includes(status) ? '✓ ' + (statusText[status] || status) : ['FULL_LOSS','HALF_LOSS'].includes(status) ? '✗ ' + (statusText[status] || status) : (statusText[status] || status || 'รอประเมิน');
+            return '<div class="mc-review-row"><span>AH ' + (p.snapshot?.selectedTeam === 'home' ? 'เจ้าบ้าน' : 'ทีมเยือน') + ' ' + Number(p.selectedLine).toFixed(2) + '</span><b class="' + cls + '">' + esc(reviewLabel) + '</b></div>';
           }).join('');
-          if (!predictions.length && a?.recommendation && a.recommendation.selected_team !== 'none' && Number.isFinite(Number(a.recommendation.handicap_line))) {
+          if (!predictions.length && a?.recommendation && a.recommendation.selected_team !== 'none' && typeof a.recommendation.handicap_line === 'number' && Number.isFinite(a.recommendation.handicap_line)) {
             const side = a.recommendation.selected_team;
             const gd = side === 'home' ? r.homeGoals - r.awayGoals : r.awayGoals - r.homeGoals;
             const result = settleHandicap(gd, Number(a.recommendation.handicap_line), Number(a.marketSnapshot?.decimal_odds) > 1 ? Number(a.marketSnapshot.decimal_odds) : 2);
             const cls = result.settlement === 'PUSH' ? 'mc-push' : ['FULL_WIN','HALF_WIN'].includes(result.settlement) ? 'mc-correct' : 'mc-wrong';
-            ahReviews = '<div class="mc-review-row"><span>AH ' + esc(sideName(m, side)) + ' ' + Number(a.recommendation.handicap_line).toFixed(2) + '</span><b class="' + cls + '">' + esc(statusText[result.settlement]) + '</b></div>';
+            const reviewLabel = result.settlement === 'PUSH' ? '= คืนทุน' : ['FULL_WIN','HALF_WIN'].includes(result.settlement) ? '✓ ' + statusText[result.settlement] : '✗ ' + statusText[result.settlement];
+            ahReviews = '<div class="mc-review-row"><span>AH ' + esc(sideName(m, side)) + ' ' + Number(a.recommendation.handicap_line).toFixed(2) + '</span><b class="' + cls + '">' + esc(reviewLabel) + '</b></div>';
           }
           if (!ahReviews) ahReviews = '<div class="mc-review-row"><span>Asian Handicap</span><b>ไม่มีคำทำนายที่บันทึก</b></div>';
           const events = Array.isArray(r.events) ? r.events : [];
