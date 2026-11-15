@@ -43,7 +43,7 @@ if(start<0)throw Error('Existing Result JSON importer source missing');
 let handler=source.slice(start).trim();
 handler=handler.replace("if (!ev || typeof ev !== 'object' || ev.type !== 'goal' || !['home','away'].includes(ev.team)) fail('เหตุการณ์ต้องเป็น goal และระบุทีม home/away');","if (!ev || typeof ev !== 'object' || !['goal','yellow_card','red_card'].includes(ev.type) || !['home','away'].includes(ev.team)) fail('เหตุการณ์ต้องเป็น goal, yellow_card หรือ red_card และระบุทีม home/away');");
 if(handler.includes("ev.type !== 'goal'"))throw Error('Could not enable card-event validation');
-handler=handler.replace(/\\n\\s*}\\s*$/, '');
+handler=handler.replace(/\n\s*}\s*$/, '');
 const resultBranch=[
 "else if (currentView === 'result-import') {",
 "  const d=await records(),upcomingMatches=d.matches.filter(m=>!d.results.some(r=>r.matchId===m.id));",
