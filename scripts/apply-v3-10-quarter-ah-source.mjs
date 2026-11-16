@@ -10,7 +10,7 @@ const fullLines=`export const SUPPORTED_HANDICAPS = [
   2, 2.25, 2.5, 2.75, 3, 3.25, 3.5, 3.75, 4
 ] as const;`;
 if(!domain.includes(fullLines)){
-  domain=domain.replace(/export const SUPPORTED_HANDICAPS = \\[[\\s\\S]*?\\] as const;/,fullLines);
+  domain=domain.replace(/export const SUPPORTED_HANDICAPS = \[[\s\S]*?\] as const;/,fullLines);
   if(!domain.includes(fullLines))throw Error('V3.10 could not set the complete two-sided AH line range');
 }
 const oldSplit=`  const lowerMagnitude = Math.floor(Math.abs(handicap) * 2) / 2;
