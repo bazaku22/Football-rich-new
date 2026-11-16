@@ -9,7 +9,7 @@ let html=fs.readFileSync(htmlPath,'utf8');
 let sw=fs.readFileSync(swPath,'utf8');
 const manifest=JSON.parse(fs.readFileSync(manifestPath,'utf8'));
 if(manifest.season!=='2026/27'||!Array.isArray(manifest.teams)||manifest.teams.length!==114)throw Error('Club-logo manifest is incomplete');
-if(!main.includes("const APP_VERSION='3.10.0';")||!html.includes('main.js?v=20261116-v3-10-0')||!sw.includes("const CACHE_NAME = 'football-rich-shell-v65'"))throw Error('Expected V3.9.7 build anchors missing; refusing to patch unknown build');
+if(!main.includes("const APP_VERSION='3.9.7';")||!html.includes('main.js?v=20261116-v3-9-7')||!sw.includes("const CACHE_NAME = 'football-rich-shell-v62'"))throw Error('Expected V3.9.7 build anchors missing; refusing to patch unknown build');
 
 const normalize=value=>String(value||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]/g,'');
 const logos={
@@ -97,7 +97,7 @@ main=main.replace("const APP_VERSION='3.9.7';","const APP_VERSION='3.10.0';");
 if(!main.includes("const APP_VERSION='3.10.0';"))throw Error('App version bump failed');
 html=html.replace('main.js?v=20261116-v3-9-7','main.js?v=20261116-v3-10-0');
 sw=sw.replace("const CACHE_NAME = 'football-rich-shell-v62'","const CACHE_NAME = 'football-rich-shell-v65'");
-if(!html.includes('main.js?v=20261116-v3-9-9')||!sw.includes("const CACHE_NAME = 'football-rich-shell-v64'"))throw Error('Cache-busting update failed');
+if(!html.includes('main.js?v=20261116-v3-10-0')||!sw.includes("const CACHE_NAME = 'football-rich-shell-v65'"))throw Error('Cache-busting update failed');
 if(main.includes('indexedDB.deleteDatabase(')||main.includes('objectStore.clear('))throw Error('Destructive storage operation detected');
 fs.writeFileSync(mainPath,main);fs.writeFileSync(cssPath,css);fs.writeFileSync(htmlPath,html);fs.writeFileSync(swPath,sw);
 fs.writeFileSync(versionPath,JSON.stringify({version:'3.10.0',release:'V3.10.0 — Expanded club crest catalogue and alias matching'})+'\n');
