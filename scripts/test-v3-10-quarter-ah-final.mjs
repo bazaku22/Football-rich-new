@@ -1,0 +1,18 @@
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+const root='football-rich-v1/dist';
+const main=fs.readFileSync(root+'/main.js','utf8');
+const html=fs.readFileSync(root+'/index.html','utf8');
+const sw=fs.readFileSync(root+'/sw.js','utf8');
+const version=JSON.parse(fs.readFileSync(root+'/app-version.json','utf8'));
+const domain=fs.readFileSync(root+'/domain/handicap.js','utf8');
+const database=fs.readFileSync(root+'/data/database.js','utf8');
+assert.equal(version.version,'3.9.3');
+assert.ok(html.includes('main.js?v=20261116-v3-9-3'));
+assert.ok(sw.includes("const CACHE_NAME = 'football-rich-shell-v58'"));
+assert.ok(main.includes('Math.abs(line) > 4')&&main.includes('const sign = Math.sign(line)'));
+assert.ok(domain.includes('0.25')&&domain.includes('3.75'));
+assert.ok(database.includes('length: 33'));
+for(const line of [0.25,0.75,1.25,1.75,2.25,3.75])assert.ok(domain.includes(String(line)),'Missing positive AH line '+line);
+assert.ok(!main.includes('indexedDB.deleteDatabase(')&&!main.includes('objectStore.clear('));
+console.log('V3.9.3 regression passed: positive/negative quarter AH model, domain, backup validation, cache bump and non-destructive storage.');

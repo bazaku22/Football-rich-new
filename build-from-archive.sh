@@ -3,6 +3,7 @@ set -euo pipefail
 
 unzip -q -o football-rich-v1-test-candidate-0.5.0.zip -d .
 cd football-rich-v1
+node ../scripts/apply-v3-10-quarter-ah-source.mjs
 
 # Keep the app entry, browser icon and Android install icon on the approved crown-and-trophy identity.
 node --input-type=module <<'NODE'
