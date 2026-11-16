@@ -8,7 +8,8 @@ if(main.includes("const APP_VERSION='3.9.2';"))main=main.replace("const APP_VERS
 else if(!main.includes("const APP_VERSION='3.9.3';"))throw Error('V3.9.3 app version anchor missing');
 main=main.replace("const PREVIOUS_APP_VERSION='3.6';","const PREVIOUS_APP_VERSION='3.9.2';");
 fs.writeFileSync(mainPath,main);
-let html=fs.readFileSync(htmlPath,'utf8').replace(/main\\.js(?:\\?[^"']*)?/g,'main.js?v=20261116-v3-9-3');
+let html=fs.readFileSync(htmlPath,'utf8');
+html=html.replaceAll('main.js?v=20261116-v3-9-2','main.js?v=20261116-v3-9-3');
 if(!html.includes('main.js?v=20261116-v3-9-3'))throw Error('V3.9.3 cache-busted entry missing');
 fs.writeFileSync(htmlPath,html);
 let sw=fs.readFileSync(swPath,'utf8');
@@ -18,5 +19,5 @@ fs.writeFileSync(swPath,sw);
 const version=JSON.parse(fs.readFileSync(versionPath,'utf8'));
 if(version.version!=='3.9.2'&&version.version!=='3.9.3')throw Error('Unexpected app-version manifest before V3.9.3');
 version.previous_version='3.9.2';version.version='3.9.3';version.release='V3.9.3-beta.1';
-fs.writeFileSync(versionPath,JSON.stringify(version,null,2)+'\\n');
+fs.writeFileSync(versionPath,JSON.stringify(version,null,2)+'\n');
 console.log('V3.9.3 final release metadata and PWA cache version applied.');
