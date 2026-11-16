@@ -28,6 +28,29 @@ for(const team of manifest.teams){
     logos[key]=team.logo_url;
   }
 }
+// Keep every app screen on the same 111-club source. The older shared
+// crest renderer is still used outside the V2.1 dashboard and has its own map.
+const sharedAnchor='const knownClubCrests = {';
+const sharedStart=main.indexOf(sharedAnchor);
+if(sharedStart<0)throw Error('Shared knownClubCrests map not found; refusing partial renderer update');
+const sharedBrace=main.indexOf('{',sharedStart);
+let sharedDepth=0,sharedEnd=-1;
+for(let i=sharedBrace;i<main.length;i++){
+  if(main[i]==='{')sharedDepth++;
+  else if(main[i]==='}'&&--sharedDepth===0){sharedEnd=i+1;break;}
+}
+if(sharedEnd<0)throw Error('Shared knownClubCrests map is incomplete');
+const existingShared=Function('return ('+main.slice(sharedBrace,sharedEnd)+')')();
+const sharedCrests={...existingShared};
+for(const team of manifest.teams){
+  for(const alias of [team.team,team.matched_as,...(team.aliases||[])]){
+    const key=normalize(alias);if(!key)continue;
+    if(sharedCrests[key]&&sharedCrests[key]!==team.logo_url)throw Error('Conflicting shared crest alias '+alias);
+    sharedCrests[key]=team.logo_url;
+  }
+}
+main=main.slice(0,sharedStart)+'const knownClubCrests = '+JSON.stringify(sharedCrests)+main.slice(sharedEnd);
+if(!main.includes('mappedClubCrest = knownClubCrests[name] || knownClubCrests[clean]'))throw Error('Shared crest renderer is not connected to the unified club map');
 const mapStart=main.indexOf('const logos={');
 const mapEnd=main.indexOf('};',mapStart)+2;
 if(mapStart<0||mapEnd<=mapStart)throw Error('Existing Match Center logo map not found');
