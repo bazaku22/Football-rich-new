@@ -7,10 +7,10 @@ let html=fs.readFileSync(htmlPath,'utf8');
 let sw=fs.readFileSync(swPath,'utf8');
 const version=JSON.parse(fs.readFileSync(versionPath,'utf8'));
 
-if(version.version!=='3.6' || !main.includes("const APP_VERSION='3.6';") ||
-   !html.includes('main.js?v=20261116-v3-6') ||
-   !sw.includes("const CACHE_NAME = 'football-rich-shell-v52'")) {
-  throw new Error('Football Time import patch requires the V3.6 build before V3.7.');
+if(version.version!=='3.7' || !main.includes("const APP_VERSION='3.7';") ||
+   !html.includes('main.js?v=20261116-v3-7') ||
+   !sw.includes("const CACHE_NAME = 'football-rich-shell-v53'")) {
+  throw new Error('Football Time import patch requires the V3.7 build before V3.8.');
 }
 
 const toolsStart=main.indexOf("currentView === 'tools'");
