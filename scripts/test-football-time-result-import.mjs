@@ -2,9 +2,10 @@ import fs from 'node:fs';
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
 
-const main=fs.readFileSync('dist/main.js','utf8');
-const css=fs.readFileSync('dist/styles/main.css','utf8');
-const syntax=spawnSync('node',['--check','dist/main.js'],{encoding:'utf8'});
+const root=fs.existsSync('football-rich-v1/dist/main.js')?'football-rich-v1/dist':'dist';
+const main=fs.readFileSync(root+'/main.js','utf8');
+const css=fs.readFileSync(root+'/styles/main.css','utf8');
+const syntax=spawnSync('node',['--check',root+'/main.js'],{encoding:'utf8'});
 assert.equal(syntax.status,0,'Generated main.js syntax must pass: '+syntax.stderr);
 for(const marker of [
   "currentView === 'football-time-result-import'",
