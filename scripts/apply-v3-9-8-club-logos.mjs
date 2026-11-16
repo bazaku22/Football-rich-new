@@ -46,13 +46,13 @@ const resolverSource = String.raw`const resolveClubLogo = name => {
     const next = [];
     for (const candidate of frontier) {
       for (const prefix of prefixes) {
-        if (candidate.startsWith(prefix) && candidate.length > prefix.length + 2) {
+        if (candidate.startsWith(prefix) && candidate.length > prefix.length + 1) {
           const v = candidate.slice(prefix.length);
           if (!variants.has(v)) { variants.add(v); next.push(v); }
         }
       }
       for (const suffix of suffixes) {
-        if (candidate.endsWith(suffix) && candidate.length > suffix.length + 2) {
+        if (candidate.endsWith(suffix) && candidate.length > suffix.length + 1) {
           const v = candidate.slice(0, -suffix.length);
           if (!variants.has(v)) { variants.add(v); next.push(v); }
         }
