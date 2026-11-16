@@ -1,0 +1,23 @@
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+const root='football-rich-v1/dist';
+const main=fs.readFileSync(root+'/main.js','utf8');
+const html=fs.readFileSync(root+'/index.html','utf8');
+const sw=fs.readFileSync(root+'/sw.js','utf8');
+const version=JSON.parse(fs.readFileSync(root+'/app-version.json','utf8'));
+assert.equal(version.version,'3.9.7');
+assert.ok(main.includes("const APP_VERSION='3.9.7';"));
+assert.ok(main.includes("r=results.get(m.id),legacy=m.footballTimeLegacyResultSnapshot||null"));
+assert.ok(main.includes("legacyValid?'จบแล้ว · Legacy'"));
+assert.ok(main.includes("legacyValid?Number(legacy.home_score)+' – '+Number(legacy.away_score)"));
+assert.ok(main.includes('ยังไม่ได้ตรวจสอบอิสระ · ไม่รวมใน Verified Performance'));
+assert.ok(html.includes('main.js?v=20261116-v3-9-7'));
+assert.ok(sw.includes("const CACHE_NAME = 'football-rich-shell-v62'"));
+// Verified result remains the only source for prediction review and match events.
+assert.ok(main.includes('if(r){\n   const predicted=forecastOutcome(p)'));
+assert.ok(main.includes('const events=Array.isArray(r?.events)?r.events:[]'));
+assert.ok(main.includes('d.results.length'));
+assert.ok(!main.includes('legacy.home_score)-Number(legacy.away_score)'));
+assert.ok(!main.includes('indexedDB.deleteDatabase('));
+assert.ok(!main.includes('objectStore.clear('));
+console.log('V3.9.7 tests passed: Legacy display-only, verified-only evaluation, no destructive storage operations.');
