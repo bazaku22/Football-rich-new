@@ -33,13 +33,13 @@ app = app.slice(0, start) + helper + app.slice(end + endMarker.length);
 if (!app.includes("level=riskAssessment?.level||['ยังประเมินไม่ได้','unknown']")) {
   throw new Error('Match card is not using the direct AH risk assessment');
 }
-app = app.replaceAll('V3.9.1', 'V3.9.2').replaceAll('V3.9', 'V3.9.2');
+app = app.replaceAll('V3.9.1', 'V3.9.2');
 app = app.replace("const APP_VERSION='3.9.1'", "const APP_VERSION='3.9.2'");
 if (!app.includes("const APP_VERSION='3.9.2'")) throw new Error('Internal app version did not update to V3.9.2');
 fs.writeFileSync(mainFile, app);
 
 let html = fs.readFileSync(htmlFile, 'utf8');
-html = html.replace(/main\\.js(?:\\?[^"' ]*)?/g, 'main.js?v=20261116-v3-9-2');
+html = html.replace(/main\\.js(?:\\?[^"']*)?/g, 'main.js?v=20261116-v3-9-2');
 if (!html.includes('main.js?v=20261116-v3-9-2')) throw new Error('V3.9.2 cache-busted app entry missing');
 fs.writeFileSync(htmlFile, html);
 
