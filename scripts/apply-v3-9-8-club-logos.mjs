@@ -32,12 +32,72 @@ const mapStart=main.indexOf('const logos={');
 const mapEnd=main.indexOf('};',mapStart)+2;
 if(mapStart<0||mapEnd<=mapStart)throw Error('Existing Match Center logo map not found');
 main=main.slice(0,mapStart)+'const logos='+JSON.stringify(logos)+';'+main.slice(mapEnd);
-main=main.replace("const APP_VERSION='3.9.7';","const APP_VERSION='3.9.8';");
-if(!main.includes("const APP_VERSION='3.9.8';"))throw Error('App version bump failed');
-html=html.replace('main.js?v=20261116-v3-9-7','main.js?v=20261116-v3-9-8');
-sw=sw.replace("const CACHE_NAME = 'football-rich-shell-v62'","const CACHE_NAME = 'football-rich-shell-v63'");
-if(!html.includes('main.js?v=20261116-v3-9-8')||!sw.includes("const CACHE_NAME = 'football-rich-shell-v63'"))throw Error('Cache-busting update failed');
+if(!main.includes('const mark=name=>{'))throw Error('Match Center team mark renderer missing');
+const resolveClubLogo = name => {
+  const normalizeClubKey = value => String(value || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]/g, '');
+  const key = normalizeClubKey(name);
+  if (!key) return '';
+  if (logos[key]) return logos[key];
+  const prefixes = ['footballclub','associationfootballclub','fc','afc','cf','ac','as','us','ssc','sc','rcd','rc','club'];
+  const suffixes = ['associationfootballclub','footballclub','fc','afc','cf','ac','as','us','ssc','sc','calcio','club'];
+  const variants = new Set([key]);
+  let frontier = [key];
+  for (let depth = 0; depth < 4; depth++) {
+    const next = [];
+    for (const candidate of frontier) {
+      for (const prefix of prefixes) {
+        if (candidate.startsWith(prefix) && candidate.length > prefix.length + 2) {
+          const v = candidate.slice(prefix.length);
+          if (!variants.has(v)) { variants.add(v); next.push(v); }
+        }
+      }
+      for (const suffix of suffixes) {
+        if (candidate.endsWith(suffix) && candidate.length > suffix.length + 2) {
+          const v = candidate.slice(0, -suffix.length);
+          if (!variants.has(v)) { variants.add(v); next.push(v); }
+        }
+      }
+      if (candidate.endsWith('utd')) {
+        const v = candidate.slice(0, -3) + 'united';
+        if (!variants.has(v)) { variants.add(v); next.push(v); }
+      }
+      if (candidate.endsWith('united')) {
+        const v = candidate.slice(0, -6) + 'utd';
+        if (!variants.has(v)) { variants.add(v); next.push(v); }
+      }
+      if (candidate.startsWith('man') && !candidate.startsWith('manchester')) {
+        const v = 'manchester' + candidate.slice(3);
+        if (!variants.has(v)) { variants.add(v); next.push(v); }
+      }
+      if (candidate.startsWith('manchester')) {
+        const v = 'man' + candidate.slice(10);
+        if (!variants.has(v)) { variants.add(v); next.push(v); }
+      }
+    }
+    frontier = next;
+    if (!frontier.length) break;
+  }
+  const synonyms = {
+    manunited:'manchesterunited',
+    manutd:'manchesterunited',
+    manchesterutd:'manchesterunited',
+    newcastleutd:'newcastleunited',
+    psg:'parissaintgermain'
+  };
+  for (const candidate of variants) {
+    const mapped = logos[candidate] || logos[synonyms[candidate] || ''];
+    if (mapped) return mapped;
+  }
+  return '';
+};
+main=main.replace('logo=logos[k]','logo=resolveClubLogo(n)');
+if(!main.includes('logo=resolveClubLogo(n)'))throw Error('Global club-logo resolver was not connected to the renderer');
+main=main.replace("const APP_VERSION='3.9.7';","const APP_VERSION='3.9.9';");
+if(!main.includes("const APP_VERSION='3.9.9';"))throw Error('App version bump failed');
+html=html.replace('main.js?v=20261116-v3-9-7','main.js?v=20261116-v3-9-9');
+sw=sw.replace("const CACHE_NAME = 'football-rich-shell-v62'","const CACHE_NAME = 'football-rich-shell-v64'");
+if(!html.includes('main.js?v=20261116-v3-9-9')||!sw.includes("const CACHE_NAME = 'football-rich-shell-v64'"))throw Error('Cache-busting update failed');
 if(main.includes('indexedDB.deleteDatabase(')||main.includes('objectStore.clear('))throw Error('Destructive storage operation detected');
 fs.writeFileSync(mainPath,main);fs.writeFileSync(cssPath,css);fs.writeFileSync(htmlPath,html);fs.writeFileSync(swPath,sw);
-fs.writeFileSync(versionPath,JSON.stringify({version:'3.9.8',release:'V3.9.8 — Five-league club crests'})+'\n');
-console.log('V3.9.8 applied: '+manifest.teams.length+' five-league club crests mapped; J.League crests preserved; static images only; data untouched.');
+fs.writeFileSync(versionPath,JSON.stringify({version:'3.9.9',release:'V3.9.9 — Five-league club crests'})+'\n');
+console.log('V3.9.9 applied: global alias resolution for '+manifest.teams.length+' five-league club crests mapped; J.League crests preserved; static images only; data untouched.');
