@@ -42,7 +42,7 @@ const oldFooter = "(riskScore!==null?'<small class=\"v30-risk-score\">Risk Score
 if (app.includes(oldFooter)) app = app.replace(oldFooter, "''");
 else if (app.includes('v30-risk-score')) throw new Error('Unexpected legacy Risk Score footer; refusing unsafe patch');
 
-app = app.replaceAll('V3.8', 'V3.9.1').replace("const APP_VERSION='3.8'", "const APP_VERSION='3.9.1'");
+app = app.replaceAll('V3.9', 'V3.9.1').replace("const APP_VERSION='3.9'", "const APP_VERSION='3.9.1'");
 if (!app.includes("const APP_VERSION='3.9.1'")) throw new Error('Internal app version did not update to V3.9.1');
 fs.writeFileSync(mainFile, app);
 
@@ -57,7 +57,7 @@ sw = sw.replace("const CACHE_NAME = 'football-rich-shell-v55'", "const CACHE_NAM
 fs.writeFileSync(swFile, sw);
 
 const version = JSON.parse(fs.readFileSync(versionFile, 'utf8'));
-if (version.version !== '3.8') throw new Error('Expected app-version.json 3.8 before V3.9.1');
+if (version.version !== '3.9') throw new Error('Expected app-version.json 3.9 before V3.9.1');
 version.previous_version = '3.9';
 version.version = '3.9.1';
 version.release = 'V3.9.1-beta.1';
