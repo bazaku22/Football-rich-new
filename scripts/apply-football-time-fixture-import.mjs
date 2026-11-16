@@ -18,10 +18,12 @@ const resultStart=main.indexOf("else if (currentView === 'result-import') {",too
 if(toolsStart<0 || resultStart<0) throw new Error('Tools Center / Result Import routes not found');
 let toolsBlock=main.slice(toolsStart,resultStart);
 if(toolsBlock.includes('football-time-import')) throw new Error('Football Time import card already exists');
-const gridEnd=toolsBlock.indexOf("</div>';");
-if(gridEnd<0) throw new Error('Tools Center card grid end not found');
+const firstCard=toolsBlock.indexOf('data-tool-target=');
+const secondCard=firstCard<0?-1:toolsBlock.indexOf('data-tool-target=',firstCard+1);
+const secondCardStart=secondCard<0?-1:toolsBlock.lastIndexOf("'<button",secondCard);
+if(secondCardStart<0) throw new Error('Result Import card start not found in Tools Center');
 const card="'<button class=\\\"panel tools-card\\\" data-tool-target=\\\"football-time-import\\\"><span class=\\\"tools-icon\\\">⇄</span><b>นำเข้าข้อมูลจาก Football Time</b><small>รับโปรแกรม 5 ลีกจากไฟล์ JSON พร้อมจับคู่ Shared Match ID โดยรักษา Match ID เดิม</small><span class=\\\"tools-open\\\">ตรวจสอบไฟล์ ›</span></button>' +";
-toolsBlock=toolsBlock.slice(0,gridEnd)+card+toolsBlock.slice(gridEnd);
+toolsBlock=toolsBlock.slice(0,secondCardStart)+card+toolsBlock.slice(secondCardStart);
 main=main.slice(0,toolsStart)+toolsBlock+main.slice(resultStart);
 
 const route = [
