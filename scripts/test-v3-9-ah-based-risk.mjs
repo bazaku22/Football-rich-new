@@ -26,7 +26,7 @@ assert.equal(version.previous_version, '3.8');
 assert.equal(version.release, 'V3.9-beta.1');
 
 const start = app.indexOf('const calculateAhRisk=a=>');
-const end = app.indexOf('};', start) + 2;
+const end = app.indexOf('\n };', start) + 3;
 assert.ok(start >= 0 && end > start, 'calculator source can be isolated');
 const source = app.slice(start, end);
 const sandbox = {};
