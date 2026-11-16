@@ -10,7 +10,7 @@ assert.equal(version.version,'3.10.0');
 assert.equal(manifest.season,'2026/27');
 assert.equal(manifest.teams.length,114);
 for(const league of ['Premier League','La Liga','Bundesliga','Serie A','Ligue 1'])assert.ok(manifest.teams.some(t=>t.league===league),'Missing league '+league);
-assert.ok(main.includes("const APP_VERSION='3.9.9';"));
+assert.ok(main.includes("const APP_VERSION='3.10.0';"));
 assert.ok(html.includes('main.js?v=20261116-v3-10-0'));
 assert.ok(sw.includes("const CACHE_NAME = 'football-rich-shell-v65'"));
 const start=main.indexOf('const logos=')+'const logos='.length,end=main.indexOf(';',start);
