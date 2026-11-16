@@ -1,0 +1,149 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Football Time legacy result snapshot",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "export_id",
+    "exported_by",
+    "exported_at",
+    "data_type",
+    "snapshot_policy",
+    "scope",
+    "records"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "export_id": {
+      "type": "string"
+    },
+    "exported_by": {
+      "const": "football-time"
+    },
+    "exported_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "data_type": {
+      "const": "legacy_match_result_snapshots"
+    },
+    "snapshot_policy": {
+      "const": "non_revision_legacy"
+    },
+    "scope": {
+      "type": "object",
+      "required": [
+        "league_ids",
+        "season_ids"
+      ],
+      "properties": {
+        "league_ids": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "PL",
+              "PD",
+              "BL1",
+              "SA",
+              "FL1"
+            ]
+          },
+          "minItems": 5,
+          "maxItems": 5,
+          "uniqueItems": true
+        },
+        "season_ids": {
+          "const": [
+            "2026-2027"
+          ]
+        }
+      }
+    },
+    "records": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "match_id",
+          "provider",
+          "provider_match_id",
+          "league_id",
+          "season_id",
+          "home_score",
+          "away_score",
+          "status",
+          "evidence"
+        ],
+        "properties": {
+          "match_id": {
+            "type": "string",
+            "pattern": "^FT-M-FOOTBALLDATA-[A-Za-z0-9_-]+$"
+          },
+          "provider": {
+            "const": "football-data"
+          },
+          "provider_match_id": {
+            "type": "string"
+          },
+          "league_id": {
+            "enum": [
+              "PL",
+              "PD",
+              "BL1",
+              "SA",
+              "FL1"
+            ]
+          },
+          "season_id": {
+            "const": "2026-2027"
+          },
+          "home_score": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "away_score": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "status": {
+            "const": "FINISHED"
+          },
+          "evidence": {
+            "type": "object",
+            "required": [
+              "classification",
+              "source_provider",
+              "database_generated_at",
+              "verification_status",
+              "revision_history_available"
+            ],
+            "properties": {
+              "classification": {
+                "const": "legacy_database_snapshot"
+              },
+              "source_provider": {
+                "type": "string"
+              },
+              "database_generated_at": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "format": "date-time"
+              },
+              "verification_status": {
+                "const": "not_independently_verified"
+              },
+              "revision_history_available": {
+                "const": false
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
