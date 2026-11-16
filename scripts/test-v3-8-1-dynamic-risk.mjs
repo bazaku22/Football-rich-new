@@ -1,0 +1,12 @@
+import fs from 'node:fs';import path from 'node:path';import assert from 'node:assert/strict';
+const root=process.argv[2]||'football-rich-v1/dist';const s=fs.readFileSync(path.join(root,'main.js'),'utf8');const h=fs.readFileSync(path.join(root,'index.html'),'utf8');const sw=fs.readFileSync(path.join(root,'sw.js'),'utf8');const v=JSON.parse(fs.readFileSync(path.join(root,'app-version.json'),'utf8'));
+assert.ok(s.includes('const calculateCompositeRisk=a=>'),'dynamic risk calculator exists');
+assert.ok(s.includes('matchRisk*.4+ahRisk*.4+dataRisk*.2'),'40/40/20 weighted composite formula exists');
+assert.ok(s.includes('compositeRisk=calculateCompositeRisk(a)'),'cards use per-match computed risk');
+assert.ok(!s.includes('Number(a?.sourceReport?.analysis?.risk_score)?Number(a.sourceReport.analysis.risk_score):null'),'legacy fixed risk_score no longer drives card');
+assert.ok(s.includes("['ยังประเมินไม่ได้','unknown']"),'missing data must not be assigned fabricated high risk');
+assert.ok(h.includes('main.js?v=20261116-v3-8-1'));assert.ok(sw.includes('football-rich-shell-v55'));assert.equal(v.version,'3.8.1');
+const calc=(p,c,d)=>((1-Math.max(...p))*40+(1-c)*40+(100-d)*20);
+assert.notEqual(calc([.6,.2,.2],.7,80),calc([.4,.3,.3],.5,50),'different match inputs must yield different scores');
+assert.equal(calc([.7,.2,.1],.8,90),24,'known example composite score');
+console.log('V3.8.1 dynamic risk regression tests passed.');
