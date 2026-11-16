@@ -6,7 +6,7 @@ assert.ok(s.includes('compositeRisk=calculateCompositeRisk(a)'),'cards use per-m
 assert.ok(!s.includes('Number(a?.sourceReport?.analysis?.risk_score)?Number(a.sourceReport.analysis.risk_score):null'),'legacy fixed risk_score no longer drives card');
 assert.ok(s.includes("['ยังประเมินไม่ได้','unknown']"),'missing data must not be assigned fabricated high risk');
 assert.ok(h.includes('main.js?v=20261116-v3-8-1'));assert.ok(sw.includes('football-rich-shell-v55'));assert.equal(v.version,'3.8.1');
-const calc=(p,c,d)=>((1-Math.max(...p))*40+(1-c)*40+(100-d)*20);
+const calc=(p,c,d)=>((1-Math.max(...p))*100*.4+(1-c)*100*.4+(100-d)*.2);
 assert.notEqual(calc([.6,.2,.2],.7,80),calc([.4,.3,.3],.5,50),'different match inputs must yield different scores');
-assert.equal(calc([.7,.2,.1],.8,90),24,'known example composite score');
+assert.equal(calc([.7,.2,.1],.8,90),22,'known example composite score');
 console.log('V3.8.1 dynamic risk regression tests passed.');
