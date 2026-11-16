@@ -11,7 +11,9 @@ const version=JSON.parse(fs.readFileSync(versionPath,'utf8'));
 
 const oldHandicapList='0, -0.25, -0.5, -0.75, -1, -1.25, -1.5, -1.75, -2, -2.25, -2.5, -2.75, -3, -3.25, -3.5, -3.75, -4';
 const newHandicapList='-4, -3.75, -3.5, -3.25, -3, -2.75, -2.5, -2.25, -2, -1.75, -1.5, -1.25, -1, -0.75, -0.5, -0.25, 0, 0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2, 2.25, 2.5, 2.75, 3, 3.25, 3.5, 3.75, 4';
-if(handicap.includes(oldHandicapList)) handicap=handicap.replace(oldHandicapList,newHandicapList);
+const handicapArray=/export const SUPPORTED_HANDICAPS = \\[([\\s\\S]*?)\\];?/.exec(handicap);
+if(handicapArray) handicap=handicap.replace(handicapArray[0], 'export const SUPPORTED_HANDICAPS = ['+newHandicapList+'];');
+else if(handicap.includes(oldHandicapList)) handicap=handicap.replace(oldHandicapList,newHandicapList);
 else if(!handicap.includes(newHandicapList)) throw new Error('Could not verify the AH calculator line range');
 fs.writeFileSync(handicapPath,handicap);
 
