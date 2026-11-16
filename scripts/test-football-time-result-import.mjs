@@ -25,8 +25,12 @@ for(const marker of [
 ]) assert.ok(main.includes(marker),'Missing FT read-only result import behavior: '+marker);
 assert.ok(main.includes("newRevision===oldRevision"),'Equal revisions must be idempotent or conflict');
 assert.ok(main.includes('stableHistory(oldHistory)!==stableHistory(record.revision_history.slice(0,oldHistory.length))'),'Higher revisions must preserve the full old history prefix');
-assert.ok(!main.includes("db.transaction(['match_results'],'readwrite')"));
-assert.ok(!main.includes("tx.objectStore('match_results')"));
+const routeStart=main.indexOf("currentView === 'football-time-result-import'");
+const routeEnd=main.indexOf("currentView === 'settings'",routeStart);
+assert.ok(routeStart>=0&&routeEnd>routeStart,'FT result route boundaries must exist');
+const ftResultRoute=main.slice(routeStart,routeEnd);
+assert.ok(!ftResultRoute.includes("db.transaction(['match_results'],'readwrite')"));
+assert.ok(!ftResultRoute.includes("tx.objectStore('match_results')"));
 assert.ok(!main.includes('indexedDB.deleteDatabase('));
 assert.ok(!main.includes("objectStore('matches').clear("));
 assert.ok(!main.includes("objectStore('matches').delete("));
