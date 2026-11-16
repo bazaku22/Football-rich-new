@@ -773,7 +773,9 @@
       "slug": "leeds",
       "logo_url": "https://a.espncdn.com/i/teamlogos/soccer/500/357.png",
       "aliases": [
-        "Leeds United"
+        "Leeds United",
+        "Leeds United FC",
+        "LU"
       ]
     },
     {
@@ -806,7 +808,8 @@
       "aliases": [
         "Man Utd",
         "Man United",
-        "Man U"
+        "Man U",
+        "MU"
       ]
     },
     {
