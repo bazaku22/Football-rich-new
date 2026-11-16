@@ -30,7 +30,7 @@ const sharedCrests=JSON.parse(main.slice(sharedBrace,sharedEnd));
 assert.ok(main.includes('mappedClubCrest = knownClubCrests[name] || knownClubCrests[clean]'),'Shared crest renderer is not wired to the unified map');
 for(const team of manifest.teams){
   for(const name of [team.team,team.matched_as,...(team.aliases||[])]){
-    const key=name.toLowerCase().normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').replace(/[^a-z0-9]/g,'');
+    const key=name.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]/g,'');
     assert.equal(sharedCrests[key],team.logo_url,'Shared renderer map failed for '+name);
   }
 }
