@@ -29,11 +29,11 @@ const helper = [
 ].join('\n');
 const helperStart = app.indexOf(' const calculateAhRisk=a=>{');
 if (helperStart >= 0) {
-  const helperEnd = app.indexOf('\\n };', helperStart) + 3;
+  const helperEnd = app.indexOf('\n };', helperStart) + 3;
   if (helperEnd <= helperStart) throw new Error('Could not locate complete previous AH risk helper');
   app = app.slice(0, helperStart) + helper + app.slice(helperEnd);
 } else if (app.includes(riskAnchor)) {
-  app = app.replace(riskAnchor, riskAnchor + '\\n' + helper);
+  app = app.replace(riskAnchor, riskAnchor + '\n' + helper);
 } else {
   throw new Error('Risk helper anchor not found');
 }
