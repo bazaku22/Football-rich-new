@@ -121,6 +121,7 @@ jobs:
           node --check scripts/test-football-time-legacy-result-import.mjs
           node --check scripts/apply-football-time-legacy-result-release.mjs
           node --check scripts/test-football-time-legacy-result-release.mjs
+          python3 -m json.tool schemas/football-time-legacy-result-snapshot-v1.schema.json > /dev/null
           base64 -d scripts/apply-v3-7-analysis-performance-center.mjs.gz.b64 | gzip -dc > /tmp/apply-v3-7-analysis-performance-center.mjs
           base64 -d scripts/test-v3-7-analysis-performance-center.mjs.gz.b64 | gzip -dc > /tmp/test-v3-7-analysis-performance-center.mjs
           node --check /tmp/apply-v3-7-analysis-performance-center.mjs
@@ -230,10 +231,10 @@ jobs:
           for (const feature of ['installReleaseUpdateCheck','footballRichLastNotifiedVersion','footballRichNotificationsV1','fr-notification-header-button','fr-notification-unread-label','readAt:null','ศูนย์แจ้งเตือน']) {
             if (!app.includes(feature)) throw new Error('V1.5.1 UI feature missing: ' + feature);
           }
-          if (!app.includes("const APP_VERSION='3.9.5';") || !app.includes("currentView === 'football-time-result-import'") || !app.includes('footballTimeResultReadOnly:true') || !app.includes("currentView === 'football-time-import'") || !app.includes('นำเข้าข้อมูลจาก Football Time') || !app.includes('MATCH + ANALYSIS IMPORT') || !app.includes('football-rich-analysis-batch') || !app.includes('result-import-file') || !app.includes('ANALYSIS PERFORMANCE CENTER') || !app.includes('football-rich-analysis-learning') || !app.includes('data-apc-review') || !app.includes('currentView === \'tools\'') || !app.includes('currentView === \'import\'') || !app.includes('currentView === \'result-import\'') || app.includes('fixture-import-file') || app.includes('analysis-import-existing-only')) throw new Error('V3.9 required app routes are missing');
+          if (!app.includes("const APP_VERSION='3.9.6';") || !app.includes("currentView === 'football-time-result-import'") || !app.includes('footballTimeResultReadOnly:true') || !app.includes("currentView === 'football-time-legacy-result-import'") || !app.includes('footballTimeLegacyResultSnapshot') || !app.includes("currentView === 'football-time-import'") || !app.includes('นำเข้าข้อมูลจาก Football Time') || !app.includes('MATCH + ANALYSIS IMPORT') || !app.includes('football-rich-analysis-batch') || !app.includes('result-import-file') || !app.includes('ANALYSIS PERFORMANCE CENTER') || !app.includes('football-rich-analysis-learning') || !app.includes('data-apc-review') || !app.includes('currentView === \'tools\'') || !app.includes('currentView === \'import\'') || !app.includes('currentView === \'result-import\'') || app.includes('fixture-import-file') || app.includes('analysis-import-existing-only')) throw new Error('V3.9 required app routes are missing');
           if (!fs.existsSync(path.join(root,'app-version.json'))) throw new Error('App version manifest missing');
           const appVersion = JSON.parse(fs.readFileSync(path.join(root,'app-version.json'),'utf8'));
-          if (appVersion.version !== '3.9.5') throw new Error('App version manifest is stale');
+          if (appVersion.version !== '3.9.6') throw new Error('App version manifest is stale');
           if (app.includes('กำไรจำลองสุทธิ') || app.includes("card('ผลชำระเดิมพัน'")) throw new Error('V1.9 non-gambling Performance cleanup failed');
           const appCss = fs.readFileSync(path.join(root,'styles/main.css'),'utf8');
           const navStart = app.indexOf('const navItems = [');
