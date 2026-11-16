@@ -18,7 +18,7 @@ assert.ok(start>=0&&end>start,'Club logo map missing');
 const logos=JSON.parse(main.slice(start,end));
 const espnUrls=Object.values(logos).filter(v=>typeof v==='string'&&v.startsWith('https://a.espncdn.com/i/teamlogos/soccer/500/'));
 assert.equal(new Set(espnUrls).size,111,'Expected 111 unique static logo URLs across all aliases');
-for(const key of ['arsenal','realmadrid','barcelona','bayernmunchen','parissaintgermain','acmilan','machidazelvia','visselkobe','kashiwareysol','kawasakifrontale'])assert.ok(logos[key],'Missing normalized crest key '+key);
+for(const key of ['arsenal','realmadrid','barcelona','bayernmunchen','parissaintgermain','acmilan','leedsunited','leedsunitedfc','lu','manchesterunited','mu','machidazelvia','visselkobe','kashiwareysol','kawasakifrontale'])assert.ok(logos[key],'Missing normalized crest key '+key);
 for(const name of ['Arsenal','Real Madrid','Barcelona','Bayern München','Paris Saint Germain','AC Milan'])assert.ok(manifest.teams.some(t=>t.team===name),'Missing club '+name);
 assert.ok(main.includes('onerror=')&&main.includes('v23-crest'),'Initials fallback must remain available');
 assert.ok(!main.includes('site.api.espn.com')&&!main.includes('site.web.api.espn.com'));
