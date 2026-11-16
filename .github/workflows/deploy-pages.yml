@@ -134,17 +134,17 @@ jobs:
           import fs from 'node:fs';
           const file='football-rich-v1/dist/index.html';
           let html=fs.readFileSync(file,'utf8');
-          html=html.replace(/main\.js(?:\?[^"']*)?/g, 'main.js?v=20261116-v3-9');
-          if (!html.includes('main.js?v=20261116-v3-9')) throw new Error('Could not apply final V3.8 cache-busted app entry');
+          html=html.replace(/main\.js(?:\?[^"']*)?/g, 'main.js?v=20261116-v3-9-1');
+          if (!html.includes('main.js?v=20261116-v3-9-1')) throw new Error('Could not apply final V3.8 cache-busted app entry');
           if (!html.includes('fonts.googleapis.com/css2?family=Inter')) {
             html=html.replace('</head>', '<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Thai:wght@400;500;600;700;800&display=swap" rel="stylesheet></head>');
           }
           fs.writeFileSync(file,html);
           const swFile='football-rich-v1/dist/sw.js';
           let sw=fs.readFileSync(swFile,'utf8');
-          if (!sw.includes("const CACHE_NAME = 'football-rich-shell-v55'")) throw new Error('Could not apply final V3.8 service worker cache version');
+          if (!sw.includes("const CACHE_NAME = 'football-rich-shell-v56'")) throw new Error('Could not apply final V3.8 service worker cache version');
           fs.writeFileSync(swFile,sw);
-          console.log('Final V3.9 app entry, Noto Sans Thai font link and service worker cache version verified.');
+          console.log('Final V3.9.1 app entry, Noto Sans Thai font link and service worker cache version verified.');
           NODE
 
       - name: Audit generated PWA files
@@ -192,12 +192,12 @@ jobs:
           }
           const index = fs.readFileSync(path.join(root,'index.html'),'utf8');
           if (!index.includes('__footballRichBootGuardInstalled')) throw new Error('Startup watchdog missing from final HTML');
-          if (!index.includes('main.js?v=20261116-v3-9')) throw new Error('Cache-busted app entry missing from final HTML');
+          if (!index.includes('main.js?v=20261116-v3-9-1')) throw new Error('Cache-busted app entry missing from final HTML');
           if (!fs.existsSync(path.join(root,'main.js'))) throw new Error('App entry main.js missing from final output');
           console.log('Startup watchdog, cache-busted app entry and main.js verified.');
           console.log('Service worker source preview:', fs.readFileSync(swFiles[0], 'utf8').slice(0, 1000));
           const swSource = fs.readFileSync(swFiles[0], 'utf8');
-          if (!swSource.includes("const CACHE_NAME = 'football-rich-shell-v55'")) throw new Error('Service worker cache version is stale');
+          if (!swSource.includes("const CACHE_NAME = 'football-rich-shell-v56'")) throw new Error('Service worker cache version is stale');
           console.log('Service worker cache version v14 verified.');
           const app = fs.readFileSync(path.join(root,'main.js'),'utf8');
           for (const feature of ['installReleaseUpdateCheck','footballRichLastNotifiedVersion','footballRichNotificationsV1','fr-notification-header-button','fr-notification-unread-label','readAt:null','ศูนย์แจ้งเตือน']) {
