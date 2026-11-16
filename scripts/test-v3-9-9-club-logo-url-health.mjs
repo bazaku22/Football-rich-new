@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import assert from 'node:assert/strict';
 
 const manifest=JSON.parse(fs.readFileSync('assets/club-logos/manifest.json','utf8'));
-assert.equal(manifest.teams.length,111,'Expected the full 111-club manifest');
+assert.equal(manifest.teams.length,114,'Expected the full 114-club soccer manifest');
 
 const unique=new Map();
 for(const team of manifest.teams){
@@ -10,7 +10,7 @@ for(const team of manifest.teams){
   if(!unique.has(team.logo_url))unique.set(team.logo_url,[]);
   unique.get(team.logo_url).push(team.team);
 }
-assert.equal(unique.size,111,'Each club should have its own static image URL');
+assert.equal(unique.size,114,'Each club should have its own static image URL');
 
 const entries=[...unique.entries()];
 const failures=[];

@@ -10,7 +10,9 @@
     "La Liga": 23,
     "Bundesliga": 21,
     "Serie A": 23,
-    "Ligue 1": 20
+    "Ligue 1": 20,
+    "Champions League": 2,
+    "Liga Portugal": 1
   },
   "teams": [
     {
@@ -53,7 +55,8 @@
       "slug": "bayer-leverkusen",
       "logo_url": "https://a.espncdn.com/i/teamlogos/soccer/500/131.png",
       "aliases": [
-        "Leverkusen"
+        "Leverkusen",
+        "Bayer 04 Leverkusen"
       ]
     },
     {
@@ -110,6 +113,17 @@
     },
     {
       "league": "Bundesliga",
+      "team": "FC Schalke 04",
+      "matched_as": "Schalke 04",
+      "slug": "fc-schalke-04",
+      "logo_url": "https://a.espncdn.com/i/teamlogos/soccer/500/133.png",
+      "aliases": [
+        "Schalke",
+        "Schalke 04"
+      ]
+    },
+    {
+      "league": "Bundesliga",
       "team": "FC St. Pauli",
       "matched_as": "St. Pauli",
       "slug": "fc-st-pauli",
@@ -126,7 +140,8 @@
       "logo_url": "https://a.espncdn.com/i/teamlogos/soccer/500/2950.png",
       "aliases": [
         "Mainz",
-        "Mainz 05"
+        "Mainz 05",
+        "FSV Mainz 05"
       ]
     },
     {
@@ -158,6 +173,27 @@
       "logo_url": "https://a.espncdn.com/i/teamlogos/soccer/500/126.png",
       "aliases": [
         "Freiburg"
+      ]
+    },
+    {
+      "league": "Bundesliga",
+      "team": "SC Paderborn 07",
+      "matched_as": "SC Paderborn 07",
+      "slug": "sc-paderborn-07",
+      "logo_url": "https://a.espncdn.com/i/teamlogos/soccer/500/3307.png",
+      "aliases": [
+        "Paderborn"
+      ]
+    },
+    {
+      "league": "Bundesliga",
+      "team": "SV Elversberg",
+      "matched_as": "SV Elversberg",
+      "slug": "sv-elversberg",
+      "logo_url": "https://a.espncdn.com/i/teamlogos/soccer/500/10388.png",
+      "aliases": [
+        "Elversberg",
+        "SV 07 Elversberg"
       ]
     },
     {
@@ -202,35 +238,20 @@
       ]
     },
     {
-      "league": "Bundesliga",
-      "team": "FC Schalke 04",
-      "matched_as": "Schalke 04",
-      "slug": "fc-schalke-04",
-      "logo_url": "https://a.espncdn.com/i/teamlogos/soccer/500/133.png",
-      "aliases": [
-        "Schalke",
-        "Schalke 04"
-      ]
+      "league": "Champions League",
+      "team": "Bodo/Glimt",
+      "matched_as": "Bodo/Glimt",
+      "slug": "bodo-glimt",
+      "logo_url": "https://a.espncdn.com/i/teamlogos/soccer/500/2980.png",
+      "aliases": []
     },
     {
-      "league": "Bundesliga",
-      "team": "SC Paderborn 07",
-      "matched_as": "SC Paderborn 07",
-      "slug": "sc-paderborn-07",
-      "logo_url": "https://a.espncdn.com/i/teamlogos/soccer/500/3307.png",
-      "aliases": [
-        "Paderborn"
-      ]
-    },
-    {
-      "league": "Bundesliga",
-      "team": "SV Elversberg",
-      "matched_as": "SV Elversberg",
-      "slug": "sv-elversberg",
-      "logo_url": "https://a.espncdn.com/i/teamlogos/soccer/500/10388.png",
-      "aliases": [
-        "Elversberg"
-      ]
+      "league": "Champions League",
+      "team": "Galatasaray",
+      "matched_as": "Galatasaray",
+      "slug": "galatasaray",
+      "logo_url": "https://a.espncdn.com/i/teamlogos/soccer/500/432.png",
+      "aliases": []
     },
     {
       "league": "La Liga",
@@ -284,7 +305,20 @@
       "slug": "celta-vigo",
       "logo_url": "https://a.espncdn.com/i/teamlogos/soccer/500/85.png",
       "aliases": [
-        "Celta"
+        "Celta",
+        "RC Celta de Vigo",
+        "RC Celta Vigo"
+      ]
+    },
+    {
+      "league": "La Liga",
+      "team": "Deportivo La Coruna",
+      "matched_as": "Deportivo",
+      "slug": "deportivo-la-coruna",
+      "logo_url": "https://a.espncdn.com/i/teamlogos/soccer/500/90.png",
+      "aliases": [
+        "Deportivo La Coruña",
+        "Deportivo"
       ]
     },
     {
@@ -331,6 +365,17 @@
     },
     {
       "league": "La Liga",
+      "team": "Malaga",
+      "matched_as": "Málaga",
+      "slug": "malaga",
+      "logo_url": "https://a.espncdn.com/i/teamlogos/soccer/500/99.png",
+      "aliases": [
+        "Málaga",
+        "Malaga CF"
+      ]
+    },
+    {
+      "league": "La Liga",
       "team": "Mallorca",
       "matched_as": "Mallorca",
       "slug": "mallorca",
@@ -357,6 +402,16 @@
       "logo_url": "https://a.espncdn.com/i/teamlogos/soccer/500/92.png",
       "aliases": [
         "Real Oviedo"
+      ]
+    },
+    {
+      "league": "La Liga",
+      "team": "Racing Santander",
+      "matched_as": "Racing Santander",
+      "slug": "racing-santander",
+      "logo_url": "https://a.espncdn.com/i/teamlogos/soccer/500/87.png",
+      "aliases": [
+        "Racing de Santander"
       ]
     },
     {
@@ -430,36 +485,12 @@
       ]
     },
     {
-      "league": "La Liga",
-      "team": "Deportivo La Coruna",
-      "matched_as": "Deportivo",
-      "slug": "deportivo-la-coruna",
-      "logo_url": "https://a.espncdn.com/i/teamlogos/soccer/500/90.png",
-      "aliases": [
-        "Deportivo La Coruña",
-        "Deportivo"
-      ]
-    },
-    {
-      "league": "La Liga",
-      "team": "Malaga",
-      "matched_as": "Málaga",
-      "slug": "malaga",
-      "logo_url": "https://a.espncdn.com/i/teamlogos/soccer/500/99.png",
-      "aliases": [
-        "Málaga",
-        "Malaga CF"
-      ]
-    },
-    {
-      "league": "La Liga",
-      "team": "Racing Santander",
-      "matched_as": "Racing Santander",
-      "slug": "racing-santander",
-      "logo_url": "https://a.espncdn.com/i/teamlogos/soccer/500/87.png",
-      "aliases": [
-        "Racing de Santander"
-      ]
+      "league": "Liga Portugal",
+      "team": "Sporting CP",
+      "matched_as": "Sporting CP",
+      "slug": "sporting-cp",
+      "logo_url": "https://a.espncdn.com/i/teamlogos/soccer/500/2250.png",
+      "aliases": []
     },
     {
       "league": "Ligue 1",
@@ -483,12 +514,35 @@
     },
     {
       "league": "Ligue 1",
+      "team": "Estac Troyes",
+      "matched_as": "Troyes",
+      "slug": "estac-troyes",
+      "logo_url": "https://a.espncdn.com/i/teamlogos/soccer/500/170.png",
+      "aliases": [
+        "Troyes",
+        "ESTAC",
+        "ES Troyes AC",
+        "ES Troyes"
+      ]
+    },
+    {
+      "league": "Ligue 1",
       "team": "Le Havre",
       "matched_as": "Le Havre AC",
       "slug": "le-havre",
       "logo_url": "https://a.espncdn.com/i/teamlogos/soccer/500/3236.png",
       "aliases": [
         "Le Havre AC"
+      ]
+    },
+    {
+      "league": "Ligue 1",
+      "team": "Le Mans",
+      "matched_as": "Le Mans",
+      "slug": "le-mans",
+      "logo_url": "https://a.espncdn.com/i/teamlogos/soccer/500/2697.png",
+      "aliases": [
+        "Le Mans FC"
       ]
     },
     {
@@ -645,27 +699,6 @@
       ]
     },
     {
-      "league": "Ligue 1",
-      "team": "Estac Troyes",
-      "matched_as": "Troyes",
-      "slug": "estac-troyes",
-      "logo_url": "https://a.espncdn.com/i/teamlogos/soccer/500/170.png",
-      "aliases": [
-        "Troyes",
-        "ESTAC"
-      ]
-    },
-    {
-      "league": "Ligue 1",
-      "team": "Le Mans",
-      "matched_as": "Le Mans",
-      "slug": "le-mans",
-      "logo_url": "https://a.espncdn.com/i/teamlogos/soccer/500/2697.png",
-      "aliases": [
-        "Le Mans FC"
-      ]
-    },
-    {
       "league": "Premier League",
       "team": "Arsenal",
       "matched_as": "Arsenal",
@@ -738,6 +771,16 @@
     },
     {
       "league": "Premier League",
+      "team": "Coventry",
+      "matched_as": "Coventry City",
+      "slug": "coventry",
+      "logo_url": "https://a.espncdn.com/i/teamlogos/soccer/500/388.png",
+      "aliases": [
+        "Coventry City"
+      ]
+    },
+    {
+      "league": "Premier League",
       "team": "Crystal Palace",
       "matched_as": "Crystal Palace",
       "slug": "crystal-palace",
@@ -764,6 +807,26 @@
       "logo_url": "https://a.espncdn.com/i/teamlogos/soccer/500/370.png",
       "aliases": [
         "Fulham FC"
+      ]
+    },
+    {
+      "league": "Premier League",
+      "team": "Hull City",
+      "matched_as": "Hull City",
+      "slug": "hull-city",
+      "logo_url": "https://a.espncdn.com/i/teamlogos/soccer/500/306.png",
+      "aliases": [
+        "Hull"
+      ]
+    },
+    {
+      "league": "Premier League",
+      "team": "Ipswich",
+      "matched_as": "Ipswich Town",
+      "slug": "ipswich",
+      "logo_url": "https://a.espncdn.com/i/teamlogos/soccer/500/373.png",
+      "aliases": [
+        "Ipswich Town"
       ]
     },
     {
@@ -885,36 +948,6 @@
       ]
     },
     {
-      "league": "Premier League",
-      "team": "Coventry",
-      "matched_as": "Coventry City",
-      "slug": "coventry",
-      "logo_url": "https://a.espncdn.com/i/teamlogos/soccer/500/388.png",
-      "aliases": [
-        "Coventry City"
-      ]
-    },
-    {
-      "league": "Premier League",
-      "team": "Hull City",
-      "matched_as": "Hull City",
-      "slug": "hull-city",
-      "logo_url": "https://a.espncdn.com/i/teamlogos/soccer/500/306.png",
-      "aliases": [
-        "Hull"
-      ]
-    },
-    {
-      "league": "Premier League",
-      "team": "Ipswich",
-      "matched_as": "Ipswich Town",
-      "slug": "ipswich",
-      "logo_url": "https://a.espncdn.com/i/teamlogos/soccer/500/373.png",
-      "aliases": [
-        "Ipswich Town"
-      ]
-    },
-    {
       "league": "Serie A",
       "team": "AC Milan",
       "matched_as": "AC Milan",
@@ -996,6 +1029,16 @@
     },
     {
       "league": "Serie A",
+      "team": "Frosinone",
+      "matched_as": "Frosinone",
+      "slug": "frosinone",
+      "logo_url": "https://a.espncdn.com/i/teamlogos/soccer/500/4057.png",
+      "aliases": [
+        "Frosinone Calcio"
+      ]
+    },
+    {
+      "league": "Serie A",
       "team": "Genoa",
       "matched_as": "Genoa",
       "slug": "genoa",
@@ -1058,6 +1101,16 @@
     },
     {
       "league": "Serie A",
+      "team": "Monza",
+      "matched_as": "Monza",
+      "slug": "monza",
+      "logo_url": "https://a.espncdn.com/i/teamlogos/soccer/500/4007.png",
+      "aliases": [
+        "AC Monza"
+      ]
+    },
+    {
+      "league": "Serie A",
       "team": "Napoli",
       "matched_as": "Napoli",
       "slug": "napoli",
@@ -1114,26 +1167,6 @@
       "logo_url": "https://a.espncdn.com/i/teamlogos/soccer/500/118.png",
       "aliases": [
         "Udinese Calcio"
-      ]
-    },
-    {
-      "league": "Serie A",
-      "team": "Frosinone",
-      "matched_as": "Frosinone",
-      "slug": "frosinone",
-      "logo_url": "https://a.espncdn.com/i/teamlogos/soccer/500/4057.png",
-      "aliases": [
-        "Frosinone Calcio"
-      ]
-    },
-    {
-      "league": "Serie A",
-      "team": "Monza",
-      "matched_as": "Monza",
-      "slug": "monza",
-      "logo_url": "https://a.espncdn.com/i/teamlogos/soccer/500/4007.png",
-      "aliases": [
-        "AC Monza"
       ]
     },
     {
