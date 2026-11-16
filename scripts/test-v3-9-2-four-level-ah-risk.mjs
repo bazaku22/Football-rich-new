@@ -1,0 +1,45 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import vm from 'node:vm';
+import assert from 'node:assert/strict';
+
+const root = process.argv[2] || 'football-rich-v1/dist';
+const app = fs.readFileSync(path.join(root, 'main.js'), 'utf8');
+const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
+const sw = fs.readFileSync(path.join(root, 'sw.js'), 'utf8');
+const css = fs.readFileSync(path.join(root, 'styles/main.css'), 'utf8');
+const version = JSON.parse(fs.readFileSync(path.join(root, 'app-version.json'), 'utf8'));
+
+assert.ok(app.includes('const calculateAhRisk=a=>{'), 'AH risk calculator exists');
+assert.ok(app.includes('riskAssessment=calculateAhRisk(a)'), 'cards use direct AH risk calculator');
+assert.ok(app.includes("level=riskAssessment?.level||['ยังประเมินไม่ได้','unknown']"), 'missing values remain unassessed');
+assert.ok(app.includes("['ต่ำ','low']") && app.includes("['ปานกลาง','medium']") && app.includes("['สูง','high']") && app.includes("['สูงมาก','very-high']"), 'all four risk bands exist');
+assert.ok(app.includes("const APP_VERSION='3.9.2'"), 'internal app version is V3.9.2');
+assert.ok(html.includes('main.js?v=20261116-v3-9-2'), 'HTML references the V3.9.2 entry');
+assert.ok(sw.includes("const CACHE_NAME = 'football-rich-shell-v57'"), 'service worker cache is v57');
+assert.ok(css.includes('.risk-badge.very-high'), 'very-high risk badge has a distinct style');
+assert.equal(version.version, '3.9.2');
+assert.equal(version.previous_version, '3.9.1');
+assert.equal(version.release, 'V3.9.2-beta.1');
+
+const start = app.indexOf('const calculateAhRisk=a=>{');
+const end = app.indexOf('\n };', start) + 3;
+assert.ok(start >= 0 && end > start, 'calculator source can be isolated');
+const sandbox = {};
+vm.runInNewContext(app.slice(start, end) + '\nthis.calculateAhRisk=calculateAhRisk;', sandbox);
+const calc = sandbox.calculateAhRisk;
+const item = (cover) => ({coverProbability:cover});
+assert.equal(calc(item(0.70)).level[1], 'low', '70% is low');
+assert.equal(calc(item(0.55)).level[1], 'low', '55% boundary is low');
+assert.equal(calc(item(0.549)).level[1], 'medium', 'just below 55% is medium');
+assert.equal(calc(item(0.45)).level[1], 'medium', '45% boundary is medium');
+assert.equal(calc(item(0.449)).level[1], 'high', 'just below 45% is high');
+assert.equal(calc(item(0.35)).level[1], 'high', '35% boundary is high');
+assert.equal(calc(item(0.349)).level[1], 'very-high', 'below 35% is very high');
+assert.equal(calc(item(0.40)).level[0], 'สูง', '40% is high');
+assert.equal(calc(item(0.44)).level[0], 'สูง', '44% is high');
+assert.equal(calc(item(0.45)).level[0], 'ปานกลาง', '45% is medium');
+assert.equal(calc({sourceReport:{analysis:{cover_probability:0.56}}}).level[1], 'low', 'source report fallback works');
+assert.equal(calc({coverProbability:null,sourceReport:{analysis:{cover_probability:null}}}), null, 'missing probability remains unassessed');
+assert.equal(calc({coverProbability:1.1}), null, 'out-of-range probability remains unassessed');
+console.log('V3.9.2 four-level AH risk tests passed.');
