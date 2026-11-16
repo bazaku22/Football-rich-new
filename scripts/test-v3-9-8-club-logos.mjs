@@ -6,16 +6,29 @@ const html=fs.readFileSync(root+'/index.html','utf8');
 const sw=fs.readFileSync(root+'/sw.js','utf8');
 const version=JSON.parse(fs.readFileSync(root+'/app-version.json','utf8'));
 const manifest=JSON.parse(fs.readFileSync('assets/club-logos/manifest.json','utf8'));
-assert.equal(version.version,'3.9.8');
+assert.equal(version.version,'3.9.9');
 assert.equal(manifest.season,'2026/27');
 assert.equal(manifest.teams.length,111);
 for(const league of ['Premier League','La Liga','Bundesliga','Serie A','Ligue 1'])assert.ok(manifest.teams.some(t=>t.league===league),'Missing league '+league);
-assert.ok(main.includes("const APP_VERSION='3.9.8';"));
-assert.ok(html.includes('main.js?v=20261116-v3-9-8'));
-assert.ok(sw.includes("const CACHE_NAME = 'football-rich-shell-v63'"));
+assert.ok(main.includes("const APP_VERSION='3.9.9';"));
+assert.ok(html.includes('main.js?v=20261116-v3-9-9'));
+assert.ok(sw.includes("const CACHE_NAME = 'football-rich-shell-v64'"));
 const start=main.indexOf('const logos=')+'const logos='.length,end=main.indexOf(';',start);
 assert.ok(start>=0&&end>start,'Club logo map missing');
 const logos=JSON.parse(main.slice(start,end));
+const resolverStart=main.indexOf('const resolveClubLogo = name => {');
+const resolverEnd=main.indexOf('\n};',resolverStart)+3;
+assert.ok(resolverStart>=0&&resolverEnd>resolverStart,'Global club-logo resolver missing');
+const resolverSource=main.slice(resolverStart,resolverEnd);
+const resolveClubLogo=new Function('logos',resolverSource+'; return resolveClubLogo;')(logos);
+for(const team of manifest.teams){
+  for(const name of [team.team,team.matched_as,...(team.aliases||[])]){
+    assert.equal(resolveClubLogo(name),team.logo_url,'Resolver failed for '+name);
+    for(const suffix of [' FC',' CF',' AFC',' SC']) assert.equal(resolveClubLogo(name+suffix),team.logo_url,'Resolver failed for '+name+suffix);
+    for(const prefix of ['FC ','AFC ','CF ']) assert.equal(resolveClubLogo(prefix+name),team.logo_url,'Resolver failed for '+prefix+name);
+  }
+}
+for(const name of ['Manchester Utd','Man United','Newcastle Utd','Wolves']) assert.ok(resolveClubLogo(name),'Resolver failed for common club name '+name);
 const espnUrls=Object.values(logos).filter(v=>typeof v==='string'&&v.startsWith('https://a.espncdn.com/i/teamlogos/soccer/500/'));
 assert.equal(new Set(espnUrls).size,111,'Expected 111 unique static logo URLs across all aliases');
 for(const key of ['arsenal','realmadrid','barcelona','bayernmunchen','parissaintgermain','acmilan','leedsunited','leedsunitedfc','lu','manchesterunited','mu','machidazelvia','visselkobe','kashiwareysol','kawasakifrontale'])assert.ok(logos[key],'Missing normalized crest key '+key);
@@ -23,4 +36,4 @@ for(const name of ['Arsenal','Real Madrid','Barcelona','Bayern München','Paris 
 assert.ok(main.includes('onerror=')&&main.includes('v23-crest'),'Initials fallback must remain available');
 assert.ok(!main.includes('site.api.espn.com')&&!main.includes('site.web.api.espn.com'));
 assert.ok(!main.includes('indexedDB.deleteDatabase(')&&!main.includes('objectStore.clear('));
-console.log('V3.9.8 tests passed: 111 static club logos, all five leagues, J.League compatibility, fallback rendering, cache versioning and data preservation.');
+console.log('V3.9.9 tests passed: 111 static club logos, all five leagues, J.League compatibility, fallback rendering, cache versioning and data preservation.');
