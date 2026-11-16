@@ -90,6 +90,7 @@ jobs:
           sed -i '/^node \.\.\/scripts\/apply-v3-6-result-import-null-guard\.mjs && node \.\.\/scripts\/test-v3-6-result-import-null-guard\.mjs$/a base64 -d ../scripts/apply-v3-7-analysis-performance-center.mjs.gz.b64 | gzip -dc > /tmp/apply-v3-7-analysis-performance-center.mjs && node /tmp/apply-v3-7-analysis-performance-center.mjs && base64 -d ../scripts/test-v3-7-analysis-performance-center.mjs.gz.b64 | gzip -dc > /tmp/test-v3-7-analysis-performance-center.mjs && node /tmp/test-v3-7-analysis-performance-center.mjs' build-from-archive.sh
           sed -i '/^base64 -d \.\.\/scripts\/apply-v3-7-analysis-performance-center\.mjs\.gz\.b64 | gzip -dc > \/tmp\/apply-v3-7-analysis-performance-center\.mjs && node \/tmp\/apply-v3-7-analysis-performance-center\.mjs && base64 -d \.\.\/scripts\/test-v3-7-analysis-performance-center\.mjs\.gz\.b64 | gzip -dc > \/tmp\/test-v3-7-analysis-performance-center\.mjs && node \/tmp\/test-v3-7-analysis-performance-center\.mjs$/a node ../scripts/apply-football-time-fixture-import.mjs && node ../scripts/test-football-time-fixture-import.mjs' build-from-archive.sh
           sed -i '/^node \.\.\/scripts\/apply-football-time-fixture-import\.mjs && node \.\.\/scripts\/test-football-time-fixture-import\.mjs$/a node ../scripts/apply-football-time-result-import.mjs && node ../scripts/test-football-time-result-import.mjs' build-from-archive.sh
+          sed -i '/apply-football-time-result-import.mjs && node ..\\/scripts\\/test-football-time-result-import.mjs/a node ../scripts/apply-football-time-legacy-result-import.mjs && node ../scripts/test-football-time-legacy-result-import.mjs' build-from-archive.sh
 
       - name: Syntax-check V3.7 Analysis Performance Center scripts and V3.8 risk patch
         run: |
@@ -116,6 +117,10 @@ jobs:
           node --check scripts/apply-football-time-result-import.mjs
           node --check scripts/test-football-time-result-import.mjs
           node --check scripts/apply-football-time-result-release.mjs
+          node --check scripts/apply-football-time-legacy-result-import.mjs
+          node --check scripts/test-football-time-legacy-result-import.mjs
+          node --check scripts/apply-football-time-legacy-result-release.mjs
+          node --check scripts/test-football-time-legacy-result-release.mjs
           base64 -d scripts/apply-v3-7-analysis-performance-center.mjs.gz.b64 | gzip -dc > /tmp/apply-v3-7-analysis-performance-center.mjs
           base64 -d scripts/test-v3-7-analysis-performance-center.mjs.gz.b64 | gzip -dc > /tmp/test-v3-7-analysis-performance-center.mjs
           node --check /tmp/apply-v3-7-analysis-performance-center.mjs
@@ -165,6 +170,9 @@ jobs:
           node scripts/test-football-time-import-release.mjs
           node scripts/apply-football-time-result-release.mjs
           node scripts/test-football-time-result-import.mjs
+          node scripts/apply-football-time-legacy-result-release.mjs
+          node scripts/test-football-time-legacy-result-import.mjs
+          node scripts/test-football-time-legacy-result-release.mjs
 
       - name: Audit generated PWA files
         working-directory: football-rich-v1
@@ -211,12 +219,12 @@ jobs:
           }
           const index = fs.readFileSync(path.join(root,'index.html'),'utf8');
           if (!index.includes('__footballRichBootGuardInstalled')) throw new Error('Startup watchdog missing from final HTML');
-          if (!index.includes('main.js?v=20261116-v3-9-5')) throw new Error('Cache-busted app entry missing from final HTML');
+          if (!index.includes('main.js?v=20261116-v3-9-6')) throw new Error('Cache-busted app entry missing from final HTML');
           if (!fs.existsSync(path.join(root,'main.js'))) throw new Error('App entry main.js missing from final output');
           console.log('Startup watchdog, cache-busted app entry and main.js verified.');
           console.log('Service worker source preview:', fs.readFileSync(swFiles[0], 'utf8').slice(0, 1000));
           const swSource = fs.readFileSync(swFiles[0], 'utf8');
-          if (!swSource.includes("const CACHE_NAME = 'football-rich-shell-v60'")) throw new Error('Service worker cache version is stale');
+          if (!swSource.includes("const CACHE_NAME = 'football-rich-shell-v61'")) throw new Error('Service worker cache version is stale');
           console.log('Service worker cache version v14 verified.');
           const app = fs.readFileSync(path.join(root,'main.js'),'utf8');
           for (const feature of ['installReleaseUpdateCheck','footballRichLastNotifiedVersion','footballRichNotificationsV1','fr-notification-header-button','fr-notification-unread-label','readAt:null','ศูนย์แจ้งเตือน']) {
