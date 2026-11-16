@@ -11,7 +11,7 @@ const manifest=JSON.parse(fs.readFileSync(manifestPath,'utf8'));
 if(manifest.season!=='2026/27'||!Array.isArray(manifest.teams)||manifest.teams.length<96)throw Error('Club-logo manifest is incomplete');
 if(!main.includes("const APP_VERSION='3.9.7';")||!html.includes('main.js?v=20261116-v3-9-7')||!sw.includes("const CACHE_NAME = 'football-rich-shell-v62'"))throw Error('Expected V3.9.7 build anchors missing; refusing to patch unknown build');
 
-const normalize=value=>String(value||'').toLowerCase().normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').replace(/[^a-z0-9]/g,'');
+const normalize=value=>String(value||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]/g,'');
 const logos={
   machidazelvia:'https://www.footylogos.com/downloads/logo/machida-zelvia-logo-footylogos.svg',
   visselkobe:'https://www.footylogos.com/downloads/logo/vissel-kobe-logo-footylogos.svg',
@@ -19,7 +19,9 @@ const logos={
   kawasakifrontale:'https://www.footylogos.com/downloads/logo/kawasaki-frontale-logo-footylogos.svg'
 };
 for(const team of manifest.teams){
-  if(!team.logo_url||!/^https:\\/\\/a\\.espncdn\\.com\\/i\\/teamlogos\\/soccer\\/500\\/\\d+\\.png$/.test(team.logo_url))throw Error('Unexpected non-static logo URL for '+team.team);
+  let u;
+  try{u=new URL(team.logo_url);}catch{throw Error('Invalid logo URL for '+team.team);}
+  if(u.protocol!=='https:'||u.hostname!=='a.espncdn.com'||!/^\/i\/teamlogos\/soccer\/500\/\d+\.png$/.test(u.pathname))throw Error('Unexpected non-static logo URL for '+team.team);
   for(const alias of [team.team,team.matched_as,...(team.aliases||[])]){
     const key=normalize(alias);if(!key)continue;
     if(logos[key]&&logos[key]!==team.logo_url)throw Error('Conflicting crest alias '+alias);
@@ -37,5 +39,5 @@ sw=sw.replace("const CACHE_NAME = 'football-rich-shell-v62'","const CACHE_NAME =
 if(!html.includes('main.js?v=20261116-v3-9-8')||!sw.includes("const CACHE_NAME = 'football-rich-shell-v63'"))throw Error('Cache-busting update failed');
 if(main.includes('indexedDB.deleteDatabase(')||main.includes('objectStore.clear('))throw Error('Destructive storage operation detected');
 fs.writeFileSync(mainPath,main);fs.writeFileSync(cssPath,css);fs.writeFileSync(htmlPath,html);fs.writeFileSync(swPath,sw);
-fs.writeFileSync(versionPath,JSON.stringify({version:'3.9.8',release:'V3.9.8 — Five-league club crests'})+'\\n');
+fs.writeFileSync(versionPath,JSON.stringify({version:'3.9.8',release:'V3.9.8 — Five-league club crests'})+'\n');
 console.log('V3.9.8 applied: '+manifest.teams.length+' five-league club crests mapped; J.League crests preserved; static images only; data untouched.');
