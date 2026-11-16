@@ -1,8 +1,11 @@
 import fs from 'node:fs';
 import assert from 'node:assert/strict';
+import { spawnSync } from 'node:child_process';
 
 const main=fs.readFileSync('dist/main.js','utf8');
 const css=fs.readFileSync('dist/styles/main.css','utf8');
+const syntax=spawnSync('node',['--check','dist/main.js'],{encoding:'utf8'});
+assert.equal(syntax.status,0,'Generated main.js must pass node --check: '+syntax.stderr);
 
 assert.ok(main.includes("currentView === 'football-time-import'"),'Football Time import route must be built');
 assert.ok(main.includes('นำเข้าข้อมูลจาก Football Time'),'Tools Center entry must be visible');
@@ -37,4 +40,4 @@ assert.ok(!main.includes('payload.ftRecords'));
 assert.ok(!main.includes('indexedDB.deleteDatabase('));
 assert.ok(!main.includes("objectStore('matches').clear("));
 assert.ok(!main.includes("objectStore('matches').delete("));
-console.log('Football Time fixture import checks passed: envelope validation, five-league scope, shared/local ID mapping, preview, duplicate/conflict guards, atomic matches-only transaction, and no destructive storage operations.');
+console.log('Generated main.js syntax check passed. Football Time fixture import checks passed: envelope validation, five-league scope, shared/local ID mapping, preview, duplicate/conflict guards, atomic matches-only transaction, and no destructive storage operations.');
