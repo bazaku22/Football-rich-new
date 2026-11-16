@@ -180,6 +180,7 @@ jobs:
           node scripts/test-legacy-snapshot-match-center.mjs
           node scripts/apply-v3-9-8-club-logos.mjs
           node scripts/test-v3-9-8-club-logos.mjs
+          node scripts/test-v3-9-9-club-logo-url-health.mjs
 
       - name: Audit generated PWA files
         working-directory: football-rich-v1
