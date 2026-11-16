@@ -87,6 +87,7 @@ jobs:
           sed -i '/^node \.\.\/scripts\/apply-v3-4-combined-import\.mjs$/a node ../scripts/test-v3-4-combined-import.mjs' build-from-archive.sh
           sed -i '/^node \.\.\/scripts\/test-v3-4-combined-import\.mjs$/a node ../scripts/apply-v3-5-result-template-export.mjs && node ../scripts/test-v3-5-result-template-export.mjs' build-from-archive.sh
           sed -i '/^node \.\.\/scripts\/apply-v3-5-result-template-export\.mjs && node \.\.\/scripts\/test-v3-5-result-template-export\.mjs$/a node ../scripts/apply-v3-6-result-import-null-guard.mjs && node ../scripts/test-v3-6-result-import-null-guard.mjs' build-from-archive.sh
+          sed -i '/^node \.\.\/scripts\/apply-v3-6-result-import-null-guard\.mjs && node \.\.\/scripts\/test-v3-6-result-import-null-guard\.mjs$/a node ../scripts/apply-football-time-fixture-import.mjs && node ../scripts/test-football-time-fixture-import.mjs' build-from-archive.sh
           sed -i '/^node \.\.\/scripts\/apply-v3-6-result-import-null-guard\.mjs && node \.\.\/scripts\/test-v3-6-result-import-null-guard\.mjs$/a base64 -d ../scripts/apply-v3-7-analysis-performance-center.mjs.gz.b64 | gzip -dc > /tmp/apply-v3-7-analysis-performance-center.mjs && node /tmp/apply-v3-7-analysis-performance-center.mjs && base64 -d ../scripts/test-v3-7-analysis-performance-center.mjs.gz.b64 | gzip -dc > /tmp/test-v3-7-analysis-performance-center.mjs && node /tmp/test-v3-7-analysis-performance-center.mjs' build-from-archive.sh
 
       - name: Syntax-check V3.7 Analysis Performance Center scripts and V3.8 risk patch
@@ -107,6 +108,8 @@ jobs:
           node --check scripts/test-v3-5-result-template-export.mjs
           node --check scripts/apply-v3-6-result-import-null-guard.mjs
           node --check scripts/test-v3-6-result-import-null-guard.mjs
+          node --check scripts/apply-football-time-fixture-import.mjs
+          node --check scripts/test-football-time-fixture-import.mjs
           base64 -d scripts/apply-v3-7-analysis-performance-center.mjs.gz.b64 | gzip -dc > /tmp/apply-v3-7-analysis-performance-center.mjs
           base64 -d scripts/test-v3-7-analysis-performance-center.mjs.gz.b64 | gzip -dc > /tmp/test-v3-7-analysis-performance-center.mjs
           node --check /tmp/apply-v3-7-analysis-performance-center.mjs
