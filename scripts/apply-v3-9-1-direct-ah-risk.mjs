@@ -27,10 +27,15 @@ const helper = [
 "  return {level:['สูง','high'],cover,line};",
 " };"
 ].join('\n');
-if (!app.includes(riskAnchor)) {
-  if (!app.includes('const calculateAhRisk=a=>')) throw new Error('Risk helper anchor not found');
-} else if (!app.includes('const calculateAhRisk=a=>')) {
-  app = app.replace(riskAnchor, riskAnchor + '\n' + helper);
+const helperStart = app.indexOf(' const calculateAhRisk=a=>{');
+if (helperStart >= 0) {
+  const helperEnd = app.indexOf('\\n };', helperStart) + 3;
+  if (helperEnd <= helperStart) throw new Error('Could not locate complete previous AH risk helper');
+  app = app.slice(0, helperStart) + helper + app.slice(helperEnd);
+} else if (app.includes(riskAnchor)) {
+  app = app.replace(riskAnchor, riskAnchor + '\\n' + helper);
+} else {
+  throw new Error('Risk helper anchor not found');
 }
 
 const oldState = "cover=a?.coverProbability,riskScore=Number.isFinite(a?.sourceReport?.analysis?.risk_score)?Number(a.sourceReport.analysis.risk_score):null,level=riskScore!==null?(riskScore<=34?['ต่ำ','low']:riskScore<=64?['กลาง','medium']:['สูง','high']):risk(a?.riskLevel||a?.sourceReport?.analysis?.risk_level);";
