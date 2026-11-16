@@ -33,7 +33,7 @@ const mapEnd=main.indexOf('};',mapStart)+2;
 if(mapStart<0||mapEnd<=mapStart)throw Error('Existing Match Center logo map not found');
 main=main.slice(0,mapStart)+'const logos='+JSON.stringify(logos)+';'+main.slice(mapEnd);
 if(!main.includes('const mark=name=>{'))throw Error('Match Center team mark renderer missing');
-const resolveClubLogo = name => {
+const resolverSource = String.raw`const resolveClubLogo = name => {
   const normalizeClubKey = value => String(value || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]/g, '');
   const key = normalizeClubKey(name);
   if (!key) return '';
@@ -89,7 +89,8 @@ const resolveClubLogo = name => {
     if (mapped) return mapped;
   }
   return '';
-};
+};`;
+main=main.replace("const mark=name=>{",resolverSource+"\nconst mark=name=>{");
 main=main.replace('logo=logos[k]','logo=resolveClubLogo(n)');
 if(!main.includes('logo=resolveClubLogo(n)'))throw Error('Global club-logo resolver was not connected to the renderer');
 main=main.replace("const APP_VERSION='3.9.7';","const APP_VERSION='3.9.9';");
