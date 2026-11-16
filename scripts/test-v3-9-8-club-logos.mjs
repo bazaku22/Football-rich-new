@@ -36,7 +36,7 @@ for(const team of manifest.teams){
 }
 const sharedEspnUrls=Object.values(sharedCrests).filter(v=>typeof v==='string'&&v.startsWith('https://a.espncdn.com/i/teamlogos/soccer/500/'));
 assert.equal(new Set(sharedEspnUrls).size,111,'Shared renderer must contain all 111 unique five-league crests');
-for(const key of ['machida','vissel','kashiwa','kawasaki'])assert.ok(sharedCrests[key]||sharedCrests[key+'frontale']||Object.keys(sharedCrests).some(k=>k.startsWith(key)),'Existing J.League crest compatibility missing: '+key);
+for(const slug of ['machida-zelvia','vissel-kobe','kashiwa-reysol','kawasaki-frontale'])assert.ok(Object.values(sharedCrests).some(url=>typeof url==='string'&&url.includes(slug)),'Existing J.League crest compatibility missing: '+slug);
 const resolverStart=main.indexOf('const resolveClubLogo = name => {');
 const resolverEnd=main.indexOf('\n};',resolverStart)+3;
 assert.ok(resolverStart>=0&&resolverEnd>resolverStart,'Global club-logo resolver missing');
