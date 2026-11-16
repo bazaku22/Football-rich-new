@@ -39,7 +39,7 @@ if (!app.includes("const APP_VERSION='3.9.2'")) throw new Error('Internal app ve
 fs.writeFileSync(mainFile, app);
 
 let html = fs.readFileSync(htmlFile, 'utf8');
-html = html.replace(/main\\.js(?:\\?[^"']*)?/g, 'main.js?v=20261116-v3-9-2');
+html = html.replace(/main\.js(?:\?[^"']*)?/g, 'main.js?v=20261116-v3-9-2');
 if (!html.includes('main.js?v=20261116-v3-9-2')) throw new Error('V3.9.2 cache-busted app entry missing');
 fs.writeFileSync(htmlFile, html);
 
