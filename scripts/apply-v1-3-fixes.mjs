@@ -18,7 +18,8 @@ const frProbabilityModel = (expectedGoals, selectedTeam, handicapLine) => {
     if (Math.abs(line * 4) % 2 !== 1) return [line, line];
     const sign = Math.sign(line);
     const magnitude = Math.floor(Math.abs(line) * 2) / 2;
-    return [sign * magnitude, sign * (magnitude + 0.5)];
+    const first = magnitude === 0 ? 0 : sign * magnitude;
+    return [first, sign * (magnitude + 0.5)];
   };
   const home = poisson(Number(expectedGoals.home));
   const away = poisson(Number(expectedGoals.away));
