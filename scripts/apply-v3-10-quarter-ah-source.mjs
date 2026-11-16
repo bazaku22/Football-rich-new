@@ -19,7 +19,7 @@ const oldSplit=`  const lowerMagnitude = Math.floor(Math.abs(handicap) * 2) / 2;
   return [first, second];`;
 const newSplit=`  const sign = Math.sign(handicap);
   const lowerMagnitude = Math.floor(Math.abs(handicap) * 2) / 2;
-  const first = sign * lowerMagnitude;
+  const first = lowerMagnitude === 0 ? 0 : sign * lowerMagnitude;
   const second = sign * (lowerMagnitude + 0.5);
   return [first, second];`;
 if(domain.includes(oldSplit))domain=domain.replace(oldSplit,newSplit);
