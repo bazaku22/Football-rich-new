@@ -29,7 +29,7 @@ for (const marker of [
   "store.put({...m,...metadata})",
   "store.add({...base()",
   'confirm-ft-fixture-import',
-  'ยังไม่มีการนำเข้าผลการแข่งขันจริง'
+  'ไม่ได้นำเข้าผลการแข่งขันจริง'
 ]) assert.ok(main.includes(marker),'Missing safe import behavior: '+marker);
 assert.ok(main.includes('Local Match UUID')===false || main.includes('sharedMatchId'),'Shared ID mapping must remain additive');
 assert.ok(css.includes('fixture-preview-row'));
