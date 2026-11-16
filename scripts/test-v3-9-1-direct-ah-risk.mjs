@@ -1,0 +1,41 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import vm from 'node:vm';
+import assert from 'node:assert/strict';
+
+const root = process.argv[2] || 'football-rich-v1/dist';
+const app = fs.readFileSync(path.join(root, 'main.js'), 'utf8');
+const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
+const sw = fs.readFileSync(path.join(root, 'sw.js'), 'utf8');
+const version = JSON.parse(fs.readFileSync(path.join(root, 'app-version.json'), 'utf8'));
+
+assert.ok(app.includes('const calculateAhRisk=a=>'), 'AH cover risk calculator exists');
+assert.ok(app.includes('riskAssessment=calculateAhRisk(a)'), 'match cards use direct AH cover risk');
+assert.ok(app.includes("level=riskAssessment?.level||['ยังประเมินไม่ได้','unknown']"), 'missing AH data remains unassessed');
+assert.ok(!app.includes('Number(a?.sourceReport?.analysis?.risk_score)'), 'imported risk_score no longer drives cards');
+assert.ok(!app.includes('v30-risk-score'), 'legacy numeric Risk Score footer is removed');
+assert.ok(app.includes("const APP_VERSION='3.9.1'"), 'internal app version is V3.9.1');
+assert.ok(html.includes('main.js?v=20261116-v3-9-1'), 'HTML references V3.9.1 app entry');
+assert.ok(sw.includes("const CACHE_NAME = 'football-rich-shell-v56'"), 'service-worker cache is bumped');
+assert.equal(version.version, '3.9.1');
+assert.equal(version.previous_version, '3.9');
+assert.equal(version.release, 'V3.9.1-beta.1');
+
+const start = app.indexOf('const calculateAhRisk=a=>');
+const end = app.indexOf('\n };', start) + 3;
+assert.ok(start >= 0 && end > start, 'calculator source can be isolated');
+const sandbox = {};
+vm.runInNewContext(app.slice(start,end) + '\nthis.calculateAhRisk=calculateAhRisk;', sandbox);
+const calc = sandbox.calculateAhRisk;
+const item = (cover,line) => ({coverProbability:cover,recommendation:{handicap_line:line}});
+assert.equal(calc(item(0.76,-0.5)).level[1], 'low', '76% on AH -0.5 is low risk');
+assert.equal(calc(item(0.70,-0.5)).level[1], 'low', '70% on AH -0.5 meets low threshold');
+assert.equal(calc(item(0.69,-0.5)).level[1], 'medium', '69% on modest AH is medium');
+assert.equal(calc(item(0.65,-0.75)).level[1], 'medium', '65% on AH -0.75 is medium');
+assert.equal(calc(item(0.80,-0.75)).level[1], 'medium', 'strong cover but harder AH line is not low');
+assert.equal(calc(item(0.80,-1.25)).level[1], 'high', 'very demanding AH line is high');
+assert.equal(calc(item(0.59,-0.25)).level[1], 'high', 'cover below 60% is high');
+assert.equal(calc(item(null,-0.5)), null, 'missing cover probability is unassessed');
+assert.equal(calc(item(0.75,null)), null, 'missing AH line is unassessed');
+assert.equal(calc({sourceReport:{analysis:{cover_probability:0.72},market:{handicap_line:-0.5}}}).level[1], 'low', 'source report fallback is supported');
+console.log('V3.9.1 direct AH cover risk tests passed.');
