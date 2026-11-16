@@ -23,7 +23,7 @@ for (const marker of [
   'footballTimeSource',
   'footballTimeExportId',
   'buildFtPlan',
-  'seenFixtures.has(fixtureKey)',
+  'seenFixtures.some(x=>x.league_id===record.league_id',
   "db.transaction(['matches'],'readwrite')",
   "store.getAll()",
   "store.put({...m,...metadata})",
