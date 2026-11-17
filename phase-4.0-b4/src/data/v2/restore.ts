@@ -1,6 +1,5 @@
 import { DB_NAME, DB_VERSION, STORE_DEFINITIONS, STORE_NAMES, type StoreName } from './schema.js';
 import { BACKUP_FORMAT, BACKUP_FORMAT_VERSION, checksumBackupPayload, createDatabaseBackup, type DatabaseBackup } from './backup.js';
-import { openDatabase } from './database.js';
 import { runTransaction } from './transaction.js';
 
 const STAGING_DB_NAME = DB_NAME + '-restore-staging';
@@ -104,11 +103,6 @@ function openStagingDatabase(): Promise<IDBDatabase> {
     request.onerror = () => reject(request.error ?? new Error('Could not open restore staging database.'));
     request.onblocked = () => console.warn('Restore staging database open is blocked by another tab.');
   });
-}
-
-function closeStagingDatabase(): void {
-  const request = indexedDB.open(STAGING_DB_NAME);
-  request.onsuccess = () => { request.result.close(); };
 }
 
 /** Load and verify backup data in a separate staging DB; live V2 is untouched. */
