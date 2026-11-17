@@ -3,6 +3,10 @@ import { BACKUP_FORMAT, BACKUP_FORMAT_VERSION, checksumBackupPayload, createData
 import { runTransaction } from './transaction.js';
 
 const STAGING_DB_NAME = DB_NAME + '-restore-staging';
+// Promotion is permitted only for a backup validated and staged in this page session.
+// Requiring this in-memory proof also prevents stale staging data surviving a reload
+// from being promoted without being revalidated.
+let stagedRestoreProof: DatabaseBackup | null = null;
 
 export interface RestoreValidation {
   valid: boolean;
@@ -107,6 +111,8 @@ function openStagingDatabase(): Promise<IDBDatabase> {
 
 /** Load and verify backup data in a separate staging DB; live V2 is untouched. */
 export async function stageDatabaseRestore(input: string | unknown): Promise<RestoreValidation> {
+  // Any new staging attempt invalidates the previous promotion authorization first.
+  stagedRestoreProof = null;
   const { backup, report } = await validateDatabaseBackup(input);
   if (!backup) return report;
   const staging = await openStagingDatabase();
@@ -131,6 +137,8 @@ export async function stageDatabaseRestore(input: string | unknown): Promise<Res
       });
       if (count !== report.recordCounts[name]) throw new Error('STAGING_COUNT_MISMATCH:' + name);
     }
+    // Keep an immutable copy of the exact validated payload for promotion-time verification.
+    stagedRestoreProof = structuredClone(backup);
     return report;
   } finally {
     staging.close();
@@ -143,7 +151,7 @@ export async function stageDatabaseRestore(input: string | unknown): Promise<Res
  */
 export async function promoteStagedRestore(options: { confirmReplace: boolean }): Promise<{ safetyBackup: DatabaseBackup; restoredCounts: Record<string, number> }> {
   if (options.confirmReplace !== true) throw new Error('RESTORE_CONFIRMATION_REQUIRED');
-  const safetyBackup = await createDatabaseBackup();
+  if (!stagedRestoreProof) throw new Error('RESTORE_STAGING_NOT_VALIDATED');
   const staged = await openStagingDatabase();
   try {
     const stagedRows = await new Promise<Record<StoreName, unknown[]>>((resolve, reject) => {
@@ -158,6 +166,23 @@ export async function promoteStagedRestore(options: { confirmReplace: boolean })
       tx.onabort = () => reject(tx.error ?? new Error('Could not read staged restore data.'));
     });
     const restoredCounts = Object.fromEntries(STORE_NAMES.map(name => [name, stagedRows[name].length]));
+    const stagedPayload: Omit<DatabaseBackup, 'checksum'> = {
+      format: stagedRestoreProof.format,
+      formatVersion: stagedRestoreProof.formatVersion,
+      databaseName: stagedRestoreProof.databaseName,
+      schemaVersion: stagedRestoreProof.schemaVersion,
+      createdAt: stagedRestoreProof.createdAt,
+      stores: stagedRows,
+      manifest: stagedRestoreProof.manifest
+    };
+    const stagedChecksum = await checksumBackupPayload(stagedPayload);
+    if (stagedChecksum !== stagedRestoreProof.checksum ||
+        STORE_NAMES.some(name => restoredCounts[name] !== stagedRestoreProof?.manifest.recordCounts[name])) {
+      stagedRestoreProof = null;
+      throw new Error('STAGING_CHECKSUM_MISMATCH');
+    }
+    // Create the safety backup only after the staged copy has passed its second integrity check.
+    const safetyBackup = await createDatabaseBackup();
     await runTransaction(STORE_NAMES, 'readwrite', tx => {
       for (const name of STORE_NAMES) {
         const store = tx.objectStore(name);
@@ -165,6 +190,7 @@ export async function promoteStagedRestore(options: { confirmReplace: boolean })
         for (const record of stagedRows[name]) store.add(record);
       }
     });
+    stagedRestoreProof = null;
     return { safetyBackup, restoredCounts };
   } finally {
     staged.close();
