@@ -302,7 +302,7 @@ jobs:
           mkdir -p football-rich-v1/dist/v2-device-test
           cp v2-device-test/index.html football-rich-v1/dist/v2-device-test/index.html
           test -s football-rich-v1/dist/v2-device-test/index.html
-          grep -q "Run All Tests" football-rich-v1/dist/v2-device-test/index.html
+          grep -q 'id="run"' football-rich-v1/dist/v2-device-test/index.html
           echo "Android Chrome device test page included in Pages artifact."
 
       - name: Upload Pages artifact
