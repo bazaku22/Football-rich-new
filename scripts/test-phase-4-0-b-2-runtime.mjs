@@ -61,7 +61,7 @@ assert.equal(await teams.get('team-async-rejected'),undefined);
 await teams.add({teamId:'team-crud',nameNormalized:'before',competitionId:'comp-atomic'});
 await teams.put({teamId:'team-crud',nameNormalized:'after',competitionId:'comp-atomic'});
 assert.equal((await teams.get('team-crud')).nameNormalized,'after');
-assert.equal((await teams.getByIndex('competitionId','comp-atomic')).length,2);
+assert.equal((await teams.getByIndex('competitionId','comp-atomic')).length,1);
 assert.equal(await teams.count('comp-atomic'),0); // primary-key query, not an index query
 assert.equal(await teams.count(),2);
 await teams.delete('team-crud');
