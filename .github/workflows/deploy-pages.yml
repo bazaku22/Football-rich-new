@@ -132,6 +132,13 @@ jobs:
       - name: Build Football rich
         run: bash -euo pipefail build-from-archive.sh
 
+      - name: Verify V2 in native Chromium IndexedDB
+        working-directory: football-rich-v1
+        run: |
+          npm install --no-save --no-package-lock playwright@1.56.1
+          npx playwright install --with-deps chromium
+          node ../scripts/test-phase-4-0-b-7-browser.mjs
+
       - name: Run smoke tests
         working-directory: football-rich-v1
         run: npm run test:smoke
