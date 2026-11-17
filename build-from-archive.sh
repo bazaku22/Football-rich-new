@@ -82,7 +82,7 @@ fs.appendFileSync('src/styles/main.css', `
 `);
 NODE
 
-npm install --no-audit --no-fund
+npm install --no-audit --no-fund --package-lock=false
 npm install --no-save --no-package-lock sharp fake-indexeddb@6.2.4
 node ../scripts/test-phase-4-0-b-1-runtime.mjs
 node ../scripts/test-phase-4-0-b-2-runtime.mjs
