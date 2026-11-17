@@ -17,7 +17,7 @@ for (const name of ['schema.ts','database.ts','transaction.ts','repositories.ts'
     fileName:name,
     compilerOptions:{target:ts.ScriptTarget.ES2022,module:ts.ModuleKind.ES2022,importsNotUsedAsValues:ts.ImportsNotUsedAsValues.Remove}
   }).outputText;
-  fs.writeFileSync(path.join(temp,name.replace(/\\.ts$/,'.js')),output);
+  fs.writeFileSync(path.join(temp,name.replace(/\.ts$/,'.js')),output);
 }
 fs.writeFileSync(path.join(temp,'package.json'),'{"type":"module"}');
 await import(pathToFileURL(require.resolve('fake-indexeddb/auto')));
