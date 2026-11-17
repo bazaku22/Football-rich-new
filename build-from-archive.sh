@@ -4,6 +4,7 @@ set -euo pipefail
 unzip -q -o football-rich-v1-test-candidate-0.5.0.zip -d .
 cd football-rich-v1
 node ../scripts/apply-phase-4-0-b-1.mjs
+node ../scripts/apply-phase-4-0-b-2.mjs
 node ../scripts/test-phase-4-0-b-1.mjs
 node ../scripts/apply-v3-10-quarter-ah-source.mjs
 
@@ -80,6 +81,7 @@ NODE
 npm install --no-audit --no-fund
 npm install --no-save --no-package-lock sharp fake-indexeddb@6.2.4
 node ../scripts/test-phase-4-0-b-1-runtime.mjs
+node ../scripts/test-phase-4-0-b-2-runtime.mjs
 node --input-type=module <<'NODE'
 import sharp from 'sharp';
 await sharp('public/brand-emblem.svg').resize(192,192).png().toFile('public/icon-192.png');
