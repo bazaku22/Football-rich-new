@@ -23,5 +23,15 @@ const blocked=api.createIntakePreview({...envelope,records:[{store:'matches',key
 assert.equal(blocked.canCommit,false);
 const coverage=api.assessIntakeCoverage('m1',envelope.records,'2026-11-17T10:00:00.000Z');
 assert.equal(coverage.availableDomains,2);assert.equal(coverage.analysisReady,false);
+const resultReference={store:'result_references',key:'rr-1',value:{resultReferenceId:'rr-1',localMatchId:'m1',sourceSystem:'FOOTBALL_TIME',revision:1}};
+const resultEnvelope={...envelope,sourceSystem:'FOOTBALL_TIME',importType:'MATCH_RESULT_UPDATE',recordCount:1,records:[resultReference]};
+assert.equal(api.validateIntakeEnvelope(resultEnvelope).envelope.importType,'MATCH_RESULT_UPDATE');
+assert.equal(api.createIntakePreview(resultEnvelope).canCommit,true);
+const wrongResultSource=api.validateIntakeEnvelope({...resultEnvelope,sourceSystem:'FOOTBALL_RICH'});
+assert.ok(wrongResultSource.issues.some(x=>x.code==='MATCH_RESULT_SOURCE_NOT_FOOTBALL_TIME'));
+const wrongResultStore=api.validateIntakeEnvelope({...resultEnvelope,records:[envelope.records[0]],recordCount:1});
+assert.ok(wrongResultStore.issues.some(x=>x.code==='MATCH_RESULT_STORE_NOT_ALLOWED'));
+const wrongRecordProvenance=api.validateIntakeEnvelope({...resultEnvelope,records:[{...resultReference,value:{...resultReference.value,sourceSystem:'OTHER'}}]});
+assert.ok(wrongRecordProvenance.issues.some(x=>x.code==='MATCH_RESULT_RECORD_PROVENANCE_MISMATCH'));
 fs.rmSync(temp,{recursive:true,force:true});
 console.log('B.5 runtime tests passed: envelope validation, idempotent duplicate classification, version-required conflict handling, critical match validation, and honest coverage readiness.');
