@@ -106,7 +106,9 @@ export function validateReferences(storeName: StoreName, record: DatabaseRecord,
   for (const [field, targetStore] of Object.entries(mapping)) {
     const value = record[field];
     if (value === undefined || value === null || value === '') continue;
-    if (typeof value !== 'string' || !references[targetStore]?.has(value)) {
+    const targetIds = references[targetStore];
+    if (!targetIds) continue; // An omitted index means the caller did not request this relationship check.
+    if (typeof value !== 'string' || !targetIds.has(value)) {
       issues.push(issue(storeName, 'BROKEN_REFERENCE', `${field} references a missing or invalid ${targetStore} record.`, field, recordId));
     }
   }
