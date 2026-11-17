@@ -295,7 +295,8 @@ jobs:
           path: football-rich-v1/dist
 
   deploy:
-    if: github.event_name != 'pull_request'
+    # Publishing is a deliberate manual action from main only; pushes and PRs never deploy.
+    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
