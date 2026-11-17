@@ -82,8 +82,8 @@ await assert.rejects(
 assert.equal((await matches.get('match-1')).revision,2);
 assert.equal(await history.count(),1);
 
-await assert.rejects(history.delete('revision-2'),error=>error.code==='DB_VALIDATION_FAILED');
-await assert.rejects(history.put({matchRevisionId:'revision-2',localMatchId:'match-1',revision:3}),error=>error.code==='DB_VALIDATION_FAILED');
+assert.throws(()=>history.delete('revision-2'),error=>error.code==='DB_VALIDATION_FAILED');
+assert.throws(()=>history.put({matchRevisionId:'revision-2',localMatchId:'match-1',revision:3}),error=>error.code==='DB_VALIDATION_FAILED');
 
 await assert.rejects(
   revisions.createMatchRevision({
