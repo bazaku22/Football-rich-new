@@ -128,6 +128,34 @@ assert.equal(coverage.availableDomains, 2);
 assert.equal(coverage.analysisReady, false);
 assert.equal(coverage.domains.some(x => x.domain === 'FORM' && x.status === 'MISSING'), true);
 
+// Official result intake is reference-only and must retain Football Time provenance.
+const officialResultEnvelope = {
+  ...envelope, sourceSystem: 'FOOTBALL_TIME', importType: 'MATCH_RESULT_UPDATE',
+  batchId: 'b6-result-reference', recordCount: 1,
+  records: [{
+    store: 'result_references', key: 'b6-result-ref',
+    value: { resultReferenceId: 'b6-result-ref', localMatchId: 'b6-match', sourceSystem: 'FOOTBALL_TIME', revision: 1 }
+  }]
+};
+assert.equal(intake.validateIntakeEnvelope(officialResultEnvelope).envelope.importType, 'MATCH_RESULT_UPDATE');
+assert.equal(intake.createIntakePreview(officialResultEnvelope).canCommit, true);
+assert.ok(intake.validateIntakeEnvelope({
+  ...officialResultEnvelope, sourceSystem: 'FOOTBALL_RICH'
+}).issues.some(issue => issue.code === 'MATCH_RESULT_SOURCE_NOT_FOOTBALL_TIME'));
+assert.ok(intake.validateIntakeEnvelope({
+  ...officialResultEnvelope,
+  records: [{ store: 'matches', key: 'b6-match', value: originalMatch }],
+  recordCount: 1
+}).issues.some(issue => issue.code === 'MATCH_RESULT_STORE_NOT_ALLOWED'));
+assert.ok(intake.validateIntakeEnvelope({
+  ...officialResultEnvelope,
+  records: [{
+    store: 'result_references', key: 'b6-result-ref',
+    value: { resultReferenceId: 'b6-result-ref', localMatchId: 'b6-match', sourceSystem: 'UNVERIFIED', revision: 1 }
+  }]
+}).issues.some(issue => issue.code === 'MATCH_RESULT_RECORD_PROVENANCE_MISMATCH'));
+
+
 // Acceptance 4: consistent backup, checksum validation and isolated restore staging.
 const backup = await backupApi.createDatabaseBackup(new Date('2026-11-17T12:15:00.000Z'));
 const serialized = backupApi.serializeDatabaseBackup(backup);
