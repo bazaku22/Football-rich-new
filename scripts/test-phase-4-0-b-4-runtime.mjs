@@ -35,6 +35,10 @@ assert.equal(backup.manifest.totalRecords,2);
 assert.equal(backup.manifest.recordCounts.teams,1);
 assert.equal(backup.stores.matches.length,1);
 const serialized = backupApi.serializeDatabaseBackup(backup);
+await assert.rejects(
+  restoreApi.promoteStagedRestore({confirmReplace:true}),
+  /RESTORE_STAGING_NOT_VALIDATED/
+);
 const valid = await restoreApi.validateDatabaseBackup(serialized);
 assert.equal(valid.report.valid,true);
 assert.equal(valid.report.totalRecords,2);
@@ -53,6 +57,29 @@ const staged = await restoreApi.stageDatabaseRestore(serialized);
 assert.equal(staged.valid,true);
 assert.equal((await repos.createRepository('teams').get('team-live')).nameNormalized,'live');
 assert.equal(await repos.createRepository('teams').count(),1);
+
+// Tampering with the isolated staging DB after validation must block promotion.
+await new Promise((resolve,reject)=>{
+  const request = indexedDB.open(schema.DB_NAME + '-restore-staging');
+  request.onerror = () => reject(request.error);
+  request.onsuccess = () => {
+    const db = request.result;
+    const tx = db.transaction('teams','readwrite');
+    tx.objectStore('teams').put({teamId:'team-live',nameNormalized:'tampered-after-stage'});
+    tx.oncomplete = () => { db.close(); resolve(); };
+    tx.onabort = () => { db.close(); reject(tx.error ?? new Error('Could not tamper staging test record.')); };
+  };
+});
+await assert.rejects(
+  restoreApi.promoteStagedRestore({confirmReplace:true}),
+  /STAGING_CHECKSUM_MISMATCH/
+);
+assert.equal((await repos.createRepository('teams').get('team-live')).nameNormalized,'live');
+assert.equal(await repos.createRepository('teams').count(),1);
+
+// A fresh verified staging pass is required after any failed promotion attempt.
+const restaged = await restoreApi.stageDatabaseRestore(serialized);
+assert.equal(restaged.valid,true);
 
 await assert.rejects(
   restoreApi.promoteStagedRestore({confirmReplace:false}),
