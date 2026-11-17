@@ -63,7 +63,7 @@ await teams.put({teamId:'team-crud',nameNormalized:'after',competitionId:'comp-a
 assert.equal((await teams.get('team-crud')).nameNormalized,'after');
 assert.equal((await teams.getByIndex('competitionId','comp-atomic')).length,2);
 assert.equal(await teams.count('comp-atomic'),0); // primary-key query, not an index query
-assert.equal(await teams.count(),3);
+assert.equal(await teams.count(),2);
 await teams.delete('team-crud');
 assert.equal(await teams.get('team-crud'),undefined);
 
