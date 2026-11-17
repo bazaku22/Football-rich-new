@@ -7,7 +7,7 @@ import {createRequire} from 'node:module';
 const require=createRequire(path.join(process.cwd(),'package.json'));
 const ts=require('typescript');
 const temp=fs.mkdtempSync(path.join(os.tmpdir(),'football-rich-b5-'));
-for(const name of ['schema.ts','intake.ts']){const src=fs.readFileSync(path.join('src','data','v2',name),'utf8');const out=ts.transpileModule(src,{fileName:name,compilerOptions:{target:ts.ScriptTarget.ES2022,module:ts.ModuleKind.ES2022}}).outputText;fs.writeFileSync(path.join(temp,name.replace(/\\.ts$/,'.js')),out);}
+for(const name of ['schema.ts','intake.ts']){const src=fs.readFileSync(path.join('src','data','v2',name),'utf8');const out=ts.transpileModule(src,{fileName:name,compilerOptions:{target:ts.ScriptTarget.ES2022,module:ts.ModuleKind.ES2022}}).outputText;fs.writeFileSync(path.join(temp,name.replace(/\.ts$/,'.js')),out);}
 fs.writeFileSync(path.join(temp,'package.json'),'{"type":"module"}');
 const api=await import(pathToFileURL(path.join(temp,'intake.js')));
 const envelope={format:'football-rich-data',schemaVersion:'2.0.0',exportedAt:'2026-11-17T10:00:00.000Z',sourceSystem:'FOOTBALL_TIME',targetSystem:'FOOTBALL_RICH',importType:'FIXTURE_UPDATE',batchId:'batch-1',recordCount:2,records:[{store:'matches',key:'m1',value:{localMatchId:'m1',homeTeamId:'t1',awayTeamId:'t2',kickoffAt:'2026-11-18T12:00:00.000Z',competitionId:'c1'}},{store:'teams',key:'t1',value:{teamId:'t1',nameNormalized:'home'}}]};
