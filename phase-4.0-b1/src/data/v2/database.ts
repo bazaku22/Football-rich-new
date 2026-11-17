@@ -1,4 +1,5 @@
 import { DB_NAME, DB_VERSION, STORE_DEFINITIONS, STORE_NAMES, type StoreName } from './schema.js';
+
 let databasePromise: Promise<IDBDatabase> | undefined;
 
 function createSchema(db: IDBDatabase): void {
@@ -12,45 +13,86 @@ function createSchema(db: IDBDatabase): void {
   }
 }
 
-/** Fail closed on an unexpected schema; never auto-delete or destructively repair data. */
-export function verifySchema(db: IDBDatabase): void {
-  const actual = Array.from(db.objectStoreNames).sort();
-  const expected = [...STORE_NAMES].sort();
-  if (actual.length !== expected.length || actual.some((name, i) => name !== expected[i])) {
-    throw new Error(`DB_SCHEMA_MISMATCH: expected ${expected.length} stores; found ${actual.length}.`);
+function sameKeyPath(actual: string | string[] | null, expected: string | readonly string[]): boolean {
+  if (Array.isArray(expected)) {
+    return Array.isArray(actual) && actual.length === expected.length &&
+      actual.every((part, index) => part === expected[index]);
   }
+  return actual === expected;
+}
+
+/** Fail closed on missing, unexpected, or mismatched stores and indexes. */
+export function verifySchema(db: IDBDatabase): void {
+  const actualStores = Array.from(db.objectStoreNames).sort();
+  const expectedStores = [...STORE_NAMES].sort();
+  if (actualStores.length !== expectedStores.length ||
+      actualStores.some((name, index) => name !== expectedStores[index])) {
+    throw new Error(`DB_SCHEMA_MISMATCH: expected ${expectedStores.length} stores; found ${actualStores.length}.`);
+  }
+
   const tx = db.transaction([...STORE_NAMES], 'readonly');
   for (const name of STORE_NAMES) {
     const store = tx.objectStore(name);
     const definition = STORE_DEFINITIONS[name];
-    if (store.keyPath !== definition.keyPath) throw new Error(`DB_SCHEMA_MISMATCH: invalid keyPath for ${name}.`);
+    if (!sameKeyPath(store.keyPath, definition.keyPath)) {
+      throw new Error(`DB_SCHEMA_MISMATCH: invalid keyPath for ${name}.`);
+    }
+
+    const actualIndexes = Array.from(store.indexNames).sort();
+    const expectedIndexes = definition.indexes.map(([indexName]) => indexName).sort();
+    if (actualIndexes.length !== expectedIndexes.length ||
+        actualIndexes.some((indexName, index) => indexName !== expectedIndexes[index])) {
+      throw new Error(`DB_SCHEMA_MISMATCH: unexpected index set for ${name}.`);
+    }
+
     for (const [indexName, keyPath, unique] of definition.indexes) {
-      if (!store.indexNames.contains(indexName)) throw new Error(`DB_SCHEMA_MISMATCH: missing index ${name}.${indexName}.`);
       const index = store.index(indexName);
-      const expectedKey = Array.isArray(keyPath) ? keyPath.join(',') : keyPath;
-      const actualKey = Array.isArray(index.keyPath) ? Array.from(index.keyPath).join(',') : index.keyPath;
-      if (actualKey !== expectedKey || index.unique !== unique) throw new Error(`DB_SCHEMA_MISMATCH: invalid index ${name}.${indexName}.`);
+      if (!sameKeyPath(index.keyPath, keyPath) || index.unique !== unique) {
+        throw new Error(`DB_SCHEMA_MISMATCH: invalid index ${name}.${indexName}.`);
+      }
     }
   }
 }
 
 export function openDatabase(): Promise<IDBDatabase> {
-  if (typeof indexedDB === 'undefined') return Promise.reject(new Error('IndexedDB is unavailable in this browser.'));
+  if (typeof indexedDB === 'undefined') {
+    return Promise.reject(new Error('IndexedDB is unavailable in this browser.'));
+  }
   if (databasePromise) return databasePromise;
-  databasePromise = new Promise((resolve, reject) => {
+
+  let opening: Promise<IDBDatabase>;
+  opening = new Promise((resolve, reject) => {
     const request = indexedDB.open(DB_NAME, DB_VERSION);
     request.onupgradeneeded = () => createSchema(request.result);
     request.onsuccess = () => {
       const db = request.result;
-      try { verifySchema(db); }
-      catch (error) { db.close(); databasePromise = undefined; reject(error); return; }
-      db.onversionchange = () => { db.close(); databasePromise = undefined; };
+      try {
+        verifySchema(db);
+      } catch (error) {
+        db.close();
+        if (databasePromise === opening) databasePromise = undefined;
+        reject(error);
+        return;
+      }
+      db.onversionchange = () => {
+        db.close();
+        if (databasePromise === opening) databasePromise = undefined;
+      };
       resolve(db);
     };
-    request.onerror = () => { databasePromise = undefined; reject(request.error ?? new Error('Could not open Football rich V2 database.')); };
-    request.onblocked = () => { databasePromise = undefined; reject(new Error('DB_VERSION_CONFLICT: V2 database upgrade is blocked by another tab.')); };
+    request.onerror = () => {
+      if (databasePromise === opening) databasePromise = undefined;
+      reject(request.error ?? new Error('Could not open Football rich V2 database.'));
+    };
+    request.onblocked = () => {
+      // A blocked request may still succeed after the other tab closes its connection.
+      // Keep this promise pending; rejecting here can leak a later successful connection.
+      console.warn('Football rich V2 database open is blocked by another tab; waiting for it to close.');
+    };
   });
-  return databasePromise;
+
+  databasePromise = opening;
+  return opening;
 }
 
 export function closeDatabase(): void {
@@ -59,7 +101,7 @@ export function closeDatabase(): void {
   databasePromise = undefined;
 }
 
-export async function getDatabaseInfo(): Promise<{name:string;version:number;stores:StoreName[]}> {
+export async function getDatabaseInfo(): Promise<{ name: string; version: number; stores: StoreName[] }> {
   const db = await openDatabase();
   return { name: db.name, version: db.version, stores: [...STORE_NAMES] };
 }
