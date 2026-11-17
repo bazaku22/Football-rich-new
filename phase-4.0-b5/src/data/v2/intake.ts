@@ -52,10 +52,13 @@ export function validateIntakeEnvelope(input: unknown): { envelope?: IntakeEnvel
 }
 export function assessIntakeCoverage(matchId: string, records: IntakeRecord[], capturedAt = new Date().toISOString()) {
   const matchRecords = records.filter(r => r.value.localMatchId === matchId || r.key === matchId);
+  const matchRecord = matchRecords.find(r => r.store === 'matches');
+  const linkedTeamIds = matchRecord ? [matchRecord.value.homeTeamId, matchRecord.value.awayTeamId] : [];
+  const linkedTeamRecords = records.filter(r => r.store === 'teams' && linkedTeamIds.includes(r.key));
   const domains = ['FIXTURE','TEAM_IDENTITY','FORM','HOME_AWAY_SPLITS','AVAILABILITY','OFFICIAL_LINEUP','MARKET_SNAPSHOT','RESULT'];
   const present: Record<string,boolean> = {
     FIXTURE: matchRecords.some(r=>r.store==='matches'),
-    TEAM_IDENTITY: matchRecords.some(r=>r.store==='teams'),
+    TEAM_IDENTITY: linkedTeamRecords.length === 2,
     FORM: matchRecords.some(r=>r.store==='research_records' && r.value.domain==='FORM'),
     HOME_AWAY_SPLITS: matchRecords.some(r=>r.store==='research_records' && r.value.domain==='HOME_AWAY_SPLITS'),
     AVAILABILITY: matchRecords.some(r=>r.store==='team_news_records'),
