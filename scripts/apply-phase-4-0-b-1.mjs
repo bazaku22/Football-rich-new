@@ -1,0 +1,11 @@
+import fs from 'node:fs';
+import path from 'node:path';
+const source = path.resolve('..','phase-4.0-b1','src','data','v2');
+const target = path.resolve('src','data','v2');
+fs.mkdirSync(target,{recursive:true});
+for (const file of ['schema.ts','database.ts']) fs.copyFileSync(path.join(source,file),path.join(target,file));
+const configPath = path.resolve('tsconfig.static.json');
+const config = JSON.parse(fs.readFileSync(configPath,'utf8'));
+for (const file of ['src/data/v2/schema.ts','src/data/v2/database.ts']) if (!config.include.includes(file)) config.include.push(file);
+fs.writeFileSync(configPath,JSON.stringify(config,null,2)+'\n');
+console.log('B.1 V2 Database Core injected into isolated build workspace; V1 archive untouched.');
