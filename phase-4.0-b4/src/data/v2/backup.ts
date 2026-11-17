@@ -15,10 +15,14 @@ export interface DatabaseBackup {
 }
 
 function canonical(value: unknown): string {
+  if (value === undefined || typeof value === 'function' || typeof value === 'symbol') return 'null';
   if (value === null || typeof value !== 'object') return JSON.stringify(value);
   if (Array.isArray(value)) return '[' + value.map(canonical).join(',') + ']';
   const object = value as Record<string, unknown>;
-  return '{' + Object.keys(object).sort().map(key => JSON.stringify(key) + ':' + canonical(object[key])).join(',') + '}';
+  const keys = Object.keys(object).filter(key =>
+    object[key] !== undefined && typeof object[key] !== 'function' && typeof object[key] !== 'symbol'
+  ).sort();
+  return '{' + keys.map(key => JSON.stringify(key) + ':' + canonical(object[key])).join(',') + '}';
 }
 
 export async function checksumBackupPayload(payload: Omit<DatabaseBackup, 'checksum'>): Promise<string> {
