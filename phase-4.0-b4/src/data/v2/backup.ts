@@ -1,5 +1,4 @@
 import { DB_NAME, DB_VERSION, STORE_NAMES, type StoreName } from './schema.js';
-import { openDatabase } from './database.js';
 import { runTransaction } from './transaction.js';
 
 export const BACKUP_FORMAT = 'football-rich-v2-backup';
@@ -31,7 +30,6 @@ export async function checksumBackupPayload(payload: Omit<DatabaseBackup, 'check
 
 /** Export every V2 store in one consistent readonly transaction. */
 export async function createDatabaseBackup(now = new Date()): Promise<DatabaseBackup> {
-  const db = await openDatabase();
   const requests = await runTransaction(STORE_NAMES, 'readonly', tx => {
     const result = {} as Record<StoreName, IDBRequest<unknown[]>>;
     for (const name of STORE_NAMES) result[name] = tx.objectStore(name).getAll();
