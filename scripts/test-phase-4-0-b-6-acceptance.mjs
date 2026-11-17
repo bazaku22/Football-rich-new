@@ -28,7 +28,7 @@ for (const name of modules) {
       importsNotUsedAsValues: ts.ImportsNotUsedAsValues.Remove
     }
   }).outputText;
-  fs.writeFileSync(path.join(temp, name.replace(/\\.ts$/, '.js')), output);
+  fs.writeFileSync(path.join(temp, name.replace(/\.ts$/, '.js')), output);
 }
 fs.writeFileSync(path.join(temp, 'package.json'), '{"type":"module"}');
 await import(pathToFileURL(require.resolve('fake-indexeddb/auto')));
