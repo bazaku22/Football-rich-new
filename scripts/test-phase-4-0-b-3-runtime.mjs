@@ -95,6 +95,68 @@ await assert.rejects(
 );
 assert.equal(await history.count(),1);
 
+// History isolation: analysis, Football Time result references, and model evaluation
+// are separate append-only record streams, not interchangeable update types.
+const analyses = repos.createRepository('analysis_records');
+const results = repos.createRepository('result_references');
+const evaluations = repos.createRepository('evaluation_records');
+for (const repository of [analyses, results, evaluations]) {
+  assert.equal(repository.immutable,true,repository.storeName+' must be append-only');
+}
+
+await analyses.addMany([
+  {
+    analysisId:'analysis-preliminary',localMatchId:'match-1',
+    analysisStage:'PRELIMINARY',createdAt:'2026-11-17T08:00:00.000Z',
+    inputSnapshot:{stage:'PRELIMINARY',sample:'synthetic'}
+  },
+  {
+    analysisId:'analysis-final',localMatchId:'match-1',
+    analysisStage:'FINAL',createdAt:'2026-11-17T12:00:00.000Z',
+    inputSnapshot:{stage:'FINAL',sample:'synthetic'}
+  }
+]);
+await results.addMany([
+  {
+    resultReferenceId:'result-import-revision-1',localMatchId:'match-1',
+    sourceSystem:'FOOTBALL_TIME',sourceResultId:'ft-match-1',
+    revision:1
+  },
+  {
+    resultReferenceId:'result-import-revision-2',localMatchId:'match-1',
+    sourceSystem:'FOOTBALL_TIME',sourceResultId:'ft-match-1',
+    revision:2
+  }
+]);
+await evaluations.add({
+  evaluationRecordId:'evaluation-1',evaluationRunId:'evaluation-run-1',
+  localMatchId:'match-1',metricType:'AH_COVER',
+  predictedValue:'HOME_COVER',actualValue:'HOME_COVER'
+});
+
+assert.equal(await analyses.count(),2,'Preliminary and Final analyses must coexist as separate records.');
+assert.equal(await results.count(),2,'Football Time result revisions must append instead of replacing history.');
+assert.equal(await evaluations.count(),1,'Model evaluation must be stored in its own record stream.');
+assert.equal((await analyses.get('analysis-preliminary')).analysisStage,'PRELIMINARY');
+assert.equal((await analyses.get('analysis-final')).analysisStage,'FINAL');
+assert.equal((await results.get('result-import-revision-1')).revision,1);
+assert.equal((await results.get('result-import-revision-2')).revision,2);
+
+for (const [repository,id,record] of [
+  [analyses,'analysis-preliminary',{analysisId:'analysis-preliminary',localMatchId:'match-1',analysisStage:'FINAL',inputSnapshot:{tampered:true}}],
+  [results,'result-import-revision-1',{resultReferenceId:'result-import-revision-1',localMatchId:'match-1',revision:99}],
+  [evaluations,'evaluation-1',{evaluationRecordId:'evaluation-1',evaluationRunId:'evaluation-run-1',localMatchId:'match-1',metricType:'AH_COVER',actualValue:'TAMPERED'}]
+]) {
+  assert.throws(()=>repository.put(record),error=>error.code==='DB_VALIDATION_FAILED',repository.storeName+' must reject overwrite');
+  assert.throws(()=>repository.delete(id),error=>error.code==='DB_VALIDATION_FAILED',repository.storeName+' must reject deletion');
+}
+assert.equal((await analyses.get('analysis-preliminary')).analysisStage,'PRELIMINARY');
+assert.equal((await results.get('result-import-revision-1')).revision,1);
+assert.equal((await evaluations.get('evaluation-1')).actualValue,'HOME_COVER');
+assert.equal(await analyses.count(),2);
+assert.equal(await results.count(),2);
+assert.equal(await evaluations.count(),1);
+
 database.closeDatabase();
 fs.rmSync(temp,{recursive:true,force:true});
-console.log('B.3 IndexedDB runtime tests passed: integrity validation, broken references, atomic revision append, stale revision conflict, and immutable revision history.');
+console.log('B.3 IndexedDB runtime tests passed: integrity validation, atomic match revisions, stale-write rejection, and isolated append-only analysis/result/evaluation histories.');
