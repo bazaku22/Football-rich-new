@@ -296,6 +296,15 @@ jobs:
           echo "=== BUILD STATIC SCRIPT ==="
           sed -n '1,220p' scripts/build-static.mjs
 
+      - name: Include Android Chrome device test page in Pages artifact
+        run: |
+          test -s v2-device-test/index.html
+          mkdir -p football-rich-v1/dist/v2-device-test
+          cp v2-device-test/index.html football-rich-v1/dist/v2-device-test/index.html
+          test -s football-rich-v1/dist/v2-device-test/index.html
+          grep -q "Run All Tests" football-rich-v1/dist/v2-device-test/index.html
+          echo "Android Chrome device test page included in Pages artifact."
+
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
