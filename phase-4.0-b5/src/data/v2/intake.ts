@@ -44,6 +44,20 @@ export function validateIntakeEnvelope(input: unknown): { envelope?: IntakeEnvel
   if (!e.sourceSystem?.trim()) issues.push({code:'MISSING_SOURCE_SYSTEM',severity:'CRITICAL',message:'sourceSystem is required.'});
   if (e.targetSystem !== 'FOOTBALL_RICH') issues.push({code:'INVALID_TARGET',severity:'CRITICAL',message:'targetSystem must be FOOTBALL_RICH.'});
   if (!['FIXTURE_UPDATE','ANALYSIS_UPDATE','MATCH_RESULT_UPDATE','EVIDENCE_UPDATE'].includes(String(e.importType))) issues.push({code:'INVALID_IMPORT_TYPE',severity:'CRITICAL',message:'Unknown import type.'});
+  if (e.importType === 'MATCH_RESULT_UPDATE' && e.sourceSystem !== 'FOOTBALL_TIME') {
+    issues.push({code:'MATCH_RESULT_SOURCE_NOT_FOOTBALL_TIME',severity:'CRITICAL',message:'Official match results must be referenced from Football Time.'});
+  }
+  if (e.importType === 'MATCH_RESULT_UPDATE' && Array.isArray(e.records)) {
+    for (const record of e.records) {
+      if (!record || record.store !== 'result_references') {
+        issues.push({code:'MATCH_RESULT_STORE_NOT_ALLOWED',severity:'CRITICAL',recordKey:record?.key,message:'Match result updates may import references only; Football rich cannot author official results.'});
+        continue;
+      }
+      if (record.value?.sourceSystem !== 'FOOTBALL_TIME') {
+        issues.push({code:'MATCH_RESULT_RECORD_PROVENANCE_MISMATCH',severity:'CRITICAL',recordKey:record.key,message:'Each result reference must identify Football Time as its source.'});
+      }
+    }
+  }
   if (!e.batchId?.trim()) issues.push({code:'MISSING_BATCH_ID',severity:'CRITICAL',message:'batchId is required.'});
   if (!Array.isArray(e.records)) issues.push({code:'INVALID_RECORDS',severity:'CRITICAL',message:'records must be an array.'});
   else if (e.recordCount !== e.records.length) issues.push({code:'RECORD_COUNT_MISMATCH',severity:'CRITICAL',message:'recordCount does not match records length.'});
