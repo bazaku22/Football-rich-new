@@ -20,7 +20,7 @@ async function sha(text){const b=await crypto.subtle.digest('SHA-256',new TextEn
 async function run(){rows.length=0;$('checks').innerHTML='';try{
 if(!('indexedDB'in window))throw Error('IndexedDB ไม่พร้อมใช้งาน');
 const db=await openDB();show('เปิดฐานข้อมูลทดสอบแยก','pass',DB);
-show('จำนวน object stores = 32',''+(db.objectStoreNames.length===32?'pass':'fail'),'พบ '+db.objectStoreNames.length+' stores');
+show('จำนวน V2 object stores = 32',''+(stores.every(s=>db.objectStoreNames.contains(s))?'pass':'fail'),'ตรวจครบ '+stores.length+' V2 stores (ไม่รวม unique_test สำหรับทดสอบ index)');
 let t=db.transaction(['matches'],'readwrite');t.objectStore('matches').put({id:'android-check',value:'synthetic',revision:1});await txDone(t);
 t=db.transaction(['matches'],'readonly');const got=await req(t.objectStore('matches').get('android-check'));await txDone(t);show('CRUD: บันทึกและอ่านข้อมูลสมมติ',''+(got?.value==='synthetic'?'pass':'fail'),got?.value||'อ่านข้อมูลไม่สำเร็จ');
 try{t=db.transaction(['matches','teams'],'readwrite');t.objectStore('matches').put({id:'rollback-check'});t.objectStore('teams').put({id:'rollback-team'});t.abort();await txDone(t);}catch{}
