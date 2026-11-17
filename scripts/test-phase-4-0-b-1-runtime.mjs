@@ -3,7 +3,9 @@ import os from 'node:os';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import assert from 'node:assert/strict';
-import ts from 'typescript';
+import { createRequire } from 'node:module';
+const require = createRequire(path.join(process.cwd(), 'package.json'));
+const ts = require('typescript');
 
 const temp = fs.mkdtempSync(path.join(os.tmpdir(), 'football-rich-b1-runtime-'));
 const schemaSource = fs.readFileSync('src/data/v2/schema.ts', 'utf8');
@@ -32,7 +34,7 @@ fs.writeFileSync(path.join(temp, 'schema.js'), transpile(schemaSource, 'schema.t
 fs.writeFileSync(path.join(temp, 'database.js'), transpile(databaseSource, 'database.ts'));
 fs.writeFileSync(path.join(temp, 'package.json'), '{"type":"module"}');
 
-await import('fake-indexeddb/auto');
+await import(pathToFileURL(require.resolve('fake-indexeddb/auto')));
 const schema = await import(pathToFileURL(path.join(temp, 'schema.js')));
 const database = await import(pathToFileURL(path.join(temp, 'database.js')));
 
