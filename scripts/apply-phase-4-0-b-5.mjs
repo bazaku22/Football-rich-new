@@ -1,0 +1,10 @@
+import fs from 'node:fs';
+import path from 'node:path';
+const source=path.resolve('..','phase-4.0-b5','src','data','v2','intake.ts');
+const target=path.resolve('src','data','v2','intake.ts');
+fs.copyFileSync(source,target);
+const configPath=path.resolve('tsconfig.static.json');
+const config=JSON.parse(fs.readFileSync(configPath,'utf8'));
+for(const file of ['src/data/v2/intake.ts']) if(!config.include.includes(file)) config.include.push(file);
+fs.writeFileSync(configPath,JSON.stringify(config,null,2)+'\n');
+console.log('B.5 safe intake and coverage module injected into isolated V2 build workspace.');
