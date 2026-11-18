@@ -118,11 +118,14 @@ if (!html.includes('main.js?v=20261118-mobile-nav')) {
   if (!/main\.js(?:\?[^"']*)?/.test(html)) throw new Error('App entry script reference was not found');
   html = html.replace(/main\.js(?:\?[^"']*)?/, 'main.js?v=20261118-mobile-nav');
 }
-if (!sw.includes("const CACHE_NAME = 'football-rich-shell-v64'")) {
-  throw new Error('Expected V3.9.9 service worker cache anchor was not found');
+const cacheMatch = sw.match(/const CACHE_NAME = 'football-rich-shell-v(\\d+)'/);
+if (!cacheMatch) throw new Error('Service worker cache name was not found');
+const currentCacheVersion = Number(cacheMatch[1]);
+if (currentCacheVersion !== 65) {
+  throw new Error('Expected service worker cache v65 before mobile navigation patch; found v' + currentCacheVersion);
 }
-sw = sw.replace("const CACHE_NAME = 'football-rich-shell-v64'", "const CACHE_NAME = 'football-rich-shell-v65'");
+sw = sw.replace(cacheMatch[0], "const CACHE_NAME = 'football-rich-shell-v66'");
 fs.writeFileSync(cssFile, css);
 fs.writeFileSync(htmlFile, html);
 fs.writeFileSync(swFile, sw);
-console.log('V3.9.10 mobile navigation applied: four icon tabs, static gold selection, no glow, and refreshed PWA cache.');
+console.log('V3.9.10 mobile navigation applied: four icon tabs, static gold selection, no glow, and refreshed PWA cache v66.');

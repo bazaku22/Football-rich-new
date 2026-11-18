@@ -12,7 +12,7 @@ for (const marker of ['grid-template-columns: repeat(4, minmax(0, 1fr))','positi
   if (!css.includes(marker)) throw new Error('Mobile navigation CSS marker missing: ' + marker);
 }
 if (!html.includes('main.js?v=20261118-mobile-nav')) throw new Error('Cache-busted app entry missing');
-if (!sw.includes("const CACHE_NAME = 'football-rich-shell-v65'")) throw new Error('Service worker cache version was not refreshed');
+if (!sw.includes("const CACHE_NAME = 'football-rich-shell-v66'")) throw new Error('Service worker cache version was not refreshed');
 // Check each active-state rule independently. The previous negative-lookahead
 // regex backtracked over whitespace and falsely treated "box-shadow: none"
 // as a glow. Normalize declarations before checking their actual value.
