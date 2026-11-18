@@ -188,6 +188,8 @@ jobs:
           node scripts/apply-v3-9-8-club-logos.mjs
           node scripts/test-v3-9-8-club-logos.mjs
           node scripts/test-v3-9-9-club-logo-url-health.mjs
+          node scripts/apply-v3-9-10-we-league-logos.mjs
+          node scripts/test-v3-9-10-we-league-logos.mjs
 
       - name: Audit generated PWA files
         working-directory: football-rich-v1
@@ -234,21 +236,21 @@ jobs:
           }
           const index = fs.readFileSync(path.join(root,'index.html'),'utf8');
           if (!index.includes('__footballRichBootGuardInstalled')) throw new Error('Startup watchdog missing from final HTML');
-          if (!index.includes('main.js?v=20261116-v3-9-9')) throw new Error('Cache-busted app entry missing from final HTML');
+          if (!index.includes('main.js?v=20261118-v3-9-10')) throw new Error('Cache-busted app entry missing from final HTML');
           if (!fs.existsSync(path.join(root,'main.js'))) throw new Error('App entry main.js missing from final output');
           console.log('Startup watchdog, cache-busted app entry and main.js verified.');
           console.log('Service worker source preview:', fs.readFileSync(swFiles[0], 'utf8').slice(0, 1000));
           const swSource = fs.readFileSync(swFiles[0], 'utf8');
-          if (!swSource.includes("const CACHE_NAME = 'football-rich-shell-v64'")) throw new Error('Service worker cache version is stale');
+          if (!swSource.includes("const CACHE_NAME = 'football-rich-shell-v65'")) throw new Error('Service worker cache version is stale');
           console.log('Service worker cache version v14 verified.');
           const app = fs.readFileSync(path.join(root,'main.js'),'utf8');
           for (const feature of ['installReleaseUpdateCheck','footballRichLastNotifiedVersion','footballRichNotificationsV1','fr-notification-header-button','fr-notification-unread-label','readAt:null','ศูนย์แจ้งเตือน']) {
             if (!app.includes(feature)) throw new Error('V1.5.1 UI feature missing: ' + feature);
           }
-          if (!app.includes("const APP_VERSION='3.9.9';") || !app.includes("currentView === 'football-time-result-import'") || !app.includes('footballTimeResultReadOnly:true') || !app.includes("currentView === 'football-time-legacy-result-import'") || !app.includes('footballTimeLegacyResultSnapshot') || !app.includes("currentView === 'football-time-import'") || !app.includes('นำเข้าข้อมูลจาก Football Time') || !app.includes('MATCH + ANALYSIS IMPORT') || !app.includes('football-rich-analysis-batch') || !app.includes('result-import-file') || !app.includes('ANALYSIS PERFORMANCE CENTER') || !app.includes('football-rich-analysis-learning') || !app.includes('data-apc-review') || !app.includes('currentView === \'tools\'') || !app.includes('currentView === \'import\'') || !app.includes('currentView === \'result-import\'') || app.includes('fixture-import-file') || app.includes('analysis-import-existing-only')) throw new Error('V3.9 required app routes are missing');
+          if (!app.includes("const APP_VERSION='3.9.10';") || !app.includes("currentView === 'football-time-result-import'") || !app.includes('footballTimeResultReadOnly:true') || !app.includes("currentView === 'football-time-legacy-result-import'") || !app.includes('footballTimeLegacyResultSnapshot') || !app.includes("currentView === 'football-time-import'") || !app.includes('นำเข้าข้อมูลจาก Football Time') || !app.includes('MATCH + ANALYSIS IMPORT') || !app.includes('football-rich-analysis-batch') || !app.includes('result-import-file') || !app.includes('ANALYSIS PERFORMANCE CENTER') || !app.includes('football-rich-analysis-learning') || !app.includes('data-apc-review') || !app.includes('currentView === \'tools\'') || !app.includes('currentView === \'import\'') || !app.includes('currentView === \'result-import\'') || app.includes('fixture-import-file') || app.includes('analysis-import-existing-only')) throw new Error('V3.9 required app routes are missing');
           if (!fs.existsSync(path.join(root,'app-version.json'))) throw new Error('App version manifest missing');
           const appVersion = JSON.parse(fs.readFileSync(path.join(root,'app-version.json'),'utf8'));
-          if (appVersion.version !== '3.9.9') throw new Error('App version manifest is stale');
+          if (appVersion.version !== '3.9.10') throw new Error('App version manifest is stale');
           if (app.includes('กำไรจำลองสุทธิ') || app.includes("card('ผลชำระเดิมพัน'")) throw new Error('V1.9 non-gambling Performance cleanup failed');
           const appCss = fs.readFileSync(path.join(root,'styles/main.css'),'utf8');
           const navStart = app.indexOf('const navItems = [');
