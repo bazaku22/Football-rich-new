@@ -115,8 +115,8 @@ css += `
 }
 `;
 if (!html.includes('main.js?v=20261118-mobile-nav')) {
-  if (!/main\\.js(?:\\?[^"']*)?/.test(html)) throw new Error('App entry script reference was not found');
-  html = html.replace(/main\\.js(?:\\?[^"']*)?/, 'main.js?v=20261118-mobile-nav');
+  if (!/main\.js(?:\?[^"']*)?/.test(html)) throw new Error('App entry script reference was not found');
+  html = html.replace(/main\.js(?:\?[^"']*)?/, 'main.js?v=20261118-mobile-nav');
 }
 if (!sw.includes("const CACHE_NAME = 'football-rich-shell-v64'")) {
   throw new Error('Expected V3.9.9 service worker cache anchor was not found');
