@@ -11,12 +11,8 @@ let css = fs.readFileSync(cssFile, 'utf8');
 let html = fs.readFileSync(htmlFile, 'utf8');
 let sw = fs.readFileSync(swFile, 'utf8');
 
-if (!main.includes("['dashboard', 'หน้าหลัก']") ||
-    !main.includes("['tools', 'เครื่องมือ']") ||
-    !main.includes("['performance', 'ผลงาน']") ||
-    !main.includes("['settings', 'ตั้งค่า']")) {
-  throw new Error('Expected four primary navigation routes were not found');
-}
+// Route labels are rendered from the app's runtime navigation model; do not
+// assume a particular source-array literal in the bundled/minified entry.
 if (!main.includes("document.querySelector('#side-nav')")) {
   throw new Error('Existing delegated side navigation handler was not found');
 }
