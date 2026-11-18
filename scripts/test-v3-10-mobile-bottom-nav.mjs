@@ -15,5 +15,4 @@ if (!html.includes('main.js?v=20261118-mobile-nav')) throw new Error('Cache-bust
 if (!sw.includes("const CACHE_NAME = 'football-rich-shell-v65'")) throw new Error('Service worker cache version was not refreshed');
 if (/\.nav-link\.active\s*\{[^}]*box-shadow:\s*(?!none)/s.test(css)) throw new Error('Active navigation must not glow');
 console.log('V3.9.10 mobile navigation regression checks passed.');
-
-// Trigger fresh CI for the corrected runtime route detection patch.
+// Re-run navigation regression checks after correcting the HTML entry matcher.
