@@ -38,7 +38,7 @@ const logos=JSON.parse(main.slice(objectStart,objectEnd));
 
 const resolverStart=main.indexOf('const resolveClubLogo = name => {');
 assert.ok(resolverStart>=0,'Club logo resolver missing');
-const resolverEnd=main.indexOf('\\n};',resolverStart)+3;
+const resolverEnd=main.indexOf('\n};',resolverStart)+3;
 assert.ok(resolverEnd>resolverStart,'Could not locate end of club logo resolver');
 const resolve=new Function('logos',main.slice(resolverStart,resolverEnd)+';return resolveClubLogo;')(logos);
 
