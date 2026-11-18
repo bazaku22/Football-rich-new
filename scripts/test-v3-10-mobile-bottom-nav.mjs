@@ -13,6 +13,18 @@ for (const marker of ['grid-template-columns: repeat(4, minmax(0, 1fr))','positi
 }
 if (!html.includes('main.js?v=20261118-mobile-nav')) throw new Error('Cache-busted app entry missing');
 if (!sw.includes("const CACHE_NAME = 'football-rich-shell-v65'")) throw new Error('Service worker cache version was not refreshed');
-if (/\.nav-link\.active\s*\{[^}]*box-shadow:\s*(?!none)/s.test(css)) throw new Error('Active navigation must not glow');
+// Check each active-state rule independently. The previous negative-lookahead
+// regex backtracked over whitespace and falsely treated "box-shadow: none"
+// as a glow. Normalize declarations before checking their actual value.
+const activeRules = [...css.matchAll(/\.nav-link\.active\s*\{([^}]*)\}/g)];
+for (const match of activeRules) {
+  const declarations = match[1].split(';').map(x => x.trim()).filter(Boolean);
+  for (const declaration of declarations) {
+    const pair = declaration.split(':');
+    if (pair[0]?.trim() === 'box-shadow' && !/^none(?:\s*!important)?$/i.test(pair.slice(1).join(':').trim())) {
+      throw new Error('Active navigation must not glow');
+    }
+  }
+}
 console.log('V3.9.10 mobile navigation regression checks passed.');
-// Re-run navigation regression checks after correcting the HTML entry matcher.
+// Re-run navigation regression checks with a declaration-aware shadow check.
