@@ -12,10 +12,10 @@ const teams=[
 {url:'https://weleague.jp/img/psm/11_sanfrecce.png',names:['Sanfrecce Hiroshima Regina','Hiroshima Regina','Sanfrecce Regina','Sanfrecce Hiroshima']},
 {url:'https://weleague.jp/img/psm/07_stella.png',names:['Nojima Stella Kanagawa Sagamihara','Nojima Stella','Nojima Stella Kanagawa','Nojima']}
 
-,{url:'https://www.buriramunited.com/uploads/club/medium/20170320/bdfhnprv0159.png',names:['Buriram United','Buriram United FC','Buriram','บุรีรัมย์ ยูไนเต็ด']}
+,{url:'https://www.buriramunited.com/uploads/club/medium/20170320/bdfhnprv0159.png',names:['Buriram United','Buriram United FC','Buriram']}
 ,{url:'https://vpf.vn/wp-content/uploads/2018/10/CAHCM.png',names:['Ho Chi Minh City Police FC','Ho Chi Minh City Police','Cong An Ho Chi Minh City','Công an TP. Hồ Chí Minh','Công An TP.HCM','CA TP.HCM']}
 ,{url:'https://static.wixstatic.com/media/87b851_eb3fc3381a3d4bf388b82ccdeeb01b18~mv2.png/v1/fill/w_73%2Ch_73%2Cal_c%2Cq_85%2Cusm_0.66_1.00_0.01%2Cenc_avif%2Cquality_auto/BGTR%20LOGO.png',names:['Tampines Rovers FC','Tampines Rovers','Tampines','BG Tampines Rovers']}
-,{url:'https://tzrvpynhuzobugcvwreh.supabase.co/storage/v1/object/public/football-teams/ratchaburi-fc/logo.webp',names:['Ratchaburi FC','Ratchaburi Football Club','Ratchaburi','ราชบุรี เอฟซี']}
+,{url:'https://tzrvpynhuzobugcvwreh.supabase.co/storage/v1/object/public/football-teams/ratchaburi-fc/logo.webp',names:['Ratchaburi FC','Ratchaburi Football Club','Ratchaburi']}
 ];
 const normalize=v=>String(v||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]/g,'');
 for(const team of teams)for(const name of team.names){const key=normalize(name);if(!key)throw Error('Empty alias');if(logos[key]&&logos[key]!==team.url)throw Error('Conflicting alias '+name);logos[key]=team.url;}
