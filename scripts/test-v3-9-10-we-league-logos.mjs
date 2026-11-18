@@ -1,0 +1,10 @@
+import fs from 'node:fs';import assert from 'node:assert/strict';
+const root='football-rich-v1/dist',main=fs.readFileSync(root+'/main.js','utf8'),html=fs.readFileSync(root+'/index.html','utf8'),sw=fs.readFileSync(root+'/sw.js','utf8'),version=JSON.parse(fs.readFileSync(root+'/app-version.json','utf8'));
+assert.equal(version.version,'3.9.10');assert.ok(main.includes("const APP_VERSION='3.9.10';"));assert.ok(html.includes('main.js?v=20261118-v3-9-10'));assert.ok(sw.includes("const CACHE_NAME = 'football-rich-shell-v65'"));
+const start=main.indexOf('const logos=')+'const logos='.length,end=main.indexOf(';',start);assert.ok(start>0&&end>start);const logos=JSON.parse(main.slice(start,end));
+const rs=main.indexOf('const resolveClubLogo = name => {'),re=main.indexOf('\n};',rs)+3;assert.ok(rs>0&&re>rs);const resolve=new Function('logos',main.slice(rs,re)+';return resolveClubLogo;')(logos);
+const cases=[['Cerezo Osaka Yanmar Ladies','Cerezo Osaka','https://weleague.jp/img/psm/cerezo.png'],['Mitsubishi Heavy Industries Urawa Reds Ladies','Urawa Reds Ladies','https://weleague.jp/img/psm/02_reds.png'],['Sanfrecce Hiroshima Regina','Hiroshima Regina','https://weleague.jp/img/psm/11_sanfrecce.png'],['Nojima Stella Kanagawa Sagamihara','Nojima Stella','https://weleague.jp/img/psm/07_stella.png']];
+for(const [full,short,url] of cases){assert.equal(resolve(full),url);assert.equal(resolve(short),url);assert.ok(url.startsWith('https://weleague.jp/img/psm/'));}
+assert.ok(main.includes('logo=resolveClubLogo(n)'));assert.ok(main.includes('v23-crest'));assert.ok(!main.includes('indexedDB.deleteDatabase(')&&!main.includes('objectStore.clear('));
+for(const key of ['arsenal','realmadrid','barcelona','machidazelvia','visselkobe','kashiwareysol','kawasakifrontale'])assert.ok(logos[key],'Existing logo mapping lost: '+key);
+console.log('V3.9.10 tests passed: 4 WE League teams and aliases resolve; previous logos/fallback retained; stored data untouched.');
