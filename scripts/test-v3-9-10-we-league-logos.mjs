@@ -25,11 +25,11 @@ for(let i=objectStart;i<main.length;i++){
   const ch=main[i];
   if(quote){
     if(escaped){escaped=false;continue;}
-    if(ch==='\\'){escaped=true;continue;}
+    if(ch==='\\\\'){escaped=true;continue;}
     if(ch===quote)quote=null;
     continue;
   }
-  if(ch==='"'||ch==="'"||ch==='`') { quote=ch; continue; }
+  if(ch==='"'||ch==="'"||ch==='\x60') { quote=ch; continue; }
   if(ch==='{')depth++;
   else if(ch==='}'&&--depth===0){objectEnd=i+1;break;}
 }
@@ -38,7 +38,7 @@ const logos=JSON.parse(main.slice(objectStart,objectEnd));
 
 const resolverStart=main.indexOf('const resolveClubLogo = name => {');
 assert.ok(resolverStart>=0,'Club logo resolver missing');
-const resolverEnd=main.indexOf('\n};',resolverStart)+3;
+const resolverEnd=main.indexOf('\\n};',resolverStart)+3;
 assert.ok(resolverEnd>resolverStart,'Could not locate end of club logo resolver');
 const resolve=new Function('logos',main.slice(resolverStart,resolverEnd)+';return resolveClubLogo;')(logos);
 
@@ -52,10 +52,11 @@ const cases=[
   ['Tampines Rovers FC','Tampines Rovers','https://static.wixstatic.com/media/87b851_eb3fc3381a3d4bf388b82ccdeeb01b18~mv2.png/v1/fill/w_73%2Ch_73%2Cal_c%2Cq_85%2Cusm_0.66_1.00_0.01%2Cenc_avif%2Cquality_auto/BGTR%20LOGO.png'],
   ['Ratchaburi FC','Ratchaburi','https://tzrvpynhuzobugcvwreh.supabase.co/storage/v1/object/public/football-teams/ratchaburi-fc/logo.webp']
 ];
-for(const [full,short,url] of cases){
+for(const [index,[full,short,url]] of cases.entries()){
   assert.equal(resolve(full),url,full+' full-name mapping');
   assert.equal(resolve(short),url,short+' alias mapping');
-  assert.ok(url.startsWith('https://weleague.jp/img/psm/'));
+  // Only the four WE League assets are expected to use the WE League host.
+  if(index<4)assert.ok(url.startsWith('https://weleague.jp/img/psm/'));
 }
 
 // Verify the four newly added remote crest assets are reachable image responses.
@@ -84,4 +85,4 @@ assert.ok(!main.includes('indexedDB.deleteDatabase(')&&!main.includes('objectSto
 for(const key of ['arsenal','realmadrid','barcelona','machidazelvia','visselkobe','kashiwareysol','kawasakifrontale']){
   assert.ok(logos[key],'Existing logo mapping lost: '+key);
 }
-console.log('V3.9.10 tests passed: 4 WE League teams and aliases resolve; previous logos/fallback retained; stored data untouched.');
+console.log('V3.9.10 tests passed: WE League and Shopee Cup teams/aliases resolve; previous logos/fallback retained; stored data untouched.');
