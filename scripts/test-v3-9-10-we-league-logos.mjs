@@ -57,6 +57,27 @@ for(const [full,short,url] of cases){
   assert.equal(resolve(short),url,short+' alias mapping');
   assert.ok(url.startsWith('https://weleague.jp/img/psm/'));
 }
+
+// Verify the four newly added remote crest assets are reachable image responses.
+const newLogoUrls=[...new Set(cases.slice(4).map(item=>item[2]))];
+const urlFailures=[];
+await Promise.all(newLogoUrls.map(async url=>{
+  try{
+    const response=await fetch(url,{
+      headers:{'Accept':'image/*,*/*;q=0.8','User-Agent':'Mozilla/5.0 (compatible; FootballRichLogoAudit/1.0)'},
+      signal:AbortSignal.timeout(15000)
+    });
+    const contentType=(response.headers.get('content-type')||'').toLowerCase();
+    const bytes=new Uint8Array(await response.arrayBuffer());
+    if(!response.ok||!contentType.startsWith('image/')||bytes.length<128){
+      urlFailures.push({url,status:response.status,contentType,bytes:bytes.length});
+    }
+  }catch(error){
+    urlFailures.push({url,error:String(error?.message||error)});
+  }
+}));
+assert.equal(urlFailures.length,0,'One or more Shopee Cup crest URLs failed health checks: '+JSON.stringify(urlFailures));
+
 assert.ok(main.includes('logo=resolveClubLogo(n)'));
 assert.ok(main.includes('v23-crest'));
 assert.ok(!main.includes('indexedDB.deleteDatabase(')&&!main.includes('objectStore.clear('));
