@@ -118,10 +118,12 @@ if (!html.includes('main.js?v=20261118-mobile-nav')) {
   if (!/main\.js(?:\?[^"']*)?/.test(html)) throw new Error('App entry script reference was not found');
   html = html.replace(/main\.js(?:\?[^"']*)?/, 'main.js?v=20261118-mobile-nav');
 }
-if (!sw.includes("const CACHE_NAME = 'football-rich-shell-v64'")) {
-  throw new Error('Expected V3.9.9 service worker cache anchor was not found');
+// The WE League logo patch already advances the generated shell cache to v65.
+ // Continue from that verified cache version instead of assuming the older v64 anchor.
+if (!sw.includes("const CACHE_NAME = 'football-rich-shell-v65'")) {
+  throw new Error('Expected V3.9.10 WE League service worker cache v65 was not found');
 }
-sw = sw.replace("const CACHE_NAME = 'football-rich-shell-v64'", "const CACHE_NAME = 'football-rich-shell-v65'");
+sw = sw.replace("const CACHE_NAME = 'football-rich-shell-v65'", "const CACHE_NAME = 'football-rich-shell-v66'");
 fs.writeFileSync(cssFile, css);
 fs.writeFileSync(htmlFile, html);
 fs.writeFileSync(swFile, sw);
