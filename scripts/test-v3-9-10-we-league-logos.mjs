@@ -47,6 +47,10 @@ const cases=[
   ['Mitsubishi Heavy Industries Urawa Reds Ladies','Urawa Reds Ladies','https://weleague.jp/img/psm/02_reds.png'],
   ['Sanfrecce Hiroshima Regina','Hiroshima Regina','https://weleague.jp/img/psm/11_sanfrecce.png'],
   ['Nojima Stella Kanagawa Sagamihara','Nojima Stella','https://weleague.jp/img/psm/07_stella.png']
+  ['Buriram United','Buriram','https://www.buriramunited.com/uploads/club/medium/20170320/bdfhnprv0159.png'],
+  ['Ho Chi Minh City Police FC','Ho Chi Minh City Police','https://vpf.vn/wp-content/uploads/2018/10/CAHCM.png'],
+  ['Tampines Rovers FC','Tampines Rovers','https://static.wixstatic.com/media/87b851_eb3fc3381a3d4bf388b82ccdeeb01b18~mv2.png/v1/fill/w_73%2Ch_73%2Cal_c%2Cq_85%2Cusm_0.66_1.00_0.01%2Cenc_avif%2Cquality_auto/BGTR%20LOGO.png'],
+  ['Ratchaburi FC','Ratchaburi','https://tzrvpynhuzobugcvwreh.supabase.co/storage/v1/object/public/football-teams/ratchaburi-fc/logo.webp']
 ];
 for(const [full,short,url] of cases){
   assert.equal(resolve(full),url,full+' full-name mapping');
