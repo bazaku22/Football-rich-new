@@ -25,7 +25,7 @@ for(let i=objectStart;i<main.length;i++){
   const ch=main[i];
   if(quote){
     if(escaped){escaped=false;continue;}
-    if(ch==='\\\\'){escaped=true;continue;}
+    if(ch==='\\'){escaped=true;continue;}
     if(ch===quote)quote=null;
     continue;
   }
