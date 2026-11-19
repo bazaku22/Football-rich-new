@@ -29,4 +29,20 @@ if(version.version!=='3.9.11')throw Error('App version manifest is stale');
 if(!html.includes('main.js?v=20261120-v3-9-11'))throw Error('HTML cache-busted app entry missing');
 if(!sw.includes("const CACHE_NAME = 'football-rich-shell-v66'"))throw Error('Service worker cache is stale');
 if(main.includes('indexedDB.deleteDatabase(')||main.includes('objectStore.clear('))throw Error('Destructive storage code detected');
-console.log('PASS: 40 J1/J2 clubs, aliases, existing mappings, renderer integration, cache version and non-destructive storage checks.');
+const queue=[...data.teams];
+const failed=[];
+const workers=Array.from({length:6},async()=>{
+  while(queue.length){
+    const team=queue.shift();
+    try{
+      const response=await fetch(team.logo_url,{method:'GET',headers:{Range:'bytes=0-0'},signal:AbortSignal.timeout(15000)});
+      const type=(response.headers.get('content-type')||'').toLowerCase();
+      if(!response.ok||!type.includes('image/png'))failed.push({team:team.team,status:response.status,type});
+      if(response.body)await response.body.cancel();
+    }catch(error){failed.push({team:team.team,error:String(error)});}
+  }
+});
+await Promise.all(workers);
+if(failed.length)throw Error('J.League crest URL health check failed: '+JSON.stringify(failed));
+console.log('PASS: 40 J1/J2 clubs, aliases, renderer integration, cache version, non-destructive storage and all 40 remote PNG URLs.');
+
