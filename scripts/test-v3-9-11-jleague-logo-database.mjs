@@ -1,0 +1,32 @@
+import fs from 'node:fs';
+
+const root='football-rich-v1/dist';
+const main=fs.readFileSync(root+'/main.js','utf8');
+const html=fs.readFileSync(root+'/index.html','utf8');
+const sw=fs.readFileSync(root+'/sw.js','utf8');
+const version=JSON.parse(fs.readFileSync(root+'/app-version.json','utf8'));
+const data=JSON.parse(fs.readFileSync('assets/club-logos/jleague-2026-27.json','utf8'));
+const normalize=v=>String(v||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]/g,'');
+const start=main.indexOf('const logos='),end=main.indexOf(';',start);
+if(start<0||end<=start)throw Error('Global logo map not found');
+const logos=JSON.parse(main.slice(start+'const logos='.length,end));
+if(data.teams.length!==40)throw Error('Expected 40 J.League teams');
+for(const league of ['J1','J2']){
+  const list=data.teams.filter(t=>t.league===league);
+  if(list.length!==20)throw Error(league+' must contain exactly 20 clubs');
+}
+for(const team of data.teams){
+  for(const alias of [team.team,...(team.aliases||[])]){
+    const key=normalize(alias);
+    if(key&&logos[key]!==team.logo_url)throw Error('Missing or incorrect logo mapping: '+team.team+' / '+alias);
+  }
+  if(team.league==='J3')throw Error('J3 must not be included');
+}
+for(const marker of ["const APP_VERSION='3.9.11';",'logo=resolveClubLogo(n)','kashiwareysol','visselkobe']){
+  if(!main.includes(marker))throw Error('Required renderer or existing logo mapping missing: '+marker);
+}
+if(version.version!=='3.9.11')throw Error('App version manifest is stale');
+if(!html.includes('main.js?v=20261120-v3-9-11'))throw Error('HTML cache-busted app entry missing');
+if(!sw.includes("const CACHE_NAME = 'football-rich-shell-v66'"))throw Error('Service worker cache is stale');
+if(main.includes('indexedDB.deleteDatabase(')||main.includes('objectStore.clear('))throw Error('Destructive storage code detected');
+console.log('PASS: 40 J1/J2 clubs, aliases, existing mappings, renderer integration, cache version and non-destructive storage checks.');
