@@ -7,9 +7,11 @@ const sw=fs.readFileSync(root+'/sw.js','utf8');
 const version=JSON.parse(fs.readFileSync(root+'/app-version.json','utf8'));
 const data=JSON.parse(fs.readFileSync('assets/club-logos/jleague-2026-27.json','utf8'));
 const normalize=v=>String(v||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]/g,'');
-const start=main.indexOf('const logos='),end=main.indexOf(';',start);
-if(start<0||end<=start)throw Error('Global logo map not found');
-const logos=JSON.parse(main.slice(start+'const logos='.length,end));
+const mapMatch=main.match(/const\\s+logos\\s*=\\s*/);
+if(!mapMatch)throw Error('Global logo map declaration not found');
+const start=mapMatch.index+mapMatch[0].length,end=main.indexOf(';',start);
+if(end<=start)throw Error('Global logo map boundary not found');
+const logos=JSON.parse(main.slice(start,end));
 if(data.teams.length!==40)throw Error('Expected 40 J.League teams');
 for(const league of ['J1','J2']){
   const list=data.teams.filter(t=>t.league===league);
