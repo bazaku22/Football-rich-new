@@ -18,8 +18,16 @@ if(counts.J1!==20||counts.J2!==20)throw Error('J.League club counts do not match
 
 const mapMatch=main.match(/const\s+logos\s*=\s*/);
 if(!mapMatch)throw Error('Existing global club-logo map declaration missing');
-const mapStart=mapMatch.index,mapValueStart=mapStart+mapMatch[0].length,mapEnd=main.indexOf(';',mapValueStart);
-if(mapEnd<=mapValueStart)throw Error('Existing global club-logo map boundary missing');
+const mapStart=mapMatch.index,mapValueStart=mapStart+mapMatch[0].length;
+let mapEnd=mapValueStart,depth=0,inString=false,stringQuote='',escaped=false,started=false;
+for(;mapEnd<main.length;mapEnd++){
+  const ch=main[mapEnd];
+  if(inString){if(escaped)escaped=false;else if(ch==='\\\\')escaped=true;else if(ch===stringQuote)inString=false;continue;}
+  if(ch==='"'||ch==="'"||ch==='\x60'){inString=true;stringQuote=ch;continue;}
+  if(ch==='{'){depth++;started=true;}
+  else if(ch==='}'){depth--;if(started&&depth===0){mapEnd++;break;}}
+}
+if(!started||depth!==0)throw Error('Existing global club-logo map boundary missing');
 const logos=JSON.parse(main.slice(mapValueStart,mapEnd));
 for(const team of data.teams){
   for(const alias of [team.team,...(team.aliases||[])]){
