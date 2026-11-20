@@ -27,7 +27,7 @@ try{
  const page=await context.newPage();
  const pageErrors=[];page.on('pageerror',e=>pageErrors.push(e.message));
  await page.goto(origin,{waitUntil:'domcontentloaded'});
- await page.waitForSelector('#view-root');
+ await page.waitForSelector('.v21-calendar',{timeout:15000}); // app finished opening its own IndexedDB schema
  await page.evaluate(async()=>{
   const db=await new Promise((resolve,reject)=>{const req=indexedDB.open('football-rich-local',1);req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error);});
   const tx=db.transaction('matches','readwrite');
