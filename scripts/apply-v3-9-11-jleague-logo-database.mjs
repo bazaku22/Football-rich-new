@@ -32,7 +32,7 @@ const logos=JSON.parse(main.slice(mapValueStart,mapEnd));
 for(const team of data.teams){
   for(const alias of [team.team,...(team.aliases||[])]){
     const key=normalize(alias);
-    if(!key)continue;
+    if(key.length<3)continue;
     const existing=logos[key];
     if(existing&&existing!==team.logo_url){
       const owner=data.teams.find(other=>[other.team,...(other.aliases||[])].some(v=>normalize(v)===key));
