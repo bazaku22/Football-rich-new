@@ -41,7 +41,7 @@ for(const team of data.teams){
     logos[key]=team.logo_url;
   }
 }
-main=main.slice(0,mapStart)+'const logos='+JSON.stringify(logos)+main.slice(mapEnd+1);
+main=main.slice(0,mapStart)+'const logos='+JSON.stringify(logos)+main.slice(mapEnd);
 if(!main.includes('const resolveClubLogo = name => {')||!main.includes('logo=resolveClubLogo(n)'))throw Error('Global logo resolver is not connected to the Match Center renderer');
 if(!main.includes("const APP_VERSION='3.9.10';"))throw Error('Expected V3.9.10 app build missing');
 main=main.replace("const APP_VERSION='3.9.10';","const APP_VERSION='3.9.11';");
