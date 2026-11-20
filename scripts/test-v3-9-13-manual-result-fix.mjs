@@ -20,6 +20,7 @@ for(const marker of [
  'allow-result-correction',
  'if(!copied)copied=fallbackCopy()',
  'navigator.clipboard?.writeText',
+ "count=bell?.querySelector('#fr-notification-count')",
  'v39-manual-form',
  'data-v39-copy-id'
 ])assert.ok(main.includes(marker),'Missing '+marker);
