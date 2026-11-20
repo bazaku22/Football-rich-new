@@ -7,7 +7,7 @@ const sw=fs.readFileSync(root+'/sw.js','utf8');
 const version=JSON.parse(fs.readFileSync(root+'/app-version.json','utf8'));
 const data=JSON.parse(fs.readFileSync('assets/club-logos/jleague-2026-27.json','utf8'));
 const normalize=v=>String(v||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]/g,'');
-const mapMatch=main.match(/const\\s+logos\\s*=\\s*/);
+const mapMatch=main.match(/const\s+logos\s*=\s*/);
 if(!mapMatch)throw Error('Global logo map declaration not found');
 const start=mapMatch.index+mapMatch[0].length,end=main.indexOf(';',start);
 if(end<=start)throw Error('Global logo map boundary not found');
