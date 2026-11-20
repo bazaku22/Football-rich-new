@@ -25,7 +25,7 @@ try{
  try{await context.grantPermissions(['clipboard-read','clipboard-write'],{origin});}catch{}
  const page=await context.newPage();
  const pageErrors=[],requestFailures=[],consoleErrors=[];
- page.on('pageerror',e=>pageErrors.push(e.message));
+ page.on('pageerror',e=>pageErrors.push(e.stack||e.message));
  page.on('requestfailed',r=>requestFailures.push(r.url()+': '+r.failure()?.errorText));
  page.on('console',m=>{if(m.type()==='error')consoleErrors.push(m.text())});
  await page.goto(origin,{waitUntil:'domcontentloaded'});
