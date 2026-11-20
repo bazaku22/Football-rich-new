@@ -19,6 +19,7 @@ for(;end<main.length;end++){
   else if(ch==='}'){depth--;if(started&&depth===0){end++;break;}}
 }
 if(!started||depth!==0)throw Error('Global logo map boundary not found');
+if(main[end]!==';')throw Error('Global logo map must retain its terminating semicolon before the next declaration');
 const logos=JSON.parse(main.slice(start,end));
 if(data.teams.length!==40)throw Error('Expected 40 J.League teams');
 for(const league of ['J1','J2']){
