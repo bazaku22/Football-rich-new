@@ -10,9 +10,10 @@ const {chromium}=require('playwright');
 const mime={'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.svg':'image/svg+xml','.png':'image/png','.webmanifest':'application/manifest+json','.json':'application/json'};
 const server=http.createServer((req,res)=>{
   const pathname=decodeURIComponent(new URL(req.url,'http://127.0.0.1').pathname);
-  const file=path.resolve(dist,'.'+pathname);
+  const routePath=pathname.startsWith('/Football-rich-new/')?pathname.slice('/Football-rich-new'.length):pathname;
+  const file=path.resolve(dist,'.'+routePath);
   if(!file.startsWith(dist+path.sep)&&file!==path.join(dist,'index.html')){res.writeHead(403);res.end();return;}
-  const target=pathname==='/'?path.join(dist,'index.html'):file;
+  const target=routePath==='/'?path.join(dist,'index.html'):file;
   fs.readFile(target,(err,data)=>{if(err){res.writeHead(404);res.end('Not found');return;}res.writeHead(200,{'content-type':mime[path.extname(target)]||'application/octet-stream','cache-control':'no-store'});res.end(data);});
 });
 await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
