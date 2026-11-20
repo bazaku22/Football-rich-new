@@ -16,7 +16,7 @@ for(const team of data.teams){
 }
 if(counts.J1!==20||counts.J2!==20)throw Error('J.League club counts do not match the approved scope');
 
-const mapMatch=main.match(/const\\s+logos\\s*=\\s*/);
+const mapMatch=main.match(/const\s+logos\s*=\s*/);
 if(!mapMatch)throw Error('Existing global club-logo map declaration missing');
 const mapStart=mapMatch.index,mapValueStart=mapStart+mapMatch[0].length,mapEnd=main.indexOf(';',mapValueStart);
 if(mapEnd<=mapValueStart)throw Error('Existing global club-logo map boundary missing');
