@@ -19,7 +19,7 @@ for(;end<main.length;end++){
   else if(ch==='}'){depth--;if(started&&depth===0){end++;break;}}
 }
 if(!started||depth!==0)throw Error('Global logo map boundary not found');
-if(main[end]!==';'&&!/\\s/.test(main[end]||''))throw Error('Global logo map boundary must retain a statement separator before the next declaration');
+if(main[end]!==';'&&!/\s/.test(main[end]||''))throw Error('Global logo map boundary must retain a statement separator before the next declaration');
 const logos=JSON.parse(main.slice(start,end));
 if(data.teams.length!==40)throw Error('Expected 40 J.League teams');
 for(const league of ['J1','J2']){
