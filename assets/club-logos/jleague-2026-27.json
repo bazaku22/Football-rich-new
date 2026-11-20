@@ -1,0 +1,496 @@
+{
+  "schema_version": "1.0",
+  "season": "2026/27",
+  "coverage": {
+    "J1": 20,
+    "J2": 20,
+    "total": 40
+  },
+  "source": "FootyLogos 2026/27 J1 and J2 club-logo collections; current club composition cross-checked against official J.League club lists.",
+  "source_pages": {
+    "J1": "https://www.footylogos.com/competition/j1-league",
+    "J2": "https://www.footylogos.com/competition/j2-league",
+    "official_club_composition": "https://aboutj.jleague.jp/corporate/en/about_jclubs/profile_jclubs/"
+  },
+  "image_source": "FootyLogos direct 512x512 transparent PNG logo assets (DLS image path); no sports-data endpoints are used.",
+  "usage_note": "Club crests are trademarks of their respective owners. Included only for club identification in this private app. Check rights-holder and source-site terms before public or commercial use.",
+  "teams": [
+    {
+      "team_id": "jleague:j1:2026-27:avispa-fukuoka",
+      "league": "J1",
+      "team": "Avispa Fukuoka",
+      "slug": "avispa-fukuoka",
+      "logo_url": "https://www.footylogos.com/dls/logo/rgba-v1/avispa-fukuoka.png",
+      "aliases": [
+        "Avispa",
+        "アビスパ福岡"
+      ]
+    },
+    {
+      "team_id": "jleague:j1:2026-27:cerezo-osaka",
+      "league": "J1",
+      "team": "Cerezo Osaka",
+      "slug": "cerezo-osaka",
+      "logo_url": "https://www.footylogos.com/dls/logo/rgba-v1/cerezo-osaka.png",
+      "aliases": [
+        "Cerezo",
+        "C-Osaka",
+        "セレッソ大阪"
+      ]
+    },
+    {
+      "team_id": "jleague:j1:2026-27:fagiano-okayama",
+      "league": "J1",
+      "team": "Fagiano Okayama",
+      "slug": "fagiano-okayama",
+      "logo_url": "https://www.footylogos.com/dls/logo/rgba-v1/fagiano-okayama.png",
+      "aliases": [
+        "Fagiano",
+        "ファジアーノ岡山"
+      ]
+    },
+    {
+      "team_id": "jleague:j1:2026-27:fc-tokyo",
+      "league": "J1",
+      "team": "FC Tokyo",
+      "slug": "fc-tokyo",
+      "logo_url": "https://www.footylogos.com/dls/logo/rgba-v1/fc-tokyo.png",
+      "aliases": [
+        "FC TOKYO",
+        "Tokyo FC",
+        "F.C. Tokyo",
+        "FC東京"
+      ]
+    },
+    {
+      "team_id": "jleague:j1:2026-27:gamba-osaka",
+      "league": "J1",
+      "team": "Gamba Osaka",
+      "slug": "gamba-osaka",
+      "logo_url": "https://www.footylogos.com/dls/logo/rgba-v1/gamba-osaka.png",
+      "aliases": [
+        "Gamba",
+        "G-Osaka",
+        "ガンバ大阪"
+      ]
+    },
+    {
+      "team_id": "jleague:j1:2026-27:jef-united-chiba",
+      "league": "J1",
+      "team": "JEF United Chiba",
+      "slug": "jef-united-chiba",
+      "logo_url": "https://www.footylogos.com/dls/logo/rgba-v1/jef-united-chiba.png",
+      "aliases": [
+        "JEF United",
+        "JEF Chiba",
+        "JEF",
+        "ジェフユナイテッド千葉"
+      ]
+    },
+    {
+      "team_id": "jleague:j1:2026-27:kashima-antlers",
+      "league": "J1",
+      "team": "Kashima Antlers",
+      "slug": "kashima-antlers",
+      "logo_url": "https://www.footylogos.com/dls/logo/rgba-v1/kashima-antlers.png",
+      "aliases": [
+        "Kashima",
+        "鹿島アントラーズ"
+      ]
+    },
+    {
+      "team_id": "jleague:j1:2026-27:kashiwa-reysol",
+      "league": "J1",
+      "team": "Kashiwa Reysol",
+      "slug": "kashiwa-reysol",
+      "logo_url": "https://www.footylogos.com/dls/logo/rgba-v1/kashiwa-reysol.png",
+      "aliases": [
+        "Kashiwa",
+        "Reysol",
+        "柏レイソル"
+      ]
+    },
+    {
+      "team_id": "jleague:j1:2026-27:kawasaki-frontale",
+      "league": "J1",
+      "team": "Kawasaki Frontale",
+      "slug": "kawasaki-frontale",
+      "logo_url": "https://www.footylogos.com/dls/logo/rgba-v1/kawasaki-frontale.png",
+      "aliases": [
+        "Kawasaki",
+        "Kawasaki-F",
+        "川崎フロンターレ"
+      ]
+    },
+    {
+      "team_id": "jleague:j1:2026-27:kyoto-sanga",
+      "league": "J1",
+      "team": "Kyoto Sanga",
+      "slug": "kyoto-sanga",
+      "logo_url": "https://www.footylogos.com/dls/logo/rgba-v1/kyoto-sanga.png",
+      "aliases": [
+        "Kyoto Sanga F.C.",
+        "Kyoto",
+        "京都サンガF.C."
+      ]
+    },
+    {
+      "team_id": "jleague:j1:2026-27:machida-zelvia",
+      "league": "J1",
+      "team": "Machida Zelvia",
+      "slug": "machida-zelvia",
+      "logo_url": "https://www.footylogos.com/dls/logo/rgba-v1/machida-zelvia.png",
+      "aliases": [
+        "FC Machida Zelvia",
+        "Machida",
+        "FC町田ゼルビア"
+      ]
+    },
+    {
+      "team_id": "jleague:j1:2026-27:mito-hollyhock",
+      "league": "J1",
+      "team": "Mito Hollyhock",
+      "slug": "mito-hollyhock",
+      "logo_url": "https://www.footylogos.com/dls/logo/rgba-v1/mito-hollyhock.png",
+      "aliases": [
+        "Mito",
+        "水戸ホーリーホック"
+      ]
+    },
+    {
+      "team_id": "jleague:j1:2026-27:nagoya-grampus",
+      "league": "J1",
+      "team": "Nagoya Grampus",
+      "slug": "nagoya-grampus",
+      "logo_url": "https://www.footylogos.com/dls/logo/rgba-v1/nagoya-grampus.png",
+      "aliases": [
+        "Nagoya",
+        "名古屋グランパス"
+      ]
+    },
+    {
+      "team_id": "jleague:j1:2026-27:sanfrecce-hiroshima",
+      "league": "J1",
+      "team": "Sanfrecce Hiroshima",
+      "slug": "sanfrecce-hiroshima",
+      "logo_url": "https://www.footylogos.com/dls/logo/rgba-v1/sanfrecce-hiroshima.png",
+      "aliases": [
+        "Sanfrecce",
+        "Hiroshima",
+        "サンフレッチェ広島"
+      ]
+    },
+    {
+      "team_id": "jleague:j1:2026-27:shimizu-s-pulse",
+      "league": "J1",
+      "team": "Shimizu S-Pulse",
+      "slug": "shimizu-s-pulse",
+      "logo_url": "https://www.footylogos.com/dls/logo/rgba-v1/shimizu-s-pulse.png",
+      "aliases": [
+        "Shimizu",
+        "Shimizu S-Pulse",
+        "清水エスパルス"
+      ]
+    },
+    {
+      "team_id": "jleague:j1:2026-27:tokyo-verdy",
+      "league": "J1",
+      "team": "Tokyo Verdy",
+      "slug": "tokyo-verdy",
+      "logo_url": "https://www.footylogos.com/dls/logo/rgba-v1/tokyo-verdy.png",
+      "aliases": [
+        "Tokyo-V",
+        "Verdy",
+        "東京ヴェルディ"
+      ]
+    },
+    {
+      "team_id": "jleague:j1:2026-27:urawa-red-diamonds",
+      "league": "J1",
+      "team": "Urawa Red Diamonds",
+      "slug": "urawa-red-diamonds",
+      "logo_url": "https://www.footylogos.com/dls/logo/rgba-v1/urawa-red-diamonds.png",
+      "aliases": [
+        "Urawa Reds",
+        "Urawa",
+        "浦和レッズ"
+      ]
+    },
+    {
+      "team_id": "jleague:j1:2026-27:v-varen-nagasaki",
+      "league": "J1",
+      "team": "V-Varen Nagasaki",
+      "slug": "v-varen-nagasaki",
+      "logo_url": "https://www.footylogos.com/dls/logo/rgba-v1/v-varen-nagasaki.png",
+      "aliases": [
+        "V-Varen",
+        "Nagasaki",
+        "Vファーレン長崎"
+      ]
+    },
+    {
+      "team_id": "jleague:j1:2026-27:vissel-kobe",
+      "league": "J1",
+      "team": "Vissel Kobe",
+      "slug": "vissel-kobe",
+      "logo_url": "https://www.footylogos.com/dls/logo/rgba-v1/vissel-kobe.png",
+      "aliases": [
+        "Kobe",
+        "Vissel",
+        "ヴィッセル神戸"
+      ]
+    },
+    {
+      "team_id": "jleague:j1:2026-27:yokohama-f-marinos",
+      "league": "J1",
+      "team": "Yokohama F. Marinos",
+      "slug": "yokohama-f-marinos",
+      "logo_url": "https://www.footylogos.com/dls/logo/rgba-v1/yokohama-f-marinos.png",
+      "aliases": [
+        "Yokohama F Marinos",
+        "Yokohama FM",
+        "Marinos",
+        "横浜F・マリノス"
+      ]
+    },
+    {
+      "team_id": "jleague:j2:2026-27:albirex-niigata",
+      "league": "J2",
+      "team": "Albirex Niigata",
+      "slug": "albirex-niigata",
+      "logo_url": "https://www.footylogos.com/dls/logo/rgba-v1/albirex-niigata.png",
+      "aliases": [
+        "Albirex",
+        "Niigata",
+        "アルビレックス新潟"
+      ]
+    },
+    {
+      "team_id": "jleague:j2:2026-27:blaublitz-akita",
+      "league": "J2",
+      "team": "Blaublitz Akita",
+      "slug": "blaublitz-akita",
+      "logo_url": "https://www.footylogos.com/dls/logo/rgba-v1/blaublitz-akita.png",
+      "aliases": [
+        "Blaublitz",
+        "Akita",
+        "ブラウブリッツ秋田"
+      ]
+    },
+    {
+      "team_id": "jleague:j2:2026-27:fc-imabari",
+      "league": "J2",
+      "team": "FC Imabari",
+      "slug": "fc-imabari",
+      "logo_url": "https://www.footylogos.com/dls/logo/rgba-v1/fc-imabari.png",
+      "aliases": [
+        "Imabari",
+        "FC今治"
+      ]
+    },
+    {
+      "team_id": "jleague:j2:2026-27:fujieda-myfc",
+      "league": "J2",
+      "team": "Fujieda MYFC",
+      "slug": "fujieda-myfc",
+      "logo_url": "https://www.footylogos.com/dls/logo/rgba-v1/fujieda-myfc.png",
+      "aliases": [
+        "Fujieda",
+        "藤枝MYFC"
+      ]
+    },
+    {
+      "team_id": "jleague:j2:2026-27:hokkaido-consadole-sapporo",
+      "league": "J2",
+      "team": "Hokkaido Consadole Sapporo",
+      "slug": "hokkaido-consadole-sapporo",
+      "logo_url": "https://www.footylogos.com/dls/logo/rgba-v1/hokkaido-consadole-sapporo.png",
+      "aliases": [
+        "Consadole Sapporo",
+        "Sapporo",
+        "Consadole",
+        "北海道コンサドーレ札幌"
+      ]
+    },
+    {
+      "team_id": "jleague:j2:2026-27:iwaki-fc",
+      "league": "J2",
+      "team": "Iwaki FC",
+      "slug": "iwaki-fc",
+      "logo_url": "https://www.footylogos.com/dls/logo/rgba-v1/iwaki-fc.png",
+      "aliases": [
+        "Iwaki",
+        "いわきFC"
+      ]
+    },
+    {
+      "team_id": "jleague:j2:2026-27:jubilo-iwata",
+      "league": "J2",
+      "team": "Júbilo Iwata",
+      "slug": "jubilo-iwata",
+      "logo_url": "https://www.footylogos.com/dls/logo/rgba-v1/jubilo-iwata.png",
+      "aliases": [
+        "Jubilo Iwata",
+        "Jubilo",
+        "Iwata",
+        "ジュビロ磐田"
+      ]
+    },
+    {
+      "team_id": "jleague:j2:2026-27:kataller-toyama",
+      "league": "J2",
+      "team": "Kataller Toyama",
+      "slug": "kataller-toyama",
+      "logo_url": "https://www.footylogos.com/dls/logo/rgba-v1/kataller-toyama.png",
+      "aliases": [
+        "Kataller",
+        "Toyama",
+        "カターレ富山"
+      ]
+    },
+    {
+      "team_id": "jleague:j2:2026-27:montedio-yamagata",
+      "league": "J2",
+      "team": "Montedio Yamagata",
+      "slug": "montedio-yamagata",
+      "logo_url": "https://www.footylogos.com/dls/logo/rgba-v1/montedio-yamagata.png",
+      "aliases": [
+        "Montedio",
+        "Yamagata",
+        "モンテディオ山形"
+      ]
+    },
+    {
+      "team_id": "jleague:j2:2026-27:oita-trinita",
+      "league": "J2",
+      "team": "Oita Trinita",
+      "slug": "oita-trinita",
+      "logo_url": "https://www.footylogos.com/dls/logo/rgba-v1/oita-trinita.png",
+      "aliases": [
+        "Oita",
+        "Trinita",
+        "大分トリニータ"
+      ]
+    },
+    {
+      "team_id": "jleague:j2:2026-27:rb-omiya-ardija",
+      "league": "J2",
+      "team": "RB Omiya Ardija",
+      "slug": "rb-omiya-ardija",
+      "logo_url": "https://www.footylogos.com/dls/logo/rgba-v1/rb-omiya-ardija.png",
+      "aliases": [
+        "Omiya Ardija",
+        "Omiya",
+        "RB Omiya",
+        "大宮アルディージャ"
+      ]
+    },
+    {
+      "team_id": "jleague:j2:2026-27:sagan-tosu",
+      "league": "J2",
+      "team": "Sagan Tosu",
+      "slug": "sagan-tosu",
+      "logo_url": "https://www.footylogos.com/dls/logo/rgba-v1/sagan-tosu.png",
+      "aliases": [
+        "Sagan",
+        "Tosu",
+        "サガン鳥栖"
+      ]
+    },
+    {
+      "team_id": "jleague:j2:2026-27:shonan-bellmare",
+      "league": "J2",
+      "team": "Shonan Bellmare",
+      "slug": "shonan-bellmare",
+      "logo_url": "https://www.footylogos.com/dls/logo/rgba-v1/shonan-bellmare.png",
+      "aliases": [
+        "Shonan",
+        "Bellmare",
+        "湘南ベルマーレ"
+      ]
+    },
+    {
+      "team_id": "jleague:j2:2026-27:tegevajaro-miyazaki",
+      "league": "J2",
+      "team": "Tegevajaro Miyazaki",
+      "slug": "tegevajaro-miyazaki",
+      "logo_url": "https://www.footylogos.com/dls/logo/rgba-v1/tegevajaro-miyazaki.png",
+      "aliases": [
+        "Tegevajaro",
+        "Miyazaki",
+        "テゲバジャーロ宮崎"
+      ]
+    },
+    {
+      "team_id": "jleague:j2:2026-27:tochigi-city",
+      "league": "J2",
+      "team": "Tochigi City",
+      "slug": "tochigi-city",
+      "logo_url": "https://www.footylogos.com/dls/logo/rgba-v1/tochigi-city.png",
+      "aliases": [
+        "Tochigi City",
+        "栃木シティ"
+      ]
+    },
+    {
+      "team_id": "jleague:j2:2026-27:tokushima-vortis",
+      "league": "J2",
+      "team": "Tokushima Vortis",
+      "slug": "tokushima-vortis",
+      "logo_url": "https://www.footylogos.com/dls/logo/rgba-v1/tokushima-vortis.png",
+      "aliases": [
+        "Tokushima",
+        "Vortis",
+        "徳島ヴォルティス"
+      ]
+    },
+    {
+      "team_id": "jleague:j2:2026-27:vanraure-hachinohe",
+      "league": "J2",
+      "team": "Vanraure Hachinohe",
+      "slug": "vanraure-hachinohe",
+      "logo_url": "https://www.footylogos.com/dls/logo/rgba-v1/vanraure-hachinohe.png",
+      "aliases": [
+        "Vanraure",
+        "Hachinohe",
+        "ヴァンラーレ八戸"
+      ]
+    },
+    {
+      "team_id": "jleague:j2:2026-27:vegalta-sendai",
+      "league": "J2",
+      "team": "Vegalta Sendai",
+      "slug": "vegalta-sendai",
+      "logo_url": "https://www.footylogos.com/dls/logo/rgba-v1/vegalta-sendai.png",
+      "aliases": [
+        "Vegalta",
+        "Sendai",
+        "ベガルタ仙台"
+      ]
+    },
+    {
+      "team_id": "jleague:j2:2026-27:ventforet-kofu",
+      "league": "J2",
+      "team": "Ventforet Kofu",
+      "slug": "ventforet-kofu",
+      "logo_url": "https://www.footylogos.com/dls/logo/rgba-v1/ventforet-kofu.png",
+      "aliases": [
+        "Ventforet",
+        "Kofu",
+        "ヴァンフォーレ甲府"
+      ]
+    },
+    {
+      "team_id": "jleague:j2:2026-27:yokohama-fc",
+      "league": "J2",
+      "team": "Yokohama FC",
+      "slug": "yokohama-fc",
+      "logo_url": "https://www.footylogos.com/dls/logo/rgba-v1/yokohama-fc.png",
+      "aliases": [
+        "Yokohama FC",
+        "YFC",
+        "横浜FC"
+      ]
+    }
+  ]
+}
