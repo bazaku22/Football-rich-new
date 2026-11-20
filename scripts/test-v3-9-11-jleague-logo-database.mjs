@@ -13,7 +13,7 @@ const start=mapMatch.index+mapMatch[0].length;
 let end=start,depth=0,inString=false,stringQuote='',escaped=false,started=false;
 for(;end<main.length;end++){
   const ch=main[end];
-  if(inString){if(escaped)escaped=false;else if(ch==='\\\\')escaped=true;else if(ch===stringQuote)inString=false;continue;}
+  if(inString){if(escaped)escaped=false;else if(ch==='\\')escaped=true;else if(ch===stringQuote)inString=false;continue;}
   if(ch==='"'||ch==="'"||ch==='\x60'){inString=true;stringQuote=ch;continue;}
   if(ch==='{'){depth++;started=true;}
   else if(ch==='}'){depth--;if(started&&depth===0){end++;break;}}
