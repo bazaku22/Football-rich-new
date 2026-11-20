@@ -108,5 +108,5 @@ sw=sw.replace("const CACHE_NAME = 'football-rich-shell-v67'","const CACHE_NAME =
 version.version='3.9.13';version.previous_version='3.9.12';version.release='V3.9.13 — Reliable Match ID copy and manual result import';
 if(!html.includes('main.js?v=20261121-v3-9-13')||!sw.includes("const CACHE_NAME = 'football-rich-shell-v68'"))throw Error('V3.9.13 cache bust failed');
 if(main.includes('indexedDB.deleteDatabase(')||main.includes('objectStore.clear('))throw Error('Destructive database operation detected');
-fs.writeFileSync(mp,main);fs.writeFileSync(hp,html);fs.writeFileSync(sp,sw);fs.writeFileSync(vp,JSON.stringify(version,null,2)+'\\n');
+fs.writeFileSync(mp,main);fs.writeFileSync(hp,html);fs.writeFileSync(sp,sw);fs.writeFileSync(vp,JSON.stringify(version,null,2)+'\n');
 console.log('V3.9.13: manual result payload now calls the same Result Import processor directly (no synthetic File/DataTransfer); clipboard falls back after API rejection.');
