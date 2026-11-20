@@ -53,3 +53,5 @@ JSON is the canonical machine-readable format; PDF is a human-readable companion
 - [Format specification](docs/ANALYSIS-IMPORT-SPEC-1.0.md)
 - [JSON Schema](schemas/football-rich-analysis-v1.schema.json)
 - [First sample report](samples/analysis-match-001.json)
+- [Analysis Improvement V1.1 specification](docs/ANALYSIS-IMPROVEMENT-V1.1-TH.md)
+- [Jeff Master Analysis Prompt V3.1 (Thai)](docs/JEFF-ANALYSIS-MASTER-PROMPT-V3.1-TH.md)
