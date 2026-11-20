@@ -3,7 +3,7 @@
 This directory records the club-logo mapping used by Football rich.
 
 - European coverage: Premier League, La Liga, Bundesliga, Serie A and Ligue 1 (111 team entries, including historical clubs).
-- Japan coverage: J1 League (20 clubs) and J2 League (20 clubs) for 2026/27, maintained separately in [jleague-2026-27.json](jleague-2026-27.json).
+- Japan coverage: J1 League (20 clubs) and J2 League (20 clubs) for 2026/27 (registry integration validation in progress), maintained separately in [jleague-2026-27.json](jleague-2026-27.json).
 - European crests load as direct static PNG files from the ESPN logo CDN. Football rich does **not** call ESPN sports-data APIs or retrieve fixtures, scores, standings or statistics from ESPN.
 - J.League crests load as direct static PNG image assets from FootyLogos. Football rich does not call sports-data endpoints.
 - Team names are normalized and common aliases are mapped to the same crest. If an image cannot load, the existing initials fallback remains active.
