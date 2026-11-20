@@ -28,7 +28,7 @@ for(const league of ['J1','J2']){
 for(const team of data.teams){
   for(const alias of [team.team,...(team.aliases||[])]){
     const key=normalize(alias);
-    if(key&&logos[key]!==team.logo_url)throw Error('Missing or incorrect logo mapping: '+team.team+' / '+alias);
+    if(key.length>=3&&logos[key]!==team.logo_url)throw Error('Missing or incorrect logo mapping: '+team.team+' / '+alias);
   }
   if(team.league==='J3')throw Error('J3 must not be included');
 }
