@@ -242,6 +242,8 @@ jobs:
           if (!index.includes('__footballRichBootGuardInstalled')) throw new Error('Startup watchdog missing from final HTML');
           if (!index.includes('main.js?v=20261120-v3-9-11')) throw new Error('Cache-busted app entry missing from final HTML');
           if (!fs.existsSync(path.join(root,'main.js'))) throw new Error('App entry main.js missing from final output');
+          console.log('Syntax-checking final generated JavaScript entry with Node.js parser.');
+          require('child_process').execFileSync(process.execPath, ['--check', path.join(root,'main.js')], {stdio:'inherit'});
           console.log('Startup watchdog, cache-busted app entry and main.js verified.');
           console.log('Service worker source preview:', fs.readFileSync(swFiles[0], 'utf8').slice(0, 1000));
           const swSource = fs.readFileSync(swFiles[0], 'utf8');
