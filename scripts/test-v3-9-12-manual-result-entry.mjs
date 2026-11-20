@@ -1,8 +1,10 @@
 import fs from 'node:fs';
 import assert from 'node:assert/strict';
+import { execFileSync } from 'node:child_process';
 const root=process.argv[2]||'football-rich-v1/dist';
 const main=fs.readFileSync(root+'/main.js','utf8'),html=fs.readFileSync(root+'/index.html','utf8'),sw=fs.readFileSync(root+'/sw.js','utf8'),css=fs.readFileSync(root+'/styles/main.css','utf8'),version=JSON.parse(fs.readFileSync(root+'/app-version.json','utf8'));
 assert.equal(version.version,'3.9.12');
+execFileSync(process.execPath,['--check',root+'/main.js'],{stdio:'inherit'});
 for(const x of ["const APP_VERSION='3.9.12';",'data-v39-copy-id','navigator.clipboard.writeText(id)',"currentView='result-import'",'await render()','v39-manual-form','home_goals','away_goals','v39-add-event','v39-remove-event',"source:'ผู้ใช้กรอกผลเอง'",'input.dispatchEvent(new Event(\'change\',{bubbles:true}))','validateResultPayload','confirm-result-import','allow-result-correction'])assert.ok(main.includes(x),'Missing '+x);
 assert.ok(html.includes('main.js?v=20261120-v3-9-12'));
 assert.equal((main.match(/data-v39-copy-id=/g)||[]).length,1,'Unified Match Center card template must render exactly one Copy Match ID action');
