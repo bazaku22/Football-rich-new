@@ -13,7 +13,7 @@ const upcomingReplacement = `+ '<div class="mc-id">MATCH ID: ' + esc(m.id) + '</
 main=main.replace(upcomingAnchor,upcomingReplacement);
 const finishedAnchor = `ดูรายละเอียดแมตช์</button></div></article>';`;
 if(!main.includes(finishedAnchor))throw Error('Match Center finished card anchor missing');
-const finishedReplacement = `ดูรายละเอียดแมตช์</button></div>' + '<div class="v39-card-actions"><button type="button" class="outline v39-copy-id" data-v39-copy-id="' + esc(m.id) + '">คัดลอก Match ID</button></div>' + manualMarkup + '</article>';`;
+const finishedReplacement = `ดูรายละเอียดแมตช์</button></div>' + manualMarkup + '</article>';`;
 main=main.replace(finishedAnchor,finishedReplacement);
 const resultAnchor="const resultFile = document.querySelector('#result-import-file');";
 if(!main.includes(resultAnchor))throw Error('Result Import input anchor missing');
