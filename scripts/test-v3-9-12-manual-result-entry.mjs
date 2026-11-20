@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 const root=process.argv[2]||'football-rich-v1/dist';
 const main=fs.readFileSync(root+'/main.js','utf8'),html=fs.readFileSync(root+'/index.html','utf8'),sw=fs.readFileSync(root+'/sw.js','utf8'),css=fs.readFileSync(root+'/styles/main.css','utf8'),version=JSON.parse(fs.readFileSync(root+'/app-version.json','utf8'));
 assert.equal(version.version,'3.9.12');
-for(const x of ["const APP_VERSION='3.9.12';",'data-v39-copy-id','navigator.clipboard.writeText(id)','v39-manual-form','home_goals','away_goals','v39-add-event','v39-remove-event',"source:'ผู้ใช้กรอกผลเอง'","currentView='result-import';await render();",'validateResultPayload','confirm-result-import','allow-result-correction'])assert.ok(main.includes(x),'Missing '+x);
+for(const x of ["const APP_VERSION='3.9.12';",'data-v39-copy-id','navigator.clipboard.writeText(id)','v39-manual-form','home_goals','away_goals','v39-add-event','v39-remove-event',"source:'ผู้ใช้กรอกผลเอง'","currentView='result-import';await render();",'input.dispatchEvent(new Event(\'change\',{bubbles:true}))','validateResultPayload','confirm-result-import','allow-result-correction'])assert.ok(main.includes(x),'Missing '+x);
 assert.ok(html.includes('main.js?v=20261120-v3-9-12'));
 assert.ok(sw.includes("const CACHE_NAME = 'football-rich-shell-v67'"));
 for(const x of ['v39-card-actions','v39-manual-entry','v39-score-fields','v39-event-row','v39-submit-result'])assert.ok(css.includes(x),'Missing CSS '+x);
