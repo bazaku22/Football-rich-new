@@ -103,6 +103,11 @@ main=main.replace("const APP_VERSION='3.9.12';","const APP_VERSION='3.9.13';");
 if(main.includes('new DataTransfer()')||main.includes('input.files=transfer.files'))throw Error('Fragile DataTransfer bridge remains');
 if(!main.includes('window.__frPrepareResultPayload = processResultPayload'))throw Error('Shared result payload processor missing');
 if(!main.includes('if(!copied)copied=fallbackCopy()'))throw Error('Clipboard fallback missing');
+const oldNotification=`const panel=root.querySelector('#fr-notification-panel'),list=root.querySelector('#fr-notification-list'),count=root.querySelector('#fr-notification-count'),label=root.querySelector('#fr-notification-unread-label'),kind=`;
+const newNotification=`const panel=root.querySelector('#fr-notification-panel'),list=root.querySelector('#fr-notification-list'),count=bell?.querySelector('#fr-notification-count'),label=root.querySelector('#fr-notification-unread-label'),kind=`;
+if(!main.includes(oldNotification))throw Error('Notification bell relocation selector anchor missing');
+main=main.replace(oldNotification,newNotification);
+
 html=html.replace('main.js?v=20261120-v3-9-12','main.js?v=20261121-v3-9-13');
 sw=sw.replace("const CACHE_NAME = 'football-rich-shell-v67'","const CACHE_NAME = 'football-rich-shell-v68'");
 version.version='3.9.13';version.previous_version='3.9.12';version.release='V3.9.13 — Reliable Match ID copy and manual result import';
