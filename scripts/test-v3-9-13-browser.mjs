@@ -25,9 +25,17 @@ try{
  const context=await browser.newContext({serviceWorkers:'block'});
  try{await context.grantPermissions(['clipboard-read','clipboard-write'],{origin});}catch{}
  const page=await context.newPage();
- const pageErrors=[];page.on('pageerror',e=>pageErrors.push(e.message));
+ const pageErrors=[],requestFailures=[],consoleErrors=[];
+ page.on('pageerror',e=>pageErrors.push(e.message));
+ page.on('requestfailed',r=>requestFailures.push(r.url()+': '+r.failure()?.errorText));
+ page.on('console',m=>{if(m.type()==='error')consoleErrors.push(m.text())});
  await page.goto(origin,{waitUntil:'domcontentloaded'});
- await page.waitForSelector('.v21-calendar',{timeout:15000}); // app finished opening its own IndexedDB schema
+ await page.waitForSelector('.app-shell',{timeout:15000}).catch(async()=>{
+  throw new Error('App shell did not start. pageErrors='+JSON.stringify(pageErrors)+' requestFailures='+JSON.stringify(requestFailures)+' consoleErrors='+JSON.stringify(consoleErrors)+' body='+(await page.locator('body').innerText()));
+ });
+ await page.waitForSelector('.v21-calendar',{timeout:15000}).catch(async()=>{
+  throw new Error('Dashboard did not finish rendering. pageErrors='+JSON.stringify(pageErrors)+' requestFailures='+JSON.stringify(requestFailures)+' consoleErrors='+JSON.stringify(consoleErrors)+' body='+(await page.locator('body').innerText()));
+ }); // app finished opening its own IndexedDB schema
  await page.evaluate(async()=>{
   const db=await new Promise((resolve,reject)=>{const req=indexedDB.open('football-rich-local',1);req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error);});
   const tx=db.transaction('matches','readwrite');
