@@ -12,7 +12,8 @@ const manualMarkup = String.raw`'<div class="v39-card-actions"><button type="but
 main=main.replace(upcomingAnchor,upcomingAnchor+" + "+manualMarkup);
 const finishedAnchor = "'<div class=\"mc-actions\"><button class=\"outline\" data-select-match=\"' + esc(m.id) + '\">ดูรายละเอียดแมตช์</button></div></article>'";
 if(!main.includes(finishedAnchor))throw Error('Match Center finished card anchor missing');
-main=main.replace(finishedAnchor,finishedAnchor.replace('</article>', '</div><div class=\"v39-card-actions\"><button type=\"button\" class=\"outline v39-copy-id\" data-v39-copy-id=\"\\' + esc(m.id) + '\\\">คัดลอก Match ID</button></div></article>'));
+const finishedCopySuffix = String.raw`</div><div class="v39-card-actions"><button type="button" class="outline v39-copy-id" data-v39-copy-id="' + esc(m.id) + '">คัดลอก Match ID</button></div></article>'`;
+main=main.replace(finishedAnchor,finishedAnchor.replace("</div></article>'",finishedCopySuffix));
 
 const resultAnchor="const resultFile = document.querySelector('#result-import-file');";
 if(!main.includes(resultAnchor))throw Error('Result Import input anchor missing');
