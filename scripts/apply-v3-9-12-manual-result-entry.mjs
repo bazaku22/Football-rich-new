@@ -6,15 +6,15 @@ const version=JSON.parse(fs.readFileSync(vp,'utf8'));
 if(version.version!=='3.9.11'||!main.includes("const APP_VERSION='3.9.11';"))throw Error('Expected V3.9.11');
 if(!html.includes('main.js?v=20261118-mobile-nav')||!sw.includes("const CACHE_NAME = 'football-rich-shell-v66'"))throw Error('Expected final mobile/PWA build');
 for(const marker of ['validateResultPayload','confirm-result-import','allow-result-correction'])if(!main.includes(marker))throw Error('Existing Result Import flow missing: '+marker);
-const upcomingAnchor = "'<div class=\"mc-id\">MATCH ID: ' + esc(m.id) + '</div>'";
+const upcomingAnchor = `+ '<div class="mc-id">MATCH ID: ' + esc(m.id) + '</div><div class="mc-muted">' + stateNote + '</div></article>';`;
 if(!main.includes(upcomingAnchor))throw Error('Match Center upcoming card anchor missing');
 const manualMarkup = String.raw`'<div class="v39-card-actions"><button type="button" class="outline v39-copy-id" data-v39-copy-id="' + esc(m.id) + '">คัดลอก Match ID</button></div><details class="v39-manual-entry"><summary>กรอกผลหลังจบเกม</summary><form class="v39-manual-form" data-v39-match-id="' + esc(m.id) + '" data-home-team="' + esc(m.homeTeam) + '" data-away-team="' + esc(m.awayTeam) + '"><div class="v39-score-fields"><label>สกอร์เจ้าบ้าน<input name="home_goals" type="number" min="0" max="99" step="1" inputmode="numeric" required></label><span>–</span><label>สกอร์ทีมเยือน<input name="away_goals" type="number" min="0" max="99" step="1" inputmode="numeric" required></label></div><div class="v39-event-heading"><b>ผู้ทำประตู / แอสซิสต์</b><small>กรอกเท่าที่ทราบ ไม่จำเป็นต้องครบทุกประตู</small></div><div class="v39-event-list"><div class="v39-event-row"><select name="team" aria-label="ทีมที่ทำประตู"><option value="home">เจ้าบ้าน</option><option value="away">ทีมเยือน</option></select><input name="minute" maxlength="8" placeholder="นาที" aria-label="นาที"><input name="scorer" maxlength="80" placeholder="ผู้ทำประตู" aria-label="ผู้ทำประตู"><input name="assist" maxlength="80" placeholder="แอสซิสต์ (ถ้ามี)" aria-label="แอสซิสต์"></div></div><button type="button" class="outline v39-add-event">＋ เพิ่มผู้ทำประตู</button><button type="submit" class="primary v39-submit-result">ตรวจสอบผลก่อนบันทึก</button><p class="v39-manual-note">ระบบจะเปิดตัวอย่างผลในหน้า Result Import ก่อนบันทึก และจะเก็บประวัติหากมีผลเดิม</p></form></details>'`;
-main=main.replace(upcomingAnchor,upcomingAnchor+" + "+manualMarkup);
-const finishedAnchor = "'<div class=\"mc-actions\"><button class=\"outline\" data-select-match=\"' + esc(m.id) + '\">ดูรายละเอียดแมตช์</button></div></article>'";
+const upcomingReplacement = `+ '<div class="mc-id">MATCH ID: ' + esc(m.id) + '</div>' + manualMarkup + '<div class="mc-muted">' + stateNote + '</div></article>';`;
+main=main.replace(upcomingAnchor,upcomingReplacement);
+const finishedAnchor = `ดูรายละเอียดแมตช์</button></div></article>';`;
 if(!main.includes(finishedAnchor))throw Error('Match Center finished card anchor missing');
-const finishedCopySuffix = String.raw`</div><div class="v39-card-actions"><button type="button" class="outline v39-copy-id" data-v39-copy-id="' + esc(m.id) + '">คัดลอก Match ID</button></div></article>'`;
-main=main.replace(finishedAnchor,finishedAnchor.replace("</div></article>'",finishedCopySuffix));
-
+const finishedReplacement = `ดูรายละเอียดแมตช์</button></div>' + '<div class="v39-card-actions"><button type="button" class="outline v39-copy-id" data-v39-copy-id="' + esc(m.id) + '">คัดลอก Match ID</button></div>' + manualMarkup + '</article>';`;
+main=main.replace(finishedAnchor,finishedReplacement);
 const resultAnchor="const resultFile = document.querySelector('#result-import-file');";
 if(!main.includes(resultAnchor))throw Error('Result Import input anchor missing');
 const handlers = String.raw`
