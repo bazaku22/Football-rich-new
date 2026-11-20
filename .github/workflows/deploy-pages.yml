@@ -317,6 +317,8 @@ jobs:
         run: |
           node scripts/apply-v3-10-mobile-bottom-nav.mjs
           node scripts/test-v3-10-mobile-bottom-nav.mjs
+          node scripts/apply-v3-9-12-manual-result-entry.mjs
+          node scripts/test-v3-9-12-manual-result-entry.mjs
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
