@@ -327,7 +327,7 @@ jobs:
 
   deploy:
     # Publishing is a deliberate manual action from main only; pushes and PRs never deploy.
-    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'
+    if: (github.event_name == 'workflow_dispatch' || github.event_name == 'push') && github.ref == 'refs/heads/main'
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
