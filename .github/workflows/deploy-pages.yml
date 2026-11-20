@@ -313,12 +313,16 @@ jobs:
           grep -q 'id="run"' football-rich-v1/dist/v2-device-test/index.html
           echo "Android Chrome device test page included in Pages artifact."
 
-      - name: Apply and test V3.9.10 mobile bottom navigation
+      - name: Apply and test V3.9.13 mobile result and clipboard fixes
         run: |
           node scripts/apply-v3-10-mobile-bottom-nav.mjs
           node scripts/test-v3-10-mobile-bottom-nav.mjs
           node scripts/apply-v3-9-12-manual-result-entry.mjs
           node scripts/test-v3-9-12-manual-result-entry.mjs
+          node scripts/apply-v3-9-13-manual-result-fix.mjs
+          node scripts/test-v3-9-13-manual-result-fix.mjs
+          npm install --prefix football-rich-v1 --no-save --no-package-lock playwright@1.56.1
+          node scripts/test-v3-9-13-browser.mjs
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
