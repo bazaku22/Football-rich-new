@@ -54,6 +54,11 @@ try{
  const openForm=async()=>{
   const form=page.locator('form.v39-manual-form[data-v39-match-id="ci-v3913-manual-match"]');
   await form.waitFor({state:'attached',timeout:10000});
+  // The manual-entry form is intentionally inside a collapsed <details>.
+  // Expand it before interacting, just as a user would on Android.
+  const disclosure=page.locator('details.v39-manual-entry').filter({has:form});
+  await disclosure.locator('summary').click();
+  await form.locator('input[name="home_goals"]').waitFor({state:'visible',timeout:5000});
   await form.locator('input[name="home_goals"]').fill('2');
   await form.locator('input[name="away_goals"]').fill('1');
   return form;
@@ -78,6 +83,9 @@ try{
  await page.locator('[data-view="dashboard"]').click();
  form=page.locator('form.v39-manual-form[data-v39-match-id="ci-v3913-manual-match"]');
  await form.waitFor({state:'attached',timeout:10000});
+ const correctionDisclosure=page.locator('details.v39-manual-entry').filter({has:form});
+ await correctionDisclosure.locator('summary').click();
+ await form.locator('input[name="home_goals"]').waitFor({state:'visible',timeout:5000});
  await form.locator('input[name="home_goals"]').fill('3');
  await form.locator('input[name="away_goals"]').fill('2');
  await form.locator('button[type="submit"]').click();
