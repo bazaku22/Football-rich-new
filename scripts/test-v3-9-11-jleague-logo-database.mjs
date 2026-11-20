@@ -9,8 +9,16 @@ const data=JSON.parse(fs.readFileSync('assets/club-logos/jleague-2026-27.json','
 const normalize=v=>String(v||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]/g,'');
 const mapMatch=main.match(/const\s+logos\s*=\s*/);
 if(!mapMatch)throw Error('Global logo map declaration not found');
-const start=mapMatch.index+mapMatch[0].length,end=main.indexOf(';',start);
-if(end<=start)throw Error('Global logo map boundary not found');
+const start=mapMatch.index+mapMatch[0].length;
+let end=start,depth=0,inString=false,stringQuote='',escaped=false,started=false;
+for(;end<main.length;end++){
+  const ch=main[end];
+  if(inString){if(escaped)escaped=false;else if(ch==='\\\\')escaped=true;else if(ch===stringQuote)inString=false;continue;}
+  if(ch==='"'||ch==="'"||ch==='\x60'){inString=true;stringQuote=ch;continue;}
+  if(ch==='{'){depth++;started=true;}
+  else if(ch==='}'){depth--;if(started&&depth===0){end++;break;}}
+}
+if(!started||depth!==0)throw Error('Global logo map boundary not found');
 const logos=JSON.parse(main.slice(start,end));
 if(data.teams.length!==40)throw Error('Expected 40 J.League teams');
 for(const league of ['J1','J2']){
