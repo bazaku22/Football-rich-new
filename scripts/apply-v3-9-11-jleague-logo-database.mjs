@@ -22,7 +22,7 @@ const mapStart=mapMatch.index,mapValueStart=mapStart+mapMatch[0].length;
 let mapEnd=mapValueStart,depth=0,inString=false,stringQuote='',escaped=false,started=false;
 for(;mapEnd<main.length;mapEnd++){
   const ch=main[mapEnd];
-  if(inString){if(escaped)escaped=false;else if(ch==='\\\\')escaped=true;else if(ch===stringQuote)inString=false;continue;}
+  if(inString){if(escaped)escaped=false;else if(ch==='\\')escaped=true;else if(ch===stringQuote)inString=false;continue;}
   if(ch==='"'||ch==="'"||ch==='\x60'){inString=true;stringQuote=ch;continue;}
   if(ch==='{'){depth++;started=true;}
   else if(ch==='}'){depth--;if(started&&depth===0){mapEnd++;break;}}
