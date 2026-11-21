@@ -61,7 +61,7 @@ else if (!main.includes("['scouting', 'ดาวรุ่ง']")) throw new Erro
 
 const iconAnchor = '  const icons = {\n';
 const scoutingIcon = '    scouting: \'<svg class="fr-nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8-4.2-4.1 5.9-.9z"/></svg>\',\n';
-if (!main.includes("scouting: '<svg class=\\"fr-nav-icon\\"")) {
+if (!main.includes(`scouting: '<svg class="fr-nav-icon"`)) {
   if (!main.includes(iconAnchor)) throw new Error('Mobile navigation icon map was not found');
   main = main.replace(iconAnchor, iconAnchor + scoutingIcon);
 }
