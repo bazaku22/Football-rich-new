@@ -99,6 +99,11 @@ await sharp('public/brand-emblem.svg').resize(512,512).png().toFile('public/icon
 console.log('Generated matching 192px and 512px Android PWA icons.');
 NODE
 sed -i 's/const first = -lowerMagnitude;/const first = lowerMagnitude === 0 ? 0 : -lowerMagnitude;/' src/domain/handicap.ts
+
+# Install the approved Young Talent Scouting V1 patch without changing existing match data.
+unzip -q -o ../young-talent-scouting-v1-patch.zip -d ..
+node ../scripts/apply-young-talent-scouting-v1.mjs
+npm test -- --run
 npm run build
 
 # Apply the approved V1.1 workflow UI to the generated PWA bundle.
