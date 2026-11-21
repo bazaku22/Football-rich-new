@@ -109,6 +109,10 @@ npm run build
 # Apply the approved V1.1 workflow UI to the generated PWA bundle.
 base64 -d ../scripts/apply-v1-1-ui.py.gz.b64 | gzip -dc > /tmp/football-rich-v1-1-ui.py
 python3 - <<'PY'
+from pathlib import Path
+built=Path('dist/main.js').read_text()
+pos=built.find('const navItems = [')
+print('ACTUAL NAV BLOCK:', repr(built[pos:built.find('];',pos)+2] if pos>=0 else 'NOT FOUND'))
 import base64, gzip
 from pathlib import Path
 source = gzip.decompress(base64.b64decode(Path('../scripts/apply-v1-1-ui.py.gz.b64').read_text())).decode()
