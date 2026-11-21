@@ -108,6 +108,15 @@ npm run build
 
 # Apply the approved V1.1 workflow UI to the generated PWA bundle.
 base64 -d ../scripts/apply-v1-1-ui.py.gz.b64 | gzip -dc > /tmp/football-rich-v1-1-ui.py
+python3 - <<'PY'
+import base64, gzip
+from pathlib import Path
+source = gzip.decompress(base64.b64decode(Path('../scripts/apply-v1-1-ui.py.gz.b64').read_text())).decode()
+lines = source.splitlines()
+for i, line in enumerate(lines):
+    if 'anchor' in line.lower() or 'navigation' in line.lower():
+        print(f'V1.1 source {i+1}: ' + '\\n'.join(f'{j+1}: {lines[j]}' for j in range(max(0,i-4), min(len(lines),i+5))))
+PY
 python3 /tmp/football-rich-v1-1-ui.py
 
 node --input-type=module <<'NODE'
