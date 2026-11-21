@@ -1,0 +1,38 @@
+  } else if(currentView==='scouting') {
+    const players = await getScoutingPlayers();
+    const ranked = sortScoutingPlayers(players);
+    const selectedPlayer = selectedScoutingPlayerId ? players.find(player => player.id === selectedScoutingPlayerId) : undefined;
+    if (selectedPlayer) {
+      const player = selectedPlayer;
+      const tabContent = currentScoutingTab === 'Overview'
+        ? card('บันทึกการติดตาม', `<p class="muted">${esc(player.notes)}</p>`)
+        : currentScoutingTab === 'Stats'
+          ? card('สถิติผู้เล่น', '<p class="muted">ยังไม่มีข้อมูลสถิติที่บันทึกไว้</p><p class="hint">แหล่งคะแนนฟอร์มหลัก: FotMob เท่านั้น หากไม่มีข้อมูลให้แสดง N/A</p>')
+          : currentScoutingTab === 'Match History'
+            ? card('ประวัติการแข่งขัน', '<p class="muted">ยังไม่มีรายการแข่งขันที่บันทึกไว้</p>')
+            : card('Development Center', '<p class="muted">บันทึกพัฒนาการและข้อสังเกตระยะยาว โดยแยกความเห็นผู้ใช้จากข้อมูลที่มีแหล่งอ้างอิง</p>');
+      root.innerHTML = pageTitle('YOUNG TALENT SCOUTING','โปรไฟล์นักเตะ', 'ติดตามข้อมูลและพัฒนาการรายบุคคล') +
+        '<button class="outline scout-back" data-scout-back>← กลับไปอันดับนักเตะ</button>' +
+        `<section class="panel scout-profile-hero"><div class="scout-profile-photo">${scoutingPhoto(player, 'profile')}</div><div class="scout-profile-summary"><div class="scout-profile-name"><h2>${esc(player.name)} <span>#${esc(player.number)}</span></h2>${scoutingJersey(player, 'profile')}</div><div class="scout-club-line">${scoutingCrest(player)}<span>${esc(player.club)}${player.clubNote ? ' · ' + esc(player.clubNote) : ''}</span></div><p class="muted">${esc(player.position)}</p><div class="scout-metrics"><span>เกรด <b>${esc(player.grade || '—')}</b></span><span>มูลค่า <b>${formatScoutingValue(player.valueMillions)}</b></span></div></div></section>` +
+        `<div class="scout-tabs">${['Overview','Stats','Match History','Development'].map(tab => `<button class="${tab === currentScoutingTab ? 'active' : ''}" data-scout-tab="${tab}">${tab === 'Overview' ? 'ภาพรวม' : tab === 'Stats' ? 'สถิติ' : tab === 'Match History' ? 'ประวัติแข่ง' : 'พัฒนาการ'}</button>`).join('')}</div>` + tabContent +
+        `<section class="panel scout-edit-panel"><h2>เกรดและมูลค่าประเมิน</h2><p class="hint">ใช้เกรดจัดอันดับก่อน หากเกรดเท่ากันจึงใช้มูลค่าสูงกว่าเป็นตัวตัดสิน มูลค่าเป็นหน่วยล้านยูโร (ETV)</p><form id="scout-grade-form" class="form-grid-form"><div class="field-row"><label>เกรด<select name="grade"><option value="">ยังไม่ประเมิน</option>${['A+','A','A-','B+','B','B-','C+','C','C-','D','F'].map(grade => `<option value="${grade}" ${player.grade === grade ? 'selected' : ''}>${grade}</option>`).join('')}</select></label><label>มูลค่า ETV (€M)<input name="valueMillions" type="number" min="0" max="1000" step="0.1" value="${player.valueMillions ?? ''}" placeholder="เช่น 18.5"></label></div><button class="primary">บันทึกเกรดและมูลค่า</button><p id="scout-save-message" class="notice" role="status"></p></form></section>` +
+        `<p class="hint">รูปภาพและโลโก้โหลดจากแหล่งภายนอกเมื่อมีอินเทอร์เน็ต ส่วนข้อมูลเกรดและมูลค่าบันทึกไว้ในอุปกรณ์นี้ · <a href="${esc(player.photoSource)}" target="_blank" rel="noopener">แหล่งรูปภาพ</a></p>`;
+      document.querySelector<HTMLFormElement>('#scout-grade-form')!.addEventListener('submit', async e => {
+        e.preventDefault(); const form = e.currentTarget as HTMLFormElement; const data = new FormData(form);
+        const grade = String(data.get('grade') ?? ''); const rawValue = String(data.get('valueMillions') ?? '').trim();
+        const value = rawValue === '' ? null : Number(rawValue);
+        if (value !== null && (!Number.isFinite(value) || value < 0 || value > 1000)) { setMessage('#scout-save-message','กรุณากรอกมูลค่า 0–1,000 ล้านยูโร','error'); return; }
+        const updated = players.map(item => item.id === player.id ? { ...item, grade, valueMillions:value } : item);
+        await saveScoutingPlayers(updated); setMessage('#scout-save-message','บันทึกข้อมูลและจัดอันดับใหม่เรียบร้อยแล้ว'); await render();
+      });
+    } else {
+      root.innerHTML = pageTitle('YOUNG TALENT SCOUTING','Player Ranking','จัดอันดับรวมเพียงหมวดเดียว: เกรดเป็นหลัก มูลค่าเป็นตัวตัดสินเมื่อเกรดเท่ากัน') +
+        `<section class="panel scout-ranking-rule"><b>กติกาการจัดอันดับ</b><p>① เกรดสูงกว่าอยู่ก่อน　② เกรดเท่ากัน มูลค่า ETV สูงกว่าอยู่ก่อน</p><small>นักเตะที่ยังไม่มีเกรดจะอยู่ท้ายรายการ จนกว่าจะบันทึกผลประเมิน</small></section>` +
+        `<div class="scout-list-head"><h2>อันดับนักเตะ <span class="count">${ranked.length}</span></h2><input id="scout-search" type="search" placeholder="ค้นหาชื่อนักเตะหรือสโมสร" aria-label="ค้นหานักเตะ"></div><div class="scout-grid">${ranked.map((player,index) => `<article class="panel scout-card" data-scout-card data-search="${esc((player.name + ' ' + player.club).toLowerCase())}"><div class="scout-card-main">${scoutingPhoto(player)}<div class="scout-card-info"><h3>${index+1}. ${esc(player.name)} <span>#${esc(player.number)}</span></h3><div class="scout-club-line">${scoutingCrest(player)}<span>${esc(player.club)}</span></div>${player.clubNote ? `<small class="scout-loan-note">${esc(player.clubNote)}</small>` : ''}<p>${esc(player.position)}</p><div class="scout-metrics"><span>เกรด <b>${esc(player.grade || '—')}</b></span><span>มูลค่า <b>${formatScoutingValue(player.valueMillions)}</b></span></div></div>${scoutingJersey(player)}</div><button class="outline scout-open" data-scout-open="${esc(player.id)}">ดูโปรไฟล์ <span>→</span></button></article>`).join('')}</div>` +
+        '<p class="hint scout-source-note">มูลค่าอ้างอิง ETV จาก FootballTransfers เมื่อมีการบันทึกแหล่งข้อมูล · คะแนนฟอร์มใช้ FotMob เป็นแหล่งหลัก · รูปภาพและโลโก้ต้องเชื่อมต่ออินเทอร์เน็ต</p>';
+      document.querySelector<HTMLInputElement>('#scout-search')!.addEventListener('input', e => {
+        const query = (e.currentTarget as HTMLInputElement).value.trim().toLowerCase();
+        root.querySelectorAll<HTMLElement>('[data-scout-card]').forEach(item => { item.hidden = !item.dataset.search!.includes(query); });
+      });
+    }
+  } else if(currentView==='matches') {
