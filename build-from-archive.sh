@@ -99,10 +99,44 @@ await sharp('public/brand-emblem.svg').resize(512,512).png().toFile('public/icon
 console.log('Generated matching 192px and 512px Android PWA icons.');
 NODE
 sed -i 's/const first = -lowerMagnitude;/const first = lowerMagnitude === 0 ? 0 : -lowerMagnitude;/' src/domain/handicap.ts
+
+# Install the approved Young Talent Scouting V1 patch without changing existing match data.
+# Young Talent Scouting V1 sources are committed as individual text files in ../scripts and ../docs.
+node ../scripts/apply-young-talent-scouting-v1.mjs
+npm test -- --run
 npm run build
 
 # Apply the approved V1.1 workflow UI to the generated PWA bundle.
 base64 -d ../scripts/apply-v1-1-ui.py.gz.b64 | gzip -dc > /tmp/football-rich-v1-1-ui.py
+python3 - <<'PY'
+from pathlib import Path
+built=Path('dist/main.js').read_text()
+pos=built.find('const navItems = [')
+print('ACTUAL NAV BLOCK:', repr(built[pos:built.find('];',pos)+2] if pos>=0 else 'NOT FOUND'))
+import base64, gzip
+from pathlib import Path
+source = gzip.decompress(base64.b64decode(Path('../scripts/apply-v1-1-ui.py.gz.b64').read_text())).decode()
+lines = source.splitlines()
+for i, line in enumerate(lines):
+    if 'anchor' in line.lower() or 'navigation' in line.lower():
+        print(f'V1.1 source {i+1}: ' + '\\n'.join(f'{j+1}: {lines[j]}' for j in range(max(0,i-4), min(len(lines),i+5))))
+PY
+python3 - <<'PY'
+from pathlib import Path
+patch = Path('/tmp/football-rich-v1-1-ui.py')
+source = patch.read_text()
+old_anchor = "['dashboard', 'ภาพรวม'], ['matches', 'คู่แข่งขัน'], ['research', 'ค้นคว้า'],"
+new_anchor = "['dashboard', 'ภาพรวม'], ['scouting', 'ดาวรุ่ง'], ['matches', 'คู่แข่งขัน'], ['research', 'ค้นคว้า'],"
+old_target = "['dashboard', 'หน้าหลัก'], ['matches', 'คู่แข่งขัน'], ['import', 'นำเข้าวิเคราะห์'],"
+new_target = "['dashboard', 'หน้าหลัก'], ['scouting', 'ดาวรุ่ง'], ['matches', 'คู่แข่งขัน'], ['import', 'นำเข้าวิเคราะห์'],"
+if source.count(old_anchor) != 1:
+    raise SystemExit('V1.1 navigation source anchor changed unexpectedly')
+if source.count(old_target) != 1:
+    raise SystemExit('V1.1 navigation target anchor changed unexpectedly')
+source = source.replace(old_anchor, new_anchor, 1).replace(old_target, new_target, 1)
+patch.write_text(source)
+print('V1.1 navigation patch aligned with Young Talent Scouting; scouting menu retained.')
+PY
 python3 /tmp/football-rich-v1-1-ui.py
 
 node --input-type=module <<'NODE'

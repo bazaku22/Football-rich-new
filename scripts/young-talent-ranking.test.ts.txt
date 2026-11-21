@@ -1,0 +1,36 @@
+import { describe, expect, it } from 'vitest';
+import { sortScoutingPlayers } from './scouting-ranking';
+
+describe('Young Talent grade-first ranking', () => {
+  it('uses value only as the secondary key when grades are equal', () => {
+    const ranked = sortScoutingPlayers([
+      { id:'pig', name:'หมู', grade:'B', valueMillions:8 },
+      { id:'chicken', name:'ไก่', grade:'B', valueMillions:10 }
+    ]);
+    expect(ranked.map(player => player.id)).toEqual(['chicken','pig']);
+  });
+
+  it('places a higher grade before a higher-valued lower grade', () => {
+    const ranked = sortScoutingPlayers([
+      { id:'b', name:'B', grade:'B', valueMillions:80 },
+      { id:'a', name:'A', grade:'A', valueMillions:10 }
+    ]);
+    expect(ranked.map(player => player.id)).toEqual(['a','b']);
+  });
+
+  it('keeps existing watchlist order when grade and value are tied or missing', () => {
+    const ranked = sortScoutingPlayers([
+      { id:'first', name:'First', grade:'', valueMillions:null },
+      { id:'second', name:'Second', grade:'', valueMillions:null }
+    ]);
+    expect(ranked.map(player => player.id)).toEqual(['first','second']);
+  });
+
+  it('places unrated players after graded players', () => {
+    const ranked = sortScoutingPlayers([
+      { id:'unrated', name:'Unrated', grade:'', valueMillions:500 },
+      { id:'graded', name:'Graded', grade:'C', valueMillions:1 }
+    ]);
+    expect(ranked.map(player => player.id)).toEqual(['graded','unrated']);
+  });
+});
