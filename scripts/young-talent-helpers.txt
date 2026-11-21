@@ -1,0 +1,66 @@
+let selectedScoutingPlayerId = '';
+let currentScoutingTab = 'Overview';
+
+interface ScoutingPlayer {
+  id: string; name: string; club: string; clubNote?: string; position: string; number: string;
+  shirtName: string; kitColor: string; trimColor: string; grade: string; valueMillions: number | null;
+  photoUrl: string; photoSource: string; crestUrl: string; notes: string;
+}
+const SCOUTING_SETTING_KEY = 'young_talent_watchlist_v1';
+const DEFAULT_SCOUTING_PLAYERS: ScoutingPlayer[] = [
+  { id:'nico-paz', name:'Nico Paz', club:'Como 1907', position:'Attacking Midfielder', number:'10', shirtName:'PAZ', kitColor:'#123f68', trimColor:'#ffffff', grade:'', valueMillions:null,
+    photoUrl:'https://static.sky.it/images/skysport/it/calcio/serie-a/probabili-formazioni/superscudetto/512/551493.png', photoSource:'https://sport.sky.it/calciomercato/2025/01/23/inter-nico-paz-beukema-lucumi-calciomercato-news',
+    crestUrl:'https://upload.wikimedia.org/wikipedia/commons/thumb/9/99/Calcio_Como_-_logo_%28Italy%2C_2019-%29.svg/3840px-Calcio_Como_-_logo_%28Italy%2C_2019-%29.svg.png',
+    notes:'ติดตามการสร้างสรรค์เกม การเชื่อมเกมรุก และความสม่ำเสมอในการสร้างโอกาส' },
+  { id:'mikey-moore', name:'Mikey Moore', club:'1. FC Köln', clubNote:'ยืมตัวจาก Tottenham Hotspur', position:'Attacking Midfielder / Winger', number:'47', shirtName:'MOORE', kitColor:'#f5f5f5', trimColor:'#c92732', grade:'', valueMillions:null,
+    photoUrl:'https://images.ctfassets.net/nurz7nsnha04/1Zo4UD6bJwOz9OTbxh9lRn/206ffabd1c7d57f56f42c5f000eb2ff4/260831_Portrait_MikeyMoore.jpg?fm=webp&q=75&w=1920', photoSource:'https://fc.de/en/teams/men/squad/mikey-moore',
+    crestUrl:'https://toppng.com/uploads/preview/fc-koeln-logo-11555944546y7p7oahqaj.png',
+    notes:'จากการสังเกตของผู้ใช้ มีจังหวะสวนกลับที่อันตรายและจบสกอร์ได้อย่างใจเย็น ควรติดตามความสม่ำเสมออีก 3–5 นัด โดยเฉพาะเมื่อเจอทีมครองบอลสูง' },
+  { id:'jonas-urbig', name:'Jonas Urbig', club:'Bayern Munich', position:'Goalkeeper', number:'40', shirtName:'URBIG', kitColor:'#55a98a', trimColor:'#153f32', grade:'', valueMillions:null,
+    photoUrl:'https://cdn-img.staticzz.com/img/planteis/new/29/46/14902946_jonas_urbig_20260531021317.png', photoSource:'https://www.zerozero.pt/jogador/jonas-urbig/784068',
+    crestUrl:'https://www.citypng.com/public/uploads/preview/hd-fc-bayern-munich-germany-football-club-logo-png-735811697036202ugo5cykyvr.png',
+    notes:'จากการสังเกตของผู้ใช้ แสดงจุดเด่นด้านการเซฟ การดวลตัวต่อตัว และการออกบอล ต้องแยกบันทึกการสังเกตนี้ออกจากสถิติที่ตรวจสอบได้' },
+  { id:'shea-lacey', name:'Shea Lacey', club:'Manchester United', position:'Right Winger', number:'31', shirtName:'LACEY', kitColor:'#c92732', trimColor:'#f3d27b', grade:'', valueMillions:null,
+    photoUrl:'https://images.ctfassets.net/unzgbvss5tuy/3daUM6Old26XdT82zzizw1/188d8dc13bdbe8187450d8ff00ebc8c1/Shea_Lacey.jpg', photoSource:'https://www.manutd.com/en/teams/under-21s-team/shea-lacey',
+    crestUrl:'https://pngimg.com/uploads/manchester_united/manchester_united_PNG22.png',
+    notes:'ติดตามพัฒนาการในตำแหน่งปีกขวา การใช้เท้าซ้าย และการตัดสินใจในพื้นที่สุดท้าย' }
+ ];
+async function getScoutingPlayers(): Promise<ScoutingPlayer[]> {
+  const settings = await listRecords('app_settings');
+  const saved = settings.find(item => item.key === SCOUTING_SETTING_KEY);
+  if (saved && Array.isArray(saved.value)) return saved.value as ScoutingPlayer[];
+  const initial = DEFAULT_SCOUTING_PLAYERS.map(player => ({ ...player }));
+  await putRecord('app_settings', { ...base(), key: SCOUTING_SETTING_KEY, value: initial });
+  return initial;
+}
+async function saveScoutingPlayers(players: ScoutingPlayer[]): Promise<void> {
+  const settings = await listRecords('app_settings');
+  const saved = settings.find(item => item.key === SCOUTING_SETTING_KEY);
+  await putRecord('app_settings', saved
+    ? { ...saved, updatedAt: nowISO(), value: players }
+    : { ...base(), key: SCOUTING_SETTING_KEY, value: players });
+}
+function formatScoutingValue(value: number | null): string {
+  return value === null || !Number.isFinite(value) ? 'ยังไม่ระบุ' : '€' + value.toLocaleString('en-US', { maximumFractionDigits: 1 }) + 'M';
+}
+function scoutingJersey(player: ScoutingPlayer, size: 'card'|'profile' = 'card'): string {
+  const width = size === 'card' ? 56 : 62;
+  const height = size === 'card' ? 64 : 70;
+  return `<svg class="scout-jersey scout-jersey-${size}" viewBox="0 0 76 82" width="${width}" height="${height}" aria-label="เสื้อหมายเลข ${esc(player.number)} ด้านหลัง">
+    <path d="M27 7 L33 5 L43 5 L49 7 L61 15 L72 27 L63 36 L55 29 L55 76 Q38 80 21 76 L21 29 L13 36 L4 27 L15 15 Z" fill="${esc(player.kitColor)}" stroke="${esc(player.trimColor)}" stroke-width="1.4" stroke-linejoin="round"/>
+    <path d="M27 7 L21 12 L15 15 L10 30 L18 34 L24 25 L24 74 M49 7 L55 12 L61 15 L66 30 L58 34 L52 25 L52 74" fill="none" stroke="${esc(player.trimColor)}" stroke-width="1.1" opacity=".9"/>
+    <path d="M30 7 Q38 17 46 7" fill="none" stroke="${esc(player.trimColor)}" stroke-width="2"/>
+    <path d="M24 40 H52" stroke="${esc(player.trimColor)}" stroke-width=".7" opacity=".35"/>
+    <text x="38" y="31" text-anchor="middle" font-size="5.5" font-weight="700" fill="${esc(player.trimColor)}" letter-spacing=".2">${esc(player.shirtName)}</text>
+    <text x="38" y="61" text-anchor="middle" font-size="21" font-weight="800" fill="${esc(player.trimColor)}">${esc(player.number)}</text>
+    <path d="M24 76 Q38 79 52 76" fill="none" stroke="${esc(player.trimColor)}" stroke-width=".8"/>
+  </svg>`;
+}
+function scoutingPhoto(player: ScoutingPlayer, size: 'card'|'profile' = 'card'): string {
+  const cls = size === 'card' ? 'scout-photo scout-photo-card' : 'scout-photo scout-photo-profile';
+  return `<div class="${cls}"><img src="${esc(player.photoUrl)}" alt="${esc(player.name)}" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.display='none';this.parentElement.classList.add('photo-failed')"><span>${esc(player.name.split(' ').map(part => part[0]).join('').slice(0,2))}</span></div>`;
+}
+function scoutingCrest(player: ScoutingPlayer): string {
+  const initials = player.id === 'nico-paz' ? 'COMO' : player.id === 'mikey-moore' ? 'KÖLN' : player.id === 'jonas-urbig' ? 'FCB' : 'MUN';
+  return `<span class="scout-crest-wrap"><img class="scout-crest" src="${esc(player.crestUrl)}" alt="${esc(player.club)}" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.display='none'"><span class="scout-crest-fallback">${initials}</span></span>`;
+}
