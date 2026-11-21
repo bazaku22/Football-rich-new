@@ -121,6 +121,22 @@ for i, line in enumerate(lines):
     if 'anchor' in line.lower() or 'navigation' in line.lower():
         print(f'V1.1 source {i+1}: ' + '\\n'.join(f'{j+1}: {lines[j]}' for j in range(max(0,i-4), min(len(lines),i+5))))
 PY
+python3 - <<'PY'
+from pathlib import Path
+patch = Path('/tmp/football-rich-v1-1-ui.py')
+source = patch.read_text()
+old_anchor = "['dashboard', 'ภาพรวม'], ['matches', 'คู่แข่งขัน'], ['research', 'ค้นคว้า'],"
+new_anchor = "['dashboard', 'ภาพรวม'], ['scouting', 'ดาวรุ่ง'], ['matches', 'คู่แข่งขัน'], ['research', 'ค้นคว้า'],"
+old_target = "['dashboard', 'หน้าหลัก'], ['matches', 'คู่แข่งขัน'], ['import', 'นำเข้าวิเคราะห์'],"
+new_target = "['dashboard', 'หน้าหลัก'], ['scouting', 'ดาวรุ่ง'], ['matches', 'คู่แข่งขัน'], ['import', 'นำเข้าวิเคราะห์'],"
+if source.count(old_anchor) != 1:
+    raise SystemExit('V1.1 navigation source anchor changed unexpectedly')
+if source.count(old_target) != 1:
+    raise SystemExit('V1.1 navigation target anchor changed unexpectedly')
+source = source.replace(old_anchor, new_anchor, 1).replace(old_target, new_target, 1)
+patch.write_text(source)
+print('V1.1 navigation patch aligned with Young Talent Scouting; scouting menu retained.')
+PY
 python3 /tmp/football-rich-v1-1-ui.py
 
 node --input-type=module <<'NODE'
