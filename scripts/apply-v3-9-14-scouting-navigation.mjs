@@ -39,8 +39,9 @@ const end = branchSource.lastIndexOf(endMarker);
 if (start < 0 || end <= start) throw new Error('Young Talent Scouting render branch source is incomplete');
 let branchBody = branchSource.slice(start + startMarker.length, end);
 branchBody = branchBody
-  .replace(/document\.querySelector<[A-Za-z]+>\(/g, 'document.querySelector(')
+  .replace(/(document|root)\.querySelector(All)?<[A-Za-z]+>\(/g, '$1.querySelector$2(')
   .replace(/\)!\.addEventListener/g, ').addEventListener')
+  .replace(/\(e\.currentTarget as HTML(?:Form|Input)Element\)/g, '(e.currentTarget)')
   .replace(/e\.currentTarget as HTMLFormElement/g, 'e.currentTarget')
   .replace(/item\.dataset\.search!/g, 'item.dataset.search');
 if (/querySelector<[A-Za-z]+>|currentTarget as |dataset\.search!/.test(branchBody)) {
