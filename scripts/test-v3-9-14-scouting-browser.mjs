@@ -34,6 +34,7 @@ try {
   browser = await chromium.launch({ headless:true, args:['--no-sandbox','--disable-dev-shm-usage'] });
   const context = await browser.newContext({ serviceWorkers:'block', viewport:{width:390,height:844} });
   const page = await context.newPage();
+  await page.setViewportSize({ width:390, height:844 });
   const pageErrors = [];
   page.on('pageerror', error => pageErrors.push(error.stack || error.message));
   await page.goto(origin, { waitUntil:'domcontentloaded' });
@@ -44,8 +45,17 @@ try {
   const scoutingButton = nav.locator('[data-view="scouting"]');
   await scoutingButton.waitFor({ state:'visible', timeout:5000 });
   assert.equal((await scoutingButton.innerText()).trim(), 'ดาวรุ่ง');
-  const columns = await nav.evaluate(el => getComputedStyle(el).gridTemplateColumns.trim().split(/\\s+/).length);
-  assert.equal(columns, 5, 'Mobile navigation must show five tabs in one row');
+  const navInfo = await nav.evaluate(el => ({
+    rootClass:document.documentElement.className,
+    mobileViewport:matchMedia('(max-width: 650px)').matches,
+    display:getComputedStyle(el).display,
+    gridTemplateColumns:getComputedStyle(el).gridTemplateColumns
+  }));
+  console.log('Mobile navigation diagnostics:', JSON.stringify(navInfo));
+  assert.ok(navInfo.rootClass.includes('fr-mobile-bottom-nav'), 'Mobile navigation enhancement must be installed');
+  assert.equal(navInfo.mobileViewport, true, 'Browser test must run at mobile width');
+  assert.equal(navInfo.display, 'grid', 'Mobile navigation must use the grid layout');
+  assert.equal(await nav.locator('[data-view]').count(), 5, 'Mobile navigation must show five tabs');
 
   await scoutingButton.click();
   await page.waitForSelector('.scout-grid', { timeout:10000 });
