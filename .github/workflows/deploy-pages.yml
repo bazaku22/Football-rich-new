@@ -324,6 +324,12 @@ jobs:
           npm install --prefix football-rich-v1 --no-save --no-package-lock playwright@1.56.1
           node scripts/test-v3-9-13-browser.mjs
 
+      - name: Restore and verify Young Talent Scouting in final PWA
+        run: |
+          node scripts/apply-v3-9-14-scouting-navigation.mjs
+          node scripts/test-v3-9-14-scouting-navigation.mjs
+          node scripts/test-v3-9-14-scouting-browser.mjs
+
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
