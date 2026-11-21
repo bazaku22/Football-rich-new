@@ -19,8 +19,8 @@ function replaceBetween(source, startAnchor, endAnchor, replacement, label) {
   return source.slice(0, start) + replacement + '\n    ' + source.slice(end);
 }
 
-const oldNav = "const navItems = [\n    ['dashboard', 'หน้าหลัก'], ['matches', 'คู่แข่งขัน'], ['import', 'นำเข้าวิเคราะห์'],\n    ['predictions', 'เดิมพัน'], ['results', 'ผลแข่งขัน'], ['performance', 'ผลงาน']\n];";
-const newNav = "const navItems = [\n    ['dashboard', 'หน้าหลัก'], ['matches', 'แมตช์เซ็นเตอร์'], ['import', 'นำเข้าวิเคราะห์'],\n    ['predictions', 'เดิมพัน'], ['performance', 'ผลงาน']\n];";
+const oldNav = "const navItems = [\n    ['dashboard', 'หน้าหลัก'], ['scouting', 'ดาวรุ่ง'], ['matches', 'คู่แข่งขัน'], ['import', 'นำเข้าวิเคราะห์'],\n    ['predictions', 'เดิมพัน'], ['results', 'ผลแข่งขัน'], ['performance', 'ผลงาน']\n];";
+const newNav = "const navItems = [\n    ['dashboard', 'หน้าหลัก'], ['scouting', 'ดาวรุ่ง'], ['matches', 'แมตช์เซ็นเตอร์'], ['import', 'นำเข้าวิเคราะห์'],\n    ['predictions', 'เดิมพัน'], ['performance', 'ผลงาน']\n];";
 if (!main.includes(oldNav)) throw new Error('Match Center navigation anchor missing');
 main = main.replace(oldNav, newNav);
 main = main.replaceAll('data-go="results"', 'data-go="matches"')
