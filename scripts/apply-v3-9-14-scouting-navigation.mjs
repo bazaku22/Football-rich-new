@@ -39,7 +39,7 @@ const end = branchSource.lastIndexOf(endMarker);
 if (start < 0 || end <= start) throw new Error('Young Talent Scouting render branch source is incomplete');
 let branchBody = branchSource.slice(start + startMarker.length, end);
 branchBody = branchBody
-  .replace(/document\.querySelector<[A-Za-z]+>\\(/g, 'document.querySelector(')
+  .replace(/document\.querySelector<[A-Za-z]+>\(/g, 'document.querySelector(')
   .replace(/\)!\.addEventListener/g, ').addEventListener')
   .replace(/e\.currentTarget as HTMLFormElement/g, 'e.currentTarget')
   .replace(/item\.dataset\.search!/g, 'item.dataset.search');
@@ -82,7 +82,7 @@ main = main.replace("const APP_VERSION='3.9.13';", "const APP_VERSION='3.9.14';"
 main = main.replace("const PREVIOUS_APP_VERSION='3.9.6';", "const PREVIOUS_APP_VERSION='3.9.13';");
 main = main.replaceAll('V3.9.2', 'V3.9.14');
 main = main.replaceAll('FOOTBALL RICH · BLACK & GOLD · V3.9.2', 'FOOTBALL RICH · BLACK & GOLD · V3.9.14');
-html = html.replace(/main\.js\\?v=[^"']+/, 'main.js?v=20261121-v3-9-14-scouting');
+html = html.replace(/main\.js\?v=[^"']+/, 'main.js?v=20261121-v3-9-14-scouting');
 if (!html.includes('main.js?v=20261121-v3-9-14-scouting')) throw new Error('Could not cache-bust the final app entry');
 
 const oldRegistration = `if ('serviceWorker' in navigator) {
