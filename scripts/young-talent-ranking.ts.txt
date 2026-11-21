@@ -1,0 +1,25 @@
+export interface ScoutingRankable {
+  id: string;
+  name: string;
+  grade: string;
+  valueMillions: number | null;
+}
+
+const GRADE_ORDER: Record<string, number> = {
+  'A+':0, 'A':1, 'A-':2, 'B+':3, 'B':4, 'B-':5, 'C+':6, 'C':7, 'C-':8, 'D':9, 'F':10
+};
+
+/** Grade is the primary key; estimated value is the secondary key.
+ * Equal grade and value retain the existing watchlist order. Unrated players sort last.
+ */
+export function sortScoutingPlayers<T extends ScoutingRankable>(players: T[]): T[] {
+  return [...players].sort((a, b) => {
+    const gradeA = a.grade && GRADE_ORDER[a.grade] !== undefined ? GRADE_ORDER[a.grade] : 999;
+    const gradeB = b.grade && GRADE_ORDER[b.grade] !== undefined ? GRADE_ORDER[b.grade] : 999;
+    if (gradeA !== gradeB) return gradeA - gradeB;
+    const valueA = typeof a.valueMillions === 'number' && Number.isFinite(a.valueMillions) ? a.valueMillions : -Infinity;
+    const valueB = typeof b.valueMillions === 'number' && Number.isFinite(b.valueMillions) ? b.valueMillions : -Infinity;
+    if (valueA !== valueB) return valueB - valueA;
+    return 0;
+  });
+}
