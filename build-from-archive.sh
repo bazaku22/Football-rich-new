@@ -101,7 +101,7 @@ NODE
 sed -i 's/const first = -lowerMagnitude;/const first = lowerMagnitude === 0 ? 0 : -lowerMagnitude;/' src/domain/handicap.ts
 
 # Install the approved Young Talent Scouting V1 patch without changing existing match data.
-unzip -q -o ../young-talent-scouting-v1-patch.zip -d ..
+# Young Talent Scouting V1 sources are committed as individual text files in ../scripts and ../docs.
 node ../scripts/apply-young-talent-scouting-v1.mjs
 npm test -- --run
 npm run build
